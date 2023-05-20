@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="deploymentTargetDropDown">
+    <value>
+      <entry key="NpcDaoTest">
+        <State />
+      </entry>
+      <entry key="NpcRepositoryTest">
+        <State />
+      </entry>
+      <entry key="ShopDaoTest.test deleting npc sets npcId to null">
+        <State />
+      </entry>
+      <entry key="ShopDaoTest.test inserting shop with npc that's present in npc table">
+        <State />
+      </entry>
+      <entry key="ShopDaoTest.test updating shop with npc that's present in npc table">
+        <State />
+      </entry>
+      <entry key="app">
+        <State />
+      </entry>
+      <entry key="battletracker">
+        <State />
+      </entry>
+      <entry key="common">
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\Pramath\.android\avd\Pixel_2_API_29.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2023-05-20T00:51:11.487733700Z" />
+        </State>
+      </entry>
+      <entry key="database">
+        <State />
+      </entry>
+      <entry key="grabbag">
+        <State />
+      </entry>
+    </value>
+  </component>
+</project>
