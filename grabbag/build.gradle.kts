@@ -2,7 +2,6 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -64,9 +63,6 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
     implementation(libs.androidx.junit.ktx)
-
-    // Room
-    ksp(libs.room.compiler)
 
     // Testing
     testImplementation(libs.junit)

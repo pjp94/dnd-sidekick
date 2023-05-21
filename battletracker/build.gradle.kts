@@ -49,7 +49,7 @@ android {
 
 dependencies {
     // Local
-    implementation(project(":common"))
+    implementation(project(":core"))
 
     // Core
     implementation(libs.core.ktx)

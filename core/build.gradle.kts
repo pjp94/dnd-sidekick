@@ -2,7 +2,7 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.ksp)
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -38,7 +38,13 @@ dependencies {
     // Core
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
-    implementation(libs.material)
+    api(libs.material)
+
+    // Compose
+    api(libs.compose.material)
+
+    // Navigation
+    api(libs.navigation.compose)
 
     // Room
     api(libs.room.runtime)
@@ -46,7 +52,7 @@ dependencies {
 
     // Hilt
     api(libs.hilt)
-    ksp(libs.hilt.compiler)
+    annotationProcessor(libs.hilt.compiler)
 
     // Testing
     testImplementation(libs.junit)

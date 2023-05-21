@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">D&amp;D Sidekick</string>
+
+    <!-- Navigation -->
+    <string name="grab_bag_route">grab_bag</string>
+    <string name="grab_bag_label">Grab Bag</string>
+    <string name="grab_bag_icon_description">Grab Bag Icon</string>
+    <string name="battle_tracker_route">battle_tracker</string>
+    <string name="battle_tracker_label">Battle Tracker</string>
+    <string name="battle_tracker_icon_description">Battle Tracker Icon</string>
 </resources>

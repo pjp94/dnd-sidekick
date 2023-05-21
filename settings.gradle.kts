@@ -17,5 +17,4 @@ rootProject.name = "DnD Utilities"
 include(":app")
 include(":battletracker")
 include(":core")
-include(":common")
 include(":grabbag")

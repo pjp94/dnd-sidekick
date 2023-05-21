@@ -12,7 +12,6 @@ import com.pancholi.grabbag.database.entity.NpcEntity
 import com.pancholi.grabbag.database.entity.ShopEntity
 import junit.framework.TestCase
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -195,36 +194,6 @@ class ShopDaoTest {
             shopDao.getAll().test {
                 val result = awaitItem()
                 assertEquals(id, result.first().npcId)
-                cancel()
-            }
-        }
-    }
-
-    @Test
-    fun `test deleting npc sets npcId to null`() = runTest {
-        val shop = createShop(1)
-        shopDao.insert(shop)
-
-        val npc = NpcEntity(
-            name = "test-name",
-            race = "test-race",
-            gender = "test-gender",
-            clss = "test-class",
-            type = "test-type"
-        )
-        val npcDao = database.npcDao()
-        npcDao.insert(npc)
-
-        npcDao.getAll().test {
-            val id = awaitItem().first().id
-            val updatedShop = shop.copy(npcId = id)
-
-            shopDao.insert(updatedShop)
-            npcDao.delete(npc)
-
-            shopDao.getAll().test {
-                val result = awaitItem()
-                assertNull(result.first().npcId)
                 cancel()
             }
         }

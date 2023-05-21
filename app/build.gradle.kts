@@ -48,8 +48,8 @@ android {
 }
 
 dependencies {
-    //Local
-    implementation(project(":common"))
+    // Local
+    implementation(project(":core"))
     implementation(project(":battletracker"))
     implementation(project(":grabbag"))
 
@@ -65,11 +65,6 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
     implementation(libs.runtime.livedata)
-
-    // Navigation
-    implementation(libs.navigation.fragment)
-    implementation(libs.navigation.ui)
-    implementation(libs.navigation.compose)
 
     // Testing
     testImplementation(libs.junit)
