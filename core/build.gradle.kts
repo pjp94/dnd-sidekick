@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
     id("dagger.hilt.android.plugin")
+    id("kotlin-kapt")
 }
 
 android {
@@ -42,6 +43,10 @@ dependencies {
 
     // Compose
     api(libs.compose.material)
+    api(libs.lifecycle.runtime.compose)
+
+    // Gson
+    api(libs.gson)
 
     // Navigation
     api(libs.navigation.compose)
@@ -52,7 +57,9 @@ dependencies {
 
     // Hilt
     api(libs.hilt)
-    annotationProcessor(libs.hilt.compiler)
+    api(libs.androidx.hilt.navigation.compose)
+    kapt(libs.hilt.compiler)
+    kapt(libs.androidx.hilt.compiler)
 
     // Testing
     testImplementation(libs.junit)

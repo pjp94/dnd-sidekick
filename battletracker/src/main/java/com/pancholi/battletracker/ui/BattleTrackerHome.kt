@@ -1,11 +1,11 @@
-package com.pancholi.grabbag.ui
+package com.pancholi.battletracker.ui
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 
 @Composable
-fun GrabBag(
-    navHostController: NavHostController
+fun BattleTrackerHome(
+    navController: NavHostController
 ) {
 
 }

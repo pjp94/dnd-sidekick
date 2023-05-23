@@ -1,3 +1,17 @@
 <resources>
     <string name="grab_bag">Grab Bag</string>
+
+    <!-- Categories -->
+    <string name="npcs">NPCs</string>
+    <string name="shops">Shops</string>
+    <string name="locations">Locations</string>
+    <string name="items">Items</string>
+
+    <!-- Routes -->
+    <string name="npcs_route">npcs_route</string>
+    <string name="shops_route">shops_route</string>
+    <string name="locations_route">locations_route</string>
+    <string name="items_route">items_route</string>
+
+    <string name="empty_category">Your added %s will show up here.</string>
 </resources>
