@@ -5,7 +5,7 @@ import com.pancholi.grabbag.database.entity.NpcEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-internal class NpcRepository @Inject constructor(
+class NpcRepository @Inject constructor(
     private val database: GrabBagDatabase
 ) {
 

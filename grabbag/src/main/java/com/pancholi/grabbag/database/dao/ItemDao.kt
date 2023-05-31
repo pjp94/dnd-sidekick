@@ -6,24 +6,24 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.pancholi.grabbag.database.entity.LocationEntity
+import com.pancholi.grabbag.database.entity.ItemEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface LocationDao {
+interface ItemDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(location: LocationEntity)
+    suspend fun insert(item: ItemEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(locations: List<LocationEntity>)
+    suspend fun insertAll(items: List<ItemEntity>)
 
     @Update
-    suspend fun update(location: LocationEntity): Int
+    suspend fun update(item: ItemEntity): Int
 
     @Delete
-    suspend fun delete(location: LocationEntity): Int
+    suspend fun delete(item: ItemEntity): Int
 
-    @Query("SELECT * FROM location")
-    fun getAll(): Flow<List<LocationEntity>>
+    @Query("SELECT * FROM item")
+    fun getAll(): Flow<List<ItemEntity>>
 }

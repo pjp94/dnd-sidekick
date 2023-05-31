@@ -10,7 +10,7 @@ import com.pancholi.grabbag.database.entity.ShopEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-internal interface ShopDao {
+interface ShopDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(shop: ShopEntity)
@@ -28,5 +28,5 @@ internal interface ShopDao {
     fun getAll(): Flow<List<ShopEntity>>
 
     @Query("SELECT * FROM shop WHERE is_used = 0")
-    fun getUnusedShops(): Flow<List<ShopEntity>>
+    fun getAllUnused(): Flow<List<ShopEntity>>
 }

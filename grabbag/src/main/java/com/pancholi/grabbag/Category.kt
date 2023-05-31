@@ -2,7 +2,7 @@ package com.pancholi.grabbag
 
 import androidx.annotation.StringRes
 
-internal sealed class CategoryScreen(
+sealed class CategoryScreen(
     @StringRes val nameId: Int,
     val route: String
 ) {

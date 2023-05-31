@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_grab_bag"
+        android:enabled="true"
+        android:icon="@drawable/bag"
+        android:title="@string/grab_bag"/>
+    <item
+        android:id="@+id/menu_battle_tracker"
+        android:enabled="true"
+        android:icon="@drawable/crossed_swords"
+        android:title="@string/battle_tracker"/>
+</menu>

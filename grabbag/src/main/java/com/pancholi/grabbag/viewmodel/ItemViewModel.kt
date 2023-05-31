@@ -4,26 +4,25 @@ import androidx.lifecycle.viewModelScope
 import com.pancholi.core.Result
 import com.pancholi.core.coroutines.Dispatcher
 import com.pancholi.core.database.EmptyDatabaseException
-import com.pancholi.grabbag.mapper.NpcMapper
-import com.pancholi.grabbag.repository.NpcRepository
+import com.pancholi.grabbag.mapper.ItemMapper
+import com.pancholi.grabbag.repository.ItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NpcViewModel @Inject constructor(
-    private val npcRepository: NpcRepository,
-    private val npcMapper: NpcMapper,
+class ItemViewModel @Inject constructor(
+    private val itemRepository: ItemRepository,
+    private val itemMapper: ItemMapper,
     private val dispatcher: Dispatcher
 ) : CategoryViewModel() {
 
     private val _viewState: MutableStateFlow<Result> = MutableStateFlow(Result.Loading)
-    override val viewState: StateFlow<Result> = _viewState.asStateFlow()
+    override val viewState: StateFlow<Result> = _viewState
 
     init {
         loadData()
@@ -31,14 +30,14 @@ class NpcViewModel @Inject constructor(
 
     override fun loadData() {
         viewModelScope.launch(dispatcher.io) {
-            npcRepository
-                .getAllNpcs()
+            itemRepository
+                .getAllItems()
                 .distinctUntilChanged()
                 .catch { _viewState.value = Result.Error(it) }
                 .collect { entities ->
                     if (entities.isNotEmpty()) {
-                        val npcs = entities.map { npcMapper.fromEntity(it) }
-                        val viewState = ViewState(items = npcs)
+                        val items = entities.map { itemMapper.fromEntity(it) }
+                        val viewState = ViewState(items = items)
                         _viewState.value = Result.Success(viewState)
                     } else {
                         _viewState.value = Result.Error(EmptyDatabaseException())

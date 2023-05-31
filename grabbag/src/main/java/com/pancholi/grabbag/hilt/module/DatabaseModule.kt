@@ -21,6 +21,8 @@ internal object DatabaseModule {
             appContext,
             GrabBagDatabase::class.java,
             "GrabBagDatabase"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 }

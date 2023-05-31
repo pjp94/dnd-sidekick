@@ -4,8 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.pancholi.core.Result
 import com.pancholi.core.coroutines.Dispatcher
 import com.pancholi.core.database.EmptyDatabaseException
-import com.pancholi.grabbag.mapper.NpcMapper
-import com.pancholi.grabbag.repository.NpcRepository
+import com.pancholi.grabbag.mapper.ShopMapper
+import com.pancholi.grabbag.repository.ShopRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,9 +16,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NpcViewModel @Inject constructor(
-    private val npcRepository: NpcRepository,
-    private val npcMapper: NpcMapper,
+class ShopViewModel @Inject constructor(
+    private val shopRepository: ShopRepository,
+    private val shopMapper: ShopMapper,
     private val dispatcher: Dispatcher
 ) : CategoryViewModel() {
 
@@ -31,14 +31,14 @@ class NpcViewModel @Inject constructor(
 
     override fun loadData() {
         viewModelScope.launch(dispatcher.io) {
-            npcRepository
-                .getAllNpcs()
+            shopRepository
+                .getAllShops()
                 .distinctUntilChanged()
                 .catch { _viewState.value = Result.Error(it) }
                 .collect { entities ->
                     if (entities.isNotEmpty()) {
-                        val npcs = entities.map { npcMapper.fromEntity(it) }
-                        val viewState = ViewState(items = npcs)
+                        val shops = entities.map { shopMapper.fromEntity(it) }
+                        val viewState = ViewState(items = shops)
                         _viewState.value = Result.Success(viewState)
                     } else {
                         _viewState.value = Result.Error(EmptyDatabaseException())

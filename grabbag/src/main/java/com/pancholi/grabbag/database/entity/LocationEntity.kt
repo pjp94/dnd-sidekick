@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "location")
-internal data class LocationEntity(
+data class LocationEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     @ColumnInfo(name = "name")
@@ -13,5 +13,7 @@ internal data class LocationEntity(
     @ColumnInfo(name = "type")
     val type: String,
     @ColumnInfo(name = "description")
-    val description: String? = null
+    val description: String? = null,
+    @ColumnInfo(name = "is_used")
+    val isUsed: Boolean = false
 )

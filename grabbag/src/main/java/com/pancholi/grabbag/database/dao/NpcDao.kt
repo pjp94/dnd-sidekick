@@ -10,7 +10,7 @@ import com.pancholi.grabbag.database.entity.NpcEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-internal interface NpcDao {
+interface NpcDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(npc: NpcEntity)
@@ -26,4 +26,7 @@ internal interface NpcDao {
 
     @Query("SELECT * FROM npc")
     fun getAll(): Flow<List<NpcEntity>>
+
+    @Query("SELECT * FROM npc WHERE is_used = 0")
+    fun getAllUnused(): Flow<List<NpcEntity>>
 }

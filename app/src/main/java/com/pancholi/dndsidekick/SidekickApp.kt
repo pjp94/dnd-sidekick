@@ -1,6 +1,5 @@
-package com.pancholi.dndsidekick.ui
+package com.pancholi.dndsidekick
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -17,12 +16,13 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.pancholi.dndsidekick.navigation.Screen
 import com.pancholi.dndsidekick.navigation.SidekickGraph
 
 @Composable
-internal fun BottomNavBar(
-    navController: NavHostController,
+internal fun SidekickApp(
+    navController: NavHostController = rememberNavController(),
     items: List<Screen>
 ) {
     Scaffold(
@@ -35,14 +35,18 @@ internal fun BottomNavBar(
 
                 items.forEach { screen ->
                     BottomNavigationItem(
-                        label = { Text(
-                            text = stringResource(id = screen.labelId)
-                        ) },
-                        icon = { Icon(
-                            painterResource(id = screen.iconId),
-                            contentDescription = stringResource(id = screen.iconDescriptionId)
-                        ) },
-                        selected = currentDestination?.hierarchy?.any { it.route == screen.route} == true,
+                        label = {
+                            Text(
+                                text = stringResource(id = screen.labelId)
+                            )
+                        },
+                        icon = {
+                            Icon(
+                                painterResource(id = screen.iconId),
+                                contentDescription = stringResource(id = screen.iconDescriptionId)
+                            )
+                        },
+                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                         onClick = {
                             navController.navigate(screen.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
@@ -57,7 +61,6 @@ internal fun BottomNavBar(
             }
         }
     ) { innerPadding ->
-        Log.d("NPC_HOME_TAG", "Recomposing SidekickGraph")
         SidekickGraph(
             navController = navController,
             modifier = Modifier.padding(innerPadding)

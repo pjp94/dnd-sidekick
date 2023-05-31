@@ -5,7 +5,7 @@ import com.pancholi.grabbag.database.entity.LocationEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-internal class LocationRepository @Inject constructor(
+class LocationRepository @Inject constructor(
     private val database: GrabBagDatabase
 ) {
 

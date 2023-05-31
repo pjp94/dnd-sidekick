@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "npc")
-internal data class NpcEntity(
+data class NpcEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     @ColumnInfo(name = "name")
@@ -20,6 +20,6 @@ internal data class NpcEntity(
     val type: String,
     @ColumnInfo(name = "description")
     val description: String? = null,
-    @ColumnInfo(name = "is_assigned")
-    val isAssigned: Boolean = false
+    @ColumnInfo(name = "is_used")
+    val isUsed: Boolean = false
 )
