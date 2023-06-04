@@ -17,7 +17,7 @@ class NpcMapper @Inject constructor(
             race = entity.race,
             gender = entity.gender,
             clss = entity.clss,
-            type = entity.type,
+            profession = entity.profession,
             description = entity.description,
             isUsed = entity.isUsed
         )
@@ -29,7 +29,7 @@ class NpcMapper @Inject constructor(
             race = npc.race,
             gender = npc.gender,
             clss = npc.clss,
-            type = npc.type,
+            profession = npc.profession,
             description = npc.description,
             isUsed = npc.isUsed
         )

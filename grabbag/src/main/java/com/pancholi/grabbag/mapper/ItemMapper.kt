@@ -15,6 +15,7 @@ class ItemMapper @Inject constructor(
             name = entity.name,
             type = entity.type,
             cost = entity.cost,
+            currency = entity.currency,
             description = entity.description,
             isUsed = entity.isUsed
         )
@@ -26,6 +27,7 @@ class ItemMapper @Inject constructor(
             name = item.name,
             type = item.type,
             cost = item.cost,
+            currency = item.currency,
             description = item.description,
             isUsed = item.isUsed
         )

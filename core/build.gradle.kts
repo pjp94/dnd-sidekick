@@ -39,10 +39,9 @@ dependencies {
     // Core
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
-    api(libs.material)
 
     // Compose
-    api(libs.compose.material)
+    api(libs.compose.material3)
     api(libs.lifecycle.runtime.compose)
 
     // Gson

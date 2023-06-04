@@ -15,9 +15,9 @@ data class NpcEntity(
     @ColumnInfo(name = "gender")
     val gender: String,
     @ColumnInfo(name = "class")
-    val clss: String,
-    @ColumnInfo(name = "type")
-    val type: String,
+    val clss: String? = null,
+    @ColumnInfo(name = "profession")
+    val profession: String? = null,
     @ColumnInfo(name = "description")
     val description: String? = null,
     @ColumnInfo(name = "is_used")

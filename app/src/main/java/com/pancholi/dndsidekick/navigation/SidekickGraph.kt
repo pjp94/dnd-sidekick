@@ -4,7 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.pancholi.grabbag.navigation.grabBagGraph
+import com.pancholi.grabbag.navigation.graph.categoryGraph
+import com.pancholi.grabbag.navigation.graph.grabBagGraph
 
 @Composable
 fun SidekickGraph(
@@ -18,5 +19,6 @@ fun SidekickGraph(
     ) {
         homeGraph(navController)
         grabBagGraph(navController)
+        categoryGraph(navController)
     }
 }

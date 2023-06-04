@@ -133,7 +133,7 @@ class NpcDaoTest {
             race = "test-race",
             gender = "test-gender",
             clss = "test-class",
-            type = "test-type",
+            profession = "test-profession",
             description = "test-description"
         )
     }

@@ -64,7 +64,7 @@ dependencies {
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
-    implementation(libs.material3)
+    implementation(libs.compose.material3)
     implementation(libs.androidx.junit.ktx)
 
     // Hilt

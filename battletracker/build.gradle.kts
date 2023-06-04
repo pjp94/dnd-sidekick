@@ -64,7 +64,6 @@ dependencies {
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
-    implementation(libs.material3)
 
     // Hilt
     implementation(libs.hilt)

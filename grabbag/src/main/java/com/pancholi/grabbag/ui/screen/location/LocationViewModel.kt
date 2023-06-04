@@ -1,11 +1,13 @@
-package com.pancholi.grabbag.viewmodel
+package com.pancholi.grabbag.ui.screen.location
 
 import androidx.lifecycle.viewModelScope
 import com.pancholi.core.Result
 import com.pancholi.core.coroutines.Dispatcher
 import com.pancholi.core.database.EmptyDatabaseException
 import com.pancholi.grabbag.mapper.LocationMapper
+import com.pancholi.grabbag.model.Location
 import com.pancholi.grabbag.repository.LocationRepository
+import com.pancholi.grabbag.viewmodel.CategoryViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +26,16 @@ class LocationViewModel @Inject constructor(
 
     private val _viewState: MutableStateFlow<Result> = MutableStateFlow(Result.Loading)
     override val viewState: StateFlow<Result> = _viewState.asStateFlow()
+
+    private val _showRequired: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val showRequired: StateFlow<Boolean> = _showRequired.asStateFlow()
+
+    private val _locationSaved: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val locationSaved: StateFlow<Boolean> = _locationSaved.asStateFlow()
+
+    private var name: String? = null
+    private var type: String? = null
+    private var description: String? = null
 
     init {
         loadData()
@@ -45,5 +57,37 @@ class LocationViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    override fun onSaveClicked() {
+        if (areFieldsMissing(listOf(name, type))) {
+            viewModelScope.launch { _showRequired.emit(true) }
+        } else {
+            val location = Location(
+                name = name.orEmpty(),
+                type = type.orEmpty(),
+                description = description
+            )
+            val entity = locationMapper.toEntity(location)
+
+            viewModelScope.launch(dispatcher.io) {
+                locationRepository
+                    .insertLocation(entity)
+
+                _locationSaved.emit(true)
+            }
+        }
+    }
+
+    fun setName(name: String) {
+        this.name = name
+    }
+
+    fun setType(type: String) {
+        this.type = type
+    }
+
+    fun setDescription(description: String) {
+        this.description = description
     }
 }

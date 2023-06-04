@@ -1,28 +1,26 @@
-package com.pancholi.grabbag
+package com.pancholi.grabbag.navigation
 
 import androidx.annotation.StringRes
+import com.pancholi.grabbag.R
 
-sealed class CategoryScreen(
+enum class Category(
     @StringRes val nameId: Int,
     val route: String
 ) {
 
-    object Npc : CategoryScreen(
+    NPC(
         nameId = R.string.npcs,
         route = "npc_route"
-    )
-
-    object Shop : CategoryScreen(
+    ),
+    SHOP(
         nameId = R.string.shops,
         route = "shop_route"
-    )
-
-    object Location : CategoryScreen(
+    ),
+    LOCATION(
         nameId = R.string.locations,
         route = "location_route"
-    )
-
-    object Item : CategoryScreen(
+    ),
+    ITEM(
         nameId = R.string.items,
         route = "item_route"
     )

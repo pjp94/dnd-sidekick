@@ -3,6 +3,7 @@ package com.pancholi.grabbag.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.pancholi.grabbag.model.Currency
 
 @Entity(tableName = "item")
 data class ItemEntity(
@@ -13,7 +14,9 @@ data class ItemEntity(
     @ColumnInfo(name = "type")
     val type: String,
     @ColumnInfo(name = "cost")
-    val cost: Int? = null,
+    val cost: String? = null,
+    @ColumnInfo(name = "currency")
+    val currency: Currency? = null,
     @ColumnInfo(name = "description")
     val description: String? = null,
     @ColumnInfo(name = "is_used")

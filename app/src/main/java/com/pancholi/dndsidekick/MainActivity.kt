@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.pancholi.dndsidekick.navigation.Screen
-import com.pancholi.dndsidekick.ui.theme.DnDSidekickTheme
+import com.pancholi.grabbag.ui.theme.DnDSidekickTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

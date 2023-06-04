@@ -151,7 +151,7 @@ class ShopDaoTest {
             race = "test-race",
             gender = "test-gender",
             clss = "test-class",
-            type = "test-type"
+            profession = "test-profession"
         )
         val npcDao = database.npcDao()
         npcDao.insert(npc)
@@ -180,7 +180,7 @@ class ShopDaoTest {
             race = "test-race",
             gender = "test-gender",
             clss = "test-class",
-            type = "test-type"
+            profession = "test-profession"
         )
         val npcDao = database.npcDao()
         npcDao.insert(npc)
