@@ -1,6 +1,5 @@
 package com.pancholi.grabbag.ui.screen.shop
 
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,7 +12,7 @@ import com.pancholi.grabbag.model.Shop
 import com.pancholi.grabbag.ui.screen.CardPropertyRow
 
 @Composable
-fun ColumnScope.ShopCard(
+fun ShopCard(
     shop: Shop
 ) {
     Text(

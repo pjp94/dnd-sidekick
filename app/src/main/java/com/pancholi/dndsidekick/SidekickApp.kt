@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -35,6 +36,8 @@ internal fun SidekickApp(
                 val currentDestination = navBackStackEntry?.destination
 
                 items.forEach { screen ->
+                    val selected = currentDestination.isTopLevelDestinationInHierarchy(screen)
+
                     NavigationBarItem(
                         label = {
                             Text(
@@ -47,7 +50,7 @@ internal fun SidekickApp(
                                 contentDescription = stringResource(id = screen.iconDescriptionId)
                             )
                         },
-                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                        selected = selected,
                         onClick = {
                             navController.navigate(screen.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
@@ -66,8 +69,13 @@ internal fun SidekickApp(
         }
     ) { innerPadding ->
         SidekickGraph(
-            navController = rememberNavController(),
+            navController = navController,
             modifier = Modifier.padding(innerPadding)
         )
     }
 }
+
+private fun NavDestination?.isTopLevelDestinationInHierarchy(screen: Screen) =
+    this?.hierarchy?.any {
+        it.route?.contains(screen.name, true) ?: false
+    } ?: false

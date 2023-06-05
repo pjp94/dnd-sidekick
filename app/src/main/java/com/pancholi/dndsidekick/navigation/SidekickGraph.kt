@@ -4,8 +4,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.pancholi.grabbag.navigation.graph.categoryGraph
+import com.pancholi.battletracker.navigation.battleTrackerGraph
+import com.pancholi.grabbag.navigation.graph.addItemScreen
+import com.pancholi.grabbag.navigation.graph.addLocationScreen
+import com.pancholi.grabbag.navigation.graph.addNpcScreen
+import com.pancholi.grabbag.navigation.graph.addShopScreen
 import com.pancholi.grabbag.navigation.graph.grabBagGraph
+import com.pancholi.grabbag.navigation.graph.itemGraph
+import com.pancholi.grabbag.navigation.graph.locationGraph
+import com.pancholi.grabbag.navigation.graph.npcGraph
+import com.pancholi.grabbag.navigation.graph.shopGraph
 
 @Composable
 fun SidekickGraph(
@@ -14,11 +22,55 @@ fun SidekickGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = "home",
+        startDestination = "grab_bag",
         modifier = modifier
     ) {
-        homeGraph(navController)
-        grabBagGraph(navController)
-        categoryGraph(navController)
+        grabBagGraph(
+            onCategoryClicked = { category ->
+                navController.navigate(category.route)
+            },
+            nestedGraphs = {
+                npcGraph(
+                    onBackPressed = { navController.popBackStack() },
+                    onAddClicked = { action -> navController.navigate(action.route) },
+                    nestedGraphs = {
+                        addNpcScreen(
+                            onBackPressed = { navController.popBackStack() }
+                        )
+                    }
+                )
+                shopGraph(
+                    onBackPressed = { navController.popBackStack() },
+                    onAddClicked = { action -> navController.navigate(action.route) },
+                    nestedGraphs = {
+                        addShopScreen(
+                            onBackPressed = { navController.popBackStack() }
+                        )
+                    }
+                )
+                locationGraph(
+                    onBackPressed = { navController.popBackStack() },
+                    onAddClicked = { action -> navController.navigate(action.route) },
+                    nestedGraphs = {
+                        addLocationScreen(
+                            onBackPressed = { navController.popBackStack() }
+                        )
+                    }
+                )
+                itemGraph(
+                    onBackPressed = { navController.popBackStack() },
+                    onAddClicked = { action -> navController.navigate(action.route) },
+                    nestedGraphs = {
+                        addItemScreen(
+                            onBackPressed = { navController.popBackStack() }
+                        )
+                    }
+                )
+            }
+        )
+        battleTrackerGraph(
+            navController = navController,
+            nestedGraphs = {}
+        )
     }
 }

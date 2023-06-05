@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.pancholi.dndsidekick.navigation.Screen
-import com.pancholi.grabbag.ui.theme.DnDSidekickTheme
+import com.pancholi.dndsidekick.ui.theme.DnDSidekickTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,8 +25,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     SidekickApp(
                         items = listOf(
-                            Screen.GrabBag,
-                            Screen.BattleTracker
+                            Screen.GRAB_BAG,
+                            Screen.BATTLE_TRACKER
                         )
                     )
                 }

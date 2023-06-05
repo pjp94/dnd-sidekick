@@ -20,10 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,8 +33,9 @@ import com.pancholi.grabbag.model.Item
 import com.pancholi.grabbag.model.Location
 import com.pancholi.grabbag.model.Npc
 import com.pancholi.grabbag.model.Shop
+import com.pancholi.grabbag.navigation.Action
 import com.pancholi.grabbag.navigation.Category
-import com.pancholi.grabbag.ui.AddItemButton
+import com.pancholi.grabbag.ui.AddButton
 import com.pancholi.grabbag.ui.BackableScreen
 import com.pancholi.grabbag.ui.LoadingIndicator
 import com.pancholi.grabbag.ui.Message
@@ -53,7 +52,7 @@ fun CategoryScreen(
     errorMessage: String,
     viewModel: CategoryViewModel,
     onBackPressed: () -> Unit,
-    onAddClicked: () -> Unit
+    onAddClicked: (Action) -> Unit
 ) {
     BackableScreen(
         title = title,
@@ -72,7 +71,8 @@ fun CategoryScreen(
                     errorMessage = errorMessage
                 )
 
-                AddItemButton(
+                AddButton(
+                    category = category,
                     onAddClicked = onAddClicked,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
@@ -83,6 +83,7 @@ fun CategoryScreen(
     )
 }
 
+@Suppress("UNCHECKED_CAST")
 @Composable
 fun CategoryBody(
     category: Category,
@@ -140,7 +141,6 @@ fun CategoryCard(
     model: CategoryModel
 ) {
     Card(
-        shape = RectangleShape,
         colors = CardDefaults.cardColors(
             containerColor = colorResource(id = R.color.white)
         ),
@@ -154,7 +154,7 @@ fun CategoryCard(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp, start = 4.dp, end = 4.dp)
+                    .padding(top = 8.dp, start = 8.dp, end = 8.dp)
             ) {
                 when (category) {
                     Category.NPC -> NpcCard(npc = model as Npc)
@@ -167,7 +167,7 @@ fun CategoryCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .height(30.dp)
                     .align(Alignment.BottomStart)
                     .background(
                         brush = Brush.verticalGradient(
@@ -198,28 +198,4 @@ fun CardPropertyRow(
             lineHeight = 20.sp
         )
     }
-}
-
-@Preview
-@Composable
-fun CardPreview() {
-    val npc = Npc(
-        name = "Darianna",
-        race = "Human",
-        gender = "Female",
-        clss = null,
-        profession = "Innkeep",
-        description = """
-            An older woman in her 50s with dark brown hair. Her complexion has very obviously been affected by long days out in the sun and sand, and she doesn’t do much to hide it. She’s very stern, having to deal with drunken sailors most days, 
-            and runs a tight ship at her inn. Her husband, Jacob, was the head of naval trade within the town. When the ship washed 
-            ashore, he was the first to be told. Jacob found the treasure chest in the captain’s quarters and kept it hidden as it 
-            was too heavy to be moved. He only told Dariana about it, and they used the treasures sparingly to fund their somewhat 
-            exuberant lifestyle. With Jacob overseeing all naval affairs, he was able to make sure no one would search the ship and 
-            find the treasure. When he died, Dariana had no way to protect the treasure, so she converted the ship into an inn and 
-            made it her permanent residence. She uses the money to fund the inn and buy supplies, as well as to bribe some of the 
-            political contacts her husband had. These contacts make sure no one tries to remove the ship, which has been complained 
-            about as an eyesore by many of the town’s beachgoers.
-        """.trimIndent()
-    )
-//    CategoryCard(npc = npc)
 }

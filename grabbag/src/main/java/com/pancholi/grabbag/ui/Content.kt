@@ -28,16 +28,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.pancholi.grabbag.R
+import com.pancholi.grabbag.navigation.Action
+import com.pancholi.grabbag.navigation.Category
 
 @Composable
 fun LoadingIndicator() {
@@ -58,20 +61,29 @@ fun Message(
     Box(modifier = Modifier.fillMaxSize()) {
         Text(
             text = message,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = colorResource(id = R.color.dark_gray),
             modifier = Modifier.align(Alignment.Center)
         )
     }
 }
 
 @Composable
-fun AddItemButton(
-    onAddClicked: () -> Unit,
+fun AddButton(
+    category: Category,
+    onAddClicked: (Action) -> Unit,
     modifier: Modifier
 ) {
     FloatingActionButton(
         modifier = modifier,
-        content = { Icon(imageVector = Icons.Filled.Add, contentDescription = "") },
-        onClick = { onAddClicked() },
+        content = {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = stringResource(id = R.string.add_icon_description)
+            )
+        },
+        onClick = { onAddClicked(category.addAction) },
         containerColor = colorResource(id = R.color.red)
     )
 }
@@ -96,7 +108,6 @@ fun BackableScreen(
                     },
                     actions = actions,
                     colors = TopAppBarDefaults.topAppBarColors(
-                        titleContentColor = Color.White,
                         containerColor = colorResource(id = R.color.red)
                     )
                 )
@@ -115,8 +126,7 @@ fun BackButton(
 
         Icon(
             painterResource(id = R.drawable.icon_back),
-            contentDescription = stringResource(id = R.string.back_icon_description),
-            tint = Color.White
+            contentDescription = stringResource(id = R.string.back_icon_description)
         )
     }
 }
@@ -126,8 +136,7 @@ fun PropertyTextField(
     label: String,
     onValueAction: (String) -> Unit = {},
     supportingText: @Composable ((String) -> Unit) = {},
-    numberOnly: Boolean = false,
-    modifier: Modifier = Modifier
+    numberOnly: Boolean = false
 ) {
     var text by rememberSaveable { mutableStateOf("") }
 
@@ -146,8 +155,7 @@ fun PropertyTextField(
                 KeyboardType.Text
             }
         ),
-        supportingText = { supportingText(text) },
-        modifier = modifier
+        supportingText = { supportingText(text) }
     )
 }
 
