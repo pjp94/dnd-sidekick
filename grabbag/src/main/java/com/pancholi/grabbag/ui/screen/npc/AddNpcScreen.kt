@@ -1,10 +1,15 @@
 package com.pancholi.grabbag.ui.screen.npc
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.grabbag.R
+import com.pancholi.grabbag.model.Npc
 import com.pancholi.grabbag.ui.OptionalTextField
 import com.pancholi.grabbag.ui.PropertyTextBox
 import com.pancholi.grabbag.ui.PropertyTextField
@@ -24,10 +29,28 @@ fun AddNpcScreen(
         onBackPressed()
     }
 
+    var name by rememberSaveable { mutableStateOf("") }
+    var race by rememberSaveable { mutableStateOf("") }
+    var gender by rememberSaveable { mutableStateOf("") }
+    var clss by rememberSaveable { mutableStateOf("") }
+    var profession by rememberSaveable { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
+
     AddScreenBase(
         title = title,
         onBackPressed = onBackPressed,
-        onSaveClicked = { viewModel.onSaveClicked() }
+        onSaveClicked = {
+            val npc = Npc(
+                name = name,
+                race = race,
+                gender = gender,
+                clss = clss,
+                profession = profession,
+                description = description
+            )
+
+            viewModel.onSaveClicked(npc)
+        }
     ) {
         val requiredSupportingText: @Composable (String) -> Unit = { text ->
             if (showRequired.value && text.isEmpty()) {
@@ -37,37 +60,37 @@ fun AddNpcScreen(
 
         PropertyTextField(
             label = stringResource(id = R.string.name),
-            onValueAction = { text -> viewModel.setName(text) },
+            onValueChangeAction = { name = it },
             supportingText = requiredSupportingText
         )
 
         PropertyTextField(
             label = stringResource(id = R.string.race),
-            onValueAction = { text -> viewModel.setRace(text) },
+            onValueChangeAction = { race = it },
             supportingText = requiredSupportingText
         )
 
         PropertyTextField(
             label = stringResource(id = R.string.gender),
-            onValueAction = { text -> viewModel.setGender(text) },
+            onValueChangeAction = { gender = it },
             supportingText = requiredSupportingText
         )
 
         PropertyTextField(
             label = stringResource(id = R.string.clss),
-            onValueAction = { text -> viewModel.setClass(text) },
+            onValueChangeAction = { clss = it },
             supportingText = { OptionalTextField() }
         )
 
         PropertyTextField(
             label = stringResource(id = R.string.profession),
-            onValueAction = { text -> viewModel.setProfession(text) },
+            onValueChangeAction = { profession = it },
             supportingText = { OptionalTextField() }
         )
 
         PropertyTextBox(
             label = stringResource(id = R.string.description),
-            onValueAction = { text -> viewModel.setDescription(text) },
+            onValueChangeAction = { description = it },
             supportingText = { OptionalTextField() }
         )
     }

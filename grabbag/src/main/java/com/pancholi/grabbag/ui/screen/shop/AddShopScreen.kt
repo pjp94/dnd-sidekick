@@ -1,10 +1,15 @@
 package com.pancholi.grabbag.ui.screen.shop
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.grabbag.R
+import com.pancholi.grabbag.model.Shop
 import com.pancholi.grabbag.ui.OptionalTextField
 import com.pancholi.grabbag.ui.PropertyTextBox
 import com.pancholi.grabbag.ui.PropertyTextField
@@ -24,10 +29,24 @@ fun AddShopScreen(
         onBackPressed()
     }
 
+    var name by rememberSaveable { mutableStateOf("") }
+    var type by rememberSaveable { mutableStateOf("") }
+    var owner by rememberSaveable { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
+
     AddScreenBase(
         title = title,
         onBackPressed = onBackPressed,
-        onSaveClicked = { viewModel.onSaveClicked() }
+        onSaveClicked = {
+            val shop = Shop(
+                name = name,
+                type = type,
+                owner = owner,
+                description = description
+            )
+
+            viewModel.onSaveClicked(shop)
+        }
     ) {
         val requiredSupportingText: @Composable (String) -> Unit = { text ->
             if (showRequired.value && text.isEmpty()) {
@@ -37,25 +56,25 @@ fun AddShopScreen(
 
         PropertyTextField(
             label = stringResource(id = R.string.name),
-            onValueAction = { text -> viewModel.setName(text) },
+            onValueChangeAction = { name = it },
             supportingText = requiredSupportingText
         )
 
         PropertyTextField(
             label = stringResource(id = R.string.type),
-            onValueAction = { text -> viewModel.setType(text) },
+            onValueChangeAction = { type = it },
             supportingText = requiredSupportingText
         )
 
         PropertyTextField(
             label = stringResource(id = R.string.owner),
-            onValueAction = { text -> viewModel.setOwner(text) },
+            onValueChangeAction = { owner = it },
             supportingText = { OptionalTextField() }
         )
 
         PropertyTextBox(
             label = stringResource(id = R.string.description),
-            onValueAction = { text -> viewModel.setDescription(text) },
+            onValueChangeAction = { description = it },
             supportingText = { OptionalTextField() }
         )
     }

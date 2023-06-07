@@ -17,17 +17,19 @@ import com.pancholi.grabbag.ui.screen.shop.ShopViewModel
 fun NavGraphBuilder.npcGraph(
     onBackPressed: () -> Unit,
     onAddClicked: (Action) -> Unit,
-    nestedGraphs: NavGraphBuilder.() -> Unit
+    nestedGraphs: NavGraphBuilder.() -> Unit,
 ) {
     navigation(startDestination = Category.NPC.route, route = "npc_home") {
         composable(Category.NPC.route) {
             val title = stringResource(id = R.string.npcs)
             val errorMessage = stringResource(id = R.string.empty_category, title)
+            val viewModel: NpcViewModel = hiltViewModel()
+
             CategoryScreen(
                 category = Category.NPC,
                 title = title,
                 errorMessage = errorMessage,
-                viewModel = hiltViewModel<NpcViewModel>(),
+                viewModel = viewModel,
                 onBackPressed = onBackPressed,
                 onAddClicked = onAddClicked
             )
@@ -45,11 +47,13 @@ fun NavGraphBuilder.shopGraph(
         composable(Category.SHOP.route) {
             val title = stringResource(id = R.string.shops)
             val errorMessage = stringResource(id = R.string.empty_category, title.lowercase())
+            val viewModel: ShopViewModel = hiltViewModel()
+
             CategoryScreen(
                 category = Category.SHOP,
                 title = title,
                 errorMessage = errorMessage,
-                viewModel = hiltViewModel<ShopViewModel>(),
+                viewModel = viewModel,
                 onBackPressed = onBackPressed,
                 onAddClicked = onAddClicked
             )
@@ -67,11 +71,13 @@ fun NavGraphBuilder.locationGraph(
         composable(Category.LOCATION.route) {
             val title = stringResource(id = R.string.locations)
             val errorMessage = stringResource(id = R.string.empty_category, title.lowercase())
+            val viewModel: LocationViewModel = hiltViewModel()
+
             CategoryScreen(
                 category = Category.LOCATION,
                 title = title,
                 errorMessage = errorMessage,
-                viewModel = hiltViewModel<LocationViewModel>(),
+                viewModel = viewModel,
                 onBackPressed = onBackPressed,
                 onAddClicked = onAddClicked
             )
@@ -89,11 +95,13 @@ fun NavGraphBuilder.itemGraph(
         composable(Category.ITEM.route) {
             val title = stringResource(id = R.string.items)
             val errorMessage = stringResource(id = R.string.empty_category, title.lowercase())
+            val viewModel: ItemViewModel = hiltViewModel()
+
             CategoryScreen(
                 category = Category.ITEM,
                 title = title,
                 errorMessage = errorMessage,
-                viewModel = hiltViewModel<ItemViewModel>(),
+                viewModel = viewModel,
                 onBackPressed = onBackPressed,
                 onAddClicked = onAddClicked
             )

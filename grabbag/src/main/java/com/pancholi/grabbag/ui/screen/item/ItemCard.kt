@@ -1,6 +1,5 @@
 package com.pancholi.grabbag.ui.screen.item
 
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,7 +12,7 @@ import com.pancholi.grabbag.model.Item
 import com.pancholi.grabbag.ui.screen.CardPropertyRow
 
 @Composable
-fun ColumnScope.ItemCard(
+fun ItemCard(
     item: Item
 ) {
     Text(
@@ -29,19 +28,14 @@ fun ColumnScope.ItemCard(
         text = item.type
     )
 
-    val cost = if (item.cost != null) {
-        "${item.cost} ${item.getCurrency()}"
-    } else {
-        stringResource(id = R.string.unspecified)
-    }
-
     CardPropertyRow(
         label = stringResource(id = R.string.cost),
-        text = cost
+        text = item.cost
     )
 
     CardPropertyRow(
         label = stringResource(id = R.string.description),
-        text = item.description ?: stringResource(id = R.string.unspecified)
+        text = item.description,
+        singleField = true
     )
 }

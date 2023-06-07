@@ -1,6 +1,5 @@
 package com.pancholi.grabbag.ui.screen.location
 
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,7 +12,7 @@ import com.pancholi.grabbag.model.Location
 import com.pancholi.grabbag.ui.screen.CardPropertyRow
 
 @Composable
-fun ColumnScope.LocationCard(
+fun LocationCard(
     location: Location
 ) {
     Text(
@@ -31,6 +30,7 @@ fun ColumnScope.LocationCard(
 
     CardPropertyRow(
         label = stringResource(id = R.string.description),
-        text = location.description ?: stringResource(id = R.string.unspecified)
+        text = location.description,
+        singleField = true
     )
 }

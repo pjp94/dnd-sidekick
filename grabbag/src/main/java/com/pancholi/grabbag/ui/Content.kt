@@ -47,7 +47,6 @@ fun LoadingIndicator() {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-
         CircularProgressIndicator(
             modifier = Modifier.align(Alignment.Center)
         )
@@ -134,7 +133,7 @@ fun BackButton(
 @Composable
 fun PropertyTextField(
     label: String,
-    onValueAction: (String) -> Unit = {},
+    onValueChangeAction: (String) -> Unit = {},
     supportingText: @Composable ((String) -> Unit) = {},
     numberOnly: Boolean = false
 ) {
@@ -143,7 +142,7 @@ fun PropertyTextField(
     OutlinedTextField(
         value = text,
         onValueChange = {
-            onValueAction(it)
+            onValueChangeAction(it)
             text = it
         },
         label = { Text(label) },
@@ -162,7 +161,7 @@ fun PropertyTextField(
 @Composable
 fun PropertyTextBox(
     label: String,
-    onValueAction: (String) -> Unit = {},
+    onValueChangeAction: (String) -> Unit = {},
     supportingText: @Composable ((String) -> Unit) = {}
 ) {
     var text by rememberSaveable { mutableStateOf("") }
@@ -171,7 +170,7 @@ fun PropertyTextBox(
         value = text,
         onValueChange = {
             text = it
-            onValueAction(it)
+            onValueChangeAction(it)
         },
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(

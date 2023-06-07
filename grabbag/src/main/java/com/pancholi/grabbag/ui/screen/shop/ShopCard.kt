@@ -30,11 +30,12 @@ fun ShopCard(
 
     CardPropertyRow(
         label = stringResource(id = R.string.owner),
-        text = shop.npcId.toString()
+        text = shop.owner
     )
 
     CardPropertyRow(
         label = stringResource(id = R.string.description),
-        text = shop.description ?: stringResource(id = R.string.unspecified)
+        text = shop.description,
+        singleField = true
     )
 }

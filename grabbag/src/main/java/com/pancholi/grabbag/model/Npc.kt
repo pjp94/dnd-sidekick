@@ -5,8 +5,8 @@ data class Npc(
     val name: String,
     val race: String,
     val gender: String,
-    val clss: String?,
-    val profession: String?,
-    val description: String?,
+    val clss: String,
+    val profession: String,
+    val description: String,
     val isUsed: Boolean = false
 ) : CategoryModel()

@@ -1,6 +1,7 @@
 package com.pancholi.grabbag.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,9 +43,13 @@ import com.pancholi.grabbag.ui.BackableScreen
 import com.pancholi.grabbag.ui.LoadingIndicator
 import com.pancholi.grabbag.ui.Message
 import com.pancholi.grabbag.ui.screen.item.ItemCard
+import com.pancholi.grabbag.ui.screen.item.ItemDialog
 import com.pancholi.grabbag.ui.screen.location.LocationCard
+import com.pancholi.grabbag.ui.screen.location.LocationDialog
 import com.pancholi.grabbag.ui.screen.npc.NpcCard
+import com.pancholi.grabbag.ui.screen.npc.NpcDialog
 import com.pancholi.grabbag.ui.screen.shop.ShopCard
+import com.pancholi.grabbag.ui.screen.shop.ShopDialog
 import com.pancholi.grabbag.viewmodel.CategoryViewModel
 
 @Composable
@@ -65,10 +72,28 @@ fun CategoryScreen(
             ) {
                 val state = viewModel.viewState.collectAsStateWithLifecycle()
 
+                when (state.value) {
+                    is Result.Success<*> -> {
+                        val result = state.value as Result.Success<*>
+                        val viewState = result.value as CategoryViewModel.ViewState<*>
+
+                        viewState.showDialogForModel?.let {
+                            ModelDialog(
+                                category = category,
+                                model = it,
+                                onDismissRequest = { viewModel.onDialogDismissed() }
+                            )
+                        }
+                    }
+                    else -> {}
+                }
+
                 CategoryBody(
                     category = category,
                     result = state.value,
-                    errorMessage = errorMessage
+                    errorMessage = errorMessage,
+                    onCardClicked = {
+                        viewModel.onCardClicked(it) }
                 )
 
                 AddButton(
@@ -88,7 +113,8 @@ fun CategoryScreen(
 fun CategoryBody(
     category: Category,
     result: Result,
-    errorMessage: String
+    errorMessage: String,
+    onCardClicked: (CategoryModel) -> Unit
 ) {
     when (result) {
         is Result.Loading -> LoadingIndicator()
@@ -98,7 +124,8 @@ fun CategoryBody(
 
             CardColumn(
                 category = category,
-                models = models
+                models = models,
+                onCardClicked = onCardClicked
             )
         }
         is Result.Error -> {
@@ -113,7 +140,8 @@ fun CategoryBody(
 @Composable
 fun CardColumn(
     category: Category,
-    models: List<CategoryModel>
+    models: List<CategoryModel>,
+    onCardClicked: (CategoryModel) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -124,10 +152,11 @@ fun CardColumn(
     ) {
         Spacer(modifier = Modifier.height(4.dp))
 
-        models.forEach {
+        models.forEach { model ->
             CategoryCard(
                 category = category,
-                model = it
+                model = model,
+                onCardClicked = onCardClicked
             )
         }
 
@@ -138,7 +167,8 @@ fun CardColumn(
 @Composable
 fun CategoryCard(
     category: Category,
-    model: CategoryModel
+    model: CategoryModel,
+    onCardClicked: (CategoryModel) -> Unit
 ) {
     Card(
         colors = CardDefaults.cardColors(
@@ -148,6 +178,7 @@ fun CategoryCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
+            .clickable { onCardClicked(model) }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -183,19 +214,63 @@ fun CategoryCard(
 @Composable
 fun CardPropertyRow(
     label: String,
-    text: String
+    text: String,
+    singleField: Boolean = false
 ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Text(
-            text = "$label:",
-            fontWeight = FontWeight.SemiBold
+    if (singleField) {
+        val spanStyles = listOf(
+            AnnotatedString.Range(
+                item = SpanStyle(fontWeight = FontWeight.SemiBold),
+                start = 0,
+                end = label.length + 1
+            )
         )
 
         Text(
-            text = text,
-            lineHeight = 20.sp
+            text = AnnotatedString(
+                text = "$label: $text",
+                spanStyles = spanStyles
+            )
+        )
+    } else {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = "$label:",
+                fontWeight = FontWeight.SemiBold
+            )
+
+            Text(
+                text = text,
+                lineHeight = 20.sp
+            )
+        }
+    }
+}
+
+@Composable
+private fun ModelDialog(
+    category: Category,
+    model: CategoryModel,
+    onDismissRequest: () -> Unit
+) {
+    when (category) {
+        Category.NPC -> NpcDialog(
+            npc = model as Npc,
+            onDismissRequest = onDismissRequest
+        )
+        Category.SHOP -> ShopDialog(
+            shop = model as Shop,
+            onDismissRequest = onDismissRequest
+        )
+        Category.LOCATION -> LocationDialog(
+            location = model as Location,
+            onDismissRequest = onDismissRequest
+        )
+        Category.ITEM -> ItemDialog(
+            item = model as Item,
+            onDismissRequest = onDismissRequest
         )
     }
 }

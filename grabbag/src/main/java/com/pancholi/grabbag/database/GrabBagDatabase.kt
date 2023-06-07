@@ -19,7 +19,7 @@ import com.pancholi.grabbag.database.entity.ShopEntity
         LocationEntity::class,
         ItemEntity::class
    ],
-    version = 6,
+    version = 8,
     exportSchema = false
 )
 abstract class GrabBagDatabase : RoomDatabase() {

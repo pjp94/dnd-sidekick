@@ -26,7 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.grabbag.R
+import com.pancholi.grabbag.ifCostNotBlank
 import com.pancholi.grabbag.model.Currency
+import com.pancholi.grabbag.model.Item
 import com.pancholi.grabbag.ui.OptionalTextField
 import com.pancholi.grabbag.ui.PropertyTextBox
 import com.pancholi.grabbag.ui.PropertyTextField
@@ -46,10 +48,28 @@ fun AddItemScreen(
         onBackPressed()
     }
 
+    var name by rememberSaveable { mutableStateOf("") }
+    var type by rememberSaveable { mutableStateOf("") }
+    var cost by rememberSaveable { mutableStateOf("") }
+    var currency by rememberSaveable { mutableStateOf(Currency.GP) }
+    var description by rememberSaveable { mutableStateOf("") }
+
     AddScreenBase(
         title = title,
         onBackPressed = onBackPressed,
-        onSaveClicked = { viewModel.onSaveClicked() }
+        onSaveClicked = {
+            val item = Item(
+                name = name,
+                type = type,
+                cost = cost.ifCostNotBlank(
+                    currency = currency,
+                    defaultValue = { "" }
+                ),
+                description = description
+            )
+
+            viewModel.onSaveClicked(item)
+        }
     ) {
         val requiredSupportingText: @Composable (String) -> Unit = { text ->
             if (showRequired.value && text.isEmpty()) {
@@ -59,13 +79,13 @@ fun AddItemScreen(
 
         PropertyTextField(
             label = stringResource(id = R.string.name),
-            onValueAction = { text -> viewModel.setName(text) },
+            onValueChangeAction = { name = it },
             supportingText = requiredSupportingText
         )
 
         PropertyTextField(
             label = stringResource(id = R.string.type),
-            onValueAction = { text -> viewModel.setType(text) },
+            onValueChangeAction = { type = it },
             supportingText = requiredSupportingText
         )
 
@@ -75,13 +95,13 @@ fun AddItemScreen(
         ) {
             PropertyTextField(
                 label = stringResource(id = R.string.cost),
-                onValueAction = { text -> viewModel.setCost(text) },
+                onValueChangeAction = { cost = it },
                 supportingText = { OptionalTextField() },
                 numberOnly = true
             )
 
             CurrencyField(
-                onCurrencyChanged = { viewModel.setCurrency(it) },
+                onCurrencyChanged = { currency = it },
                 modifier = Modifier
                     .wrapContentWidth()
                     .padding(top = 8.dp)
@@ -90,7 +110,7 @@ fun AddItemScreen(
 
         PropertyTextBox(
             label = stringResource(id = R.string.description),
-            onValueAction = { text -> viewModel.setDescription(text) },
+            onValueChangeAction = { description = it },
             supportingText = { OptionalTextField() }
         )
     }

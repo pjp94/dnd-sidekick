@@ -1,5 +1,6 @@
 package com.pancholi.dndsidekick.navigation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -18,6 +19,7 @@ import com.pancholi.grabbag.navigation.graph.shopGraph
 @Composable
 fun SidekickGraph(
     navController: NavHostController,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier
 ) {
     NavHost(
@@ -26,6 +28,7 @@ fun SidekickGraph(
         modifier = modifier
     ) {
         grabBagGraph(
+            snackbarHostState = snackbarHostState,
             onCategoryClicked = { category ->
                 navController.navigate(category.route)
             },

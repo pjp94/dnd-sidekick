@@ -5,6 +5,7 @@ import com.pancholi.core.Result
 import com.pancholi.core.coroutines.Dispatcher
 import com.pancholi.core.database.EmptyDatabaseException
 import com.pancholi.grabbag.mapper.NpcMapper
+import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.model.Npc
 import com.pancholi.grabbag.repository.NpcRepository
 import com.pancholi.grabbag.viewmodel.CategoryViewModel
@@ -24,21 +25,11 @@ class NpcViewModel @Inject constructor(
     private val dispatcher: Dispatcher
 ) : CategoryViewModel() {
 
-    private val _viewState: MutableStateFlow<Result> = MutableStateFlow(Result.Loading)
-    override val viewState: StateFlow<Result> = _viewState.asStateFlow()
-
     private val _showRequired: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val showRequired: StateFlow<Boolean> = _showRequired.asStateFlow()
 
     private val _npcSaved: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val npcSaved: StateFlow<Boolean> = _npcSaved.asStateFlow()
-
-    private var name: String? = null
-    private var race: String? = null
-    private var gender: String? = null
-    private var clss: String? = null
-    private var profession: String? = null
-    private var description: String? = null
 
     init {
         loadData()
@@ -62,50 +53,19 @@ class NpcViewModel @Inject constructor(
         }
     }
 
-    override fun onSaveClicked() {
-        if (areFieldsMissing(listOf(name, race, gender))) {
+    override fun onSaveClicked(model: CategoryModel) {
+        val npc = model as Npc
+        val requiredFields = listOf(npc.name, npc.race, npc.gender)
+
+        if (areFieldsMissing(requiredFields)) {
             viewModelScope.launch { _showRequired.emit(true) }
         } else {
-            val npc = Npc(
-                name = name.orEmpty(),
-                race = race.orEmpty(),
-                gender = gender.orEmpty(),
-                clss = clss,
-                profession = profession,
-                description = description
-            )
             val entity = npcMapper.toEntity(npc)
 
             viewModelScope.launch(dispatcher.io) {
-                npcRepository
-                    .insertNpc(entity)
-
+                npcRepository.insertNpc(entity)
                 _npcSaved.emit(true)
             }
         }
-    }
-
-    fun setName(name: String) {
-        this.name = name
-    }
-
-    fun setRace(race: String) {
-        this.race = race
-    }
-
-    fun setGender(gender: String) {
-        this.gender = gender
-    }
-
-    fun setClass(clss: String) {
-        this.clss = clss
-    }
-
-    fun setProfession(profession: String) {
-        this.profession = profession
-    }
-
-    fun setDescription(description: String) {
-        this.description = description
     }
 }

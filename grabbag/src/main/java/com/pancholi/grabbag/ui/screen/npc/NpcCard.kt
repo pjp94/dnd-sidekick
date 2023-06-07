@@ -1,6 +1,5 @@
 package com.pancholi.grabbag.ui.screen.npc
 
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,7 +12,7 @@ import com.pancholi.grabbag.model.Npc
 import com.pancholi.grabbag.ui.screen.CardPropertyRow
 
 @Composable
-fun ColumnScope.NpcCard(
+fun NpcCard(
     npc: Npc
 ) {
     Text(
@@ -36,16 +35,17 @@ fun ColumnScope.NpcCard(
 
     CardPropertyRow(
         label = stringResource(id = R.string.clss),
-        text = npc.clss ?: stringResource(id = R.string.unspecified)
+        text = npc.clss
     )
 
     CardPropertyRow(
         label = stringResource(id = R.string.profession),
-        text = npc.profession ?: stringResource(id = R.string.unspecified)
+        text = npc.profession
     )
 
     CardPropertyRow(
         label = stringResource(id = R.string.description),
-        text = npc.description ?: stringResource(id = R.string.unspecified)
+        text = npc.description,
+        singleField = true
     )
 }
