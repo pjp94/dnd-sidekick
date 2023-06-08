@@ -2,9 +2,22 @@ package com.pancholi.grabbag.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "npc")
+@Entity(
+    tableName = "npc",
+    indices = [
+        Index(
+            value = [
+                "name",
+                "race",
+                "gender"
+            ],
+            unique = true
+        )
+    ]
+)
 data class NpcEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

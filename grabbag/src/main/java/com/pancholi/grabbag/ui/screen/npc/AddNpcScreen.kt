@@ -9,7 +9,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.grabbag.R
-import com.pancholi.grabbag.model.Npc
+import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.ui.OptionalTextField
 import com.pancholi.grabbag.ui.PropertyTextBox
 import com.pancholi.grabbag.ui.PropertyTextField
@@ -40,7 +40,7 @@ fun AddNpcScreen(
         title = title,
         onBackPressed = onBackPressed,
         onSaveClicked = {
-            val npc = Npc(
+            val npc = CategoryModel.Npc(
                 name = name,
                 race = race,
                 gender = gender,

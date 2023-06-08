@@ -34,6 +34,7 @@ fun SidekickGraph(
             },
             nestedGraphs = {
                 npcGraph(
+                    snackbarHostState = snackbarHostState,
                     onBackPressed = { navController.popBackStack() },
                     onAddClicked = { action -> navController.navigate(action.route) },
                     nestedGraphs = {
@@ -43,6 +44,7 @@ fun SidekickGraph(
                     }
                 )
                 shopGraph(
+                    snackbarHostState = snackbarHostState,
                     onBackPressed = { navController.popBackStack() },
                     onAddClicked = { action -> navController.navigate(action.route) },
                     nestedGraphs = {
@@ -52,6 +54,7 @@ fun SidekickGraph(
                     }
                 )
                 locationGraph(
+                    snackbarHostState = snackbarHostState,
                     onBackPressed = { navController.popBackStack() },
                     onAddClicked = { action -> navController.navigate(action.route) },
                     nestedGraphs = {
@@ -61,6 +64,7 @@ fun SidekickGraph(
                     }
                 )
                 itemGraph(
+                    snackbarHostState = snackbarHostState,
                     onBackPressed = { navController.popBackStack() },
                     onAddClicked = { action -> navController.navigate(action.route) },
                     nestedGraphs = {

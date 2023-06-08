@@ -9,7 +9,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.grabbag.R
-import com.pancholi.grabbag.model.Shop
+import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.ui.OptionalTextField
 import com.pancholi.grabbag.ui.PropertyTextBox
 import com.pancholi.grabbag.ui.PropertyTextField
@@ -38,7 +38,7 @@ fun AddShopScreen(
         title = title,
         onBackPressed = onBackPressed,
         onSaveClicked = {
-            val shop = Shop(
+            val shop = CategoryModel.Shop(
                 name = name,
                 type = type,
                 owner = owner,

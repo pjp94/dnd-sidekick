@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,8 +16,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -32,10 +35,6 @@ import com.pancholi.core.Result
 import com.pancholi.core.database.EmptyDatabaseException
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.CategoryModel
-import com.pancholi.grabbag.model.Item
-import com.pancholi.grabbag.model.Location
-import com.pancholi.grabbag.model.Npc
-import com.pancholi.grabbag.model.Shop
 import com.pancholi.grabbag.navigation.Action
 import com.pancholi.grabbag.navigation.Category
 import com.pancholi.grabbag.ui.AddButton
@@ -56,14 +55,18 @@ import com.pancholi.grabbag.viewmodel.CategoryViewModel
 fun CategoryScreen(
     category: Category,
     title: String,
+    snackbarHostState: SnackbarHostState,
     errorMessage: String,
     viewModel: CategoryViewModel,
     onBackPressed: () -> Unit,
-    onAddClicked: (Action) -> Unit
+    onAddClicked: (Action) -> Unit,
 ) {
     BackableScreen(
         title = title,
-        onBackPressed = onBackPressed,
+        onBackPressed = {
+            onBackPressed()
+            viewModel.onSnackbarShown()
+        },
         innerContent = { innerPadding ->
             Box(
                 modifier = Modifier
@@ -71,21 +74,39 @@ fun CategoryScreen(
                     .padding(innerPadding)
             ) {
                 val state = viewModel.viewState.collectAsStateWithLifecycle()
+                val snackbarVisuals = viewModel.snackbarVisuals.collectAsStateWithLifecycle()
 
                 when (state.value) {
                     is Result.Success<*> -> {
                         val result = state.value as Result.Success<*>
-                        val viewState = result.value as CategoryViewModel.ViewState<*>
+                        val viewState = result.value as CategoryViewModel.ViewState
 
-                        viewState.showDialogForModel?.let {
+                        viewState.showDetailDialogForModel?.let {
                             ModelDialog(
                                 category = category,
                                 model = it,
-                                onDismissRequest = { viewModel.onDialogDismissed() }
+                                showDeleteDialogForModel = viewState.showDeleteDialogForModel,
+                                onDismissRequest = { viewModel.onDetailDialogDismissed() },
+                                onDeleteClicked = { viewModel.onDeleteClicked() },
+                                onConfirmDeleteClicked = {
+                                    viewModel.apply {
+                                        onDeleteModel(it)
+                                        onDeleteDialogDismissed()
+                                        onDetailDialogDismissed()
+                                    }
+                                },
+                                onDeleteDialogDismissed = { viewModel.onDeleteDialogDismissed() }
                             )
                         }
                     }
                     else -> {}
+                }
+
+                snackbarVisuals.value?.let {
+                    LaunchedEffect(snackbarHostState) {
+                        snackbarHostState.showSnackbar(visuals = it)
+                        viewModel.onSnackbarShown()
+                    }
                 }
 
                 CategoryBody(
@@ -98,7 +119,10 @@ fun CategoryScreen(
 
                 AddButton(
                     category = category,
-                    onAddClicked = onAddClicked,
+                    onAddClicked = {
+                        onAddClicked(it)
+                        viewModel.onSnackbarShown()
+                    },
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(16.dp)
@@ -108,7 +132,6 @@ fun CategoryScreen(
     )
 }
 
-@Suppress("UNCHECKED_CAST")
 @Composable
 fun CategoryBody(
     category: Category,
@@ -119,8 +142,8 @@ fun CategoryBody(
     when (result) {
         is Result.Loading -> LoadingIndicator()
         is Result.Success<*> -> {
-            val viewState = result.value as CategoryViewModel.ViewState<*>
-            val models = viewState.items as List<CategoryModel>
+            val viewState = result.value as CategoryViewModel.ViewState
+            val models = viewState.items
 
             CardColumn(
                 category = category,
@@ -188,10 +211,10 @@ fun CategoryCard(
                     .padding(top = 8.dp, start = 8.dp, end = 8.dp)
             ) {
                 when (category) {
-                    Category.NPC -> NpcCard(npc = model as Npc)
-                    Category.SHOP -> ShopCard(shop = model as Shop)
-                    Category.LOCATION -> LocationCard(location = model as Location)
-                    Category.ITEM -> ItemCard(item = model as Item)
+                    Category.NPC -> NpcCard(npc = model as CategoryModel.Npc)
+                    Category.SHOP -> ShopCard(shop = model as CategoryModel.Shop)
+                    Category.LOCATION -> LocationCard(location = model as CategoryModel.Location)
+                    Category.ITEM -> ItemCard(item = model as CategoryModel.Item)
                 }
             }
 
@@ -253,24 +276,65 @@ fun CardPropertyRow(
 private fun ModelDialog(
     category: Category,
     model: CategoryModel,
-    onDismissRequest: () -> Unit
+    showDeleteDialogForModel: Boolean,
+    onDismissRequest: () -> Unit,
+    onDeleteClicked: () -> Unit,
+    onConfirmDeleteClicked: () -> Unit,
+    onDeleteDialogDismissed: () -> Unit,
 ) {
+    val name: String
+    val content: @Composable (PaddingValues) -> Unit
+
     when (category) {
-        Category.NPC -> NpcDialog(
-            npc = model as Npc,
-            onDismissRequest = onDismissRequest
-        )
-        Category.SHOP -> ShopDialog(
-            shop = model as Shop,
-            onDismissRequest = onDismissRequest
-        )
-        Category.LOCATION -> LocationDialog(
-            location = model as Location,
-            onDismissRequest = onDismissRequest
-        )
-        Category.ITEM -> ItemDialog(
-            item = model as Item,
-            onDismissRequest = onDismissRequest
-        )
+        Category.NPC -> {
+            val npc = model as CategoryModel.Npc
+            name = npc.name
+            content = {
+                NpcDialog(
+                    npc = npc,
+                    innerPadding = it
+                )
+            }
+        }
+        Category.SHOP -> {
+            val shop = model as CategoryModel.Shop
+            name = shop.name
+            content = {
+                ShopDialog(
+                    shop = shop,
+                    innerPadding = it
+                )
+            }
+        }
+        Category.LOCATION -> {
+            val location = model as CategoryModel.Location
+            name = location.name
+            content = {
+                LocationDialog(
+                    location = location,
+                    innerPadding = it
+                )
+            }
+        }
+        Category.ITEM -> {
+            val item = model as CategoryModel.Item
+            name = item.name
+            content = {
+                ItemDialog(
+                    item = item,
+                    innerPadding = it
+                )
+            }
+        }
     }
+
+    CategoryDialog(
+        name = name,
+        content = content,
+        showDeleteDialogForModel = showDeleteDialogForModel,
+        onDismissRequest = onDismissRequest,
+        onDeleteClicked = onDeleteClicked,
+        onConfirmDeleteClicked = onConfirmDeleteClicked,
+        onDeleteDialogDismissed = onDeleteDialogDismissed
+    )
 }

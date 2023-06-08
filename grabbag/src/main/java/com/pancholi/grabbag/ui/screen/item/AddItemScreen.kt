@@ -2,9 +2,11 @@ package com.pancholi.grabbag.ui.screen.item
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -13,6 +15,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,9 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.grabbag.R
-import com.pancholi.grabbag.ifCostNotBlank
+import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.model.Currency
-import com.pancholi.grabbag.model.Item
 import com.pancholi.grabbag.ui.OptionalTextField
 import com.pancholi.grabbag.ui.PropertyTextBox
 import com.pancholi.grabbag.ui.PropertyTextField
@@ -58,54 +60,59 @@ fun AddItemScreen(
         title = title,
         onBackPressed = onBackPressed,
         onSaveClicked = {
-            val item = Item(
+            val item = CategoryModel.Item(
                 name = name,
                 type = type,
-                cost = cost.ifCostNotBlank(
-                    currency = currency,
-                    defaultValue = { "" }
-                ),
+                cost = cost,
+                currency = currency,
                 description = description
             )
 
             viewModel.onSaveClicked(item)
         }
     ) {
-        val requiredSupportingText: @Composable (String) -> Unit = { text ->
-            if (showRequired.value && text.isEmpty()) {
-                RequiredTextField()
-            }
-        }
-
-        PropertyTextField(
-            label = stringResource(id = R.string.name),
-            onValueChangeAction = { name = it },
-            supportingText = requiredSupportingText
-        )
-
-        PropertyTextField(
-            label = stringResource(id = R.string.type),
-            onValueChangeAction = { type = it },
-            supportingText = requiredSupportingText
-        )
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.fillMaxWidth()
+        Box(modifier = Modifier
+            .width(OutlinedTextFieldDefaults.MinWidth)
         ) {
-            PropertyTextField(
-                label = stringResource(id = R.string.cost),
-                onValueChangeAction = { cost = it },
-                supportingText = { OptionalTextField() },
-                numberOnly = true
-            )
+            val requiredSupportingText: @Composable (String) -> Unit = { text ->
+                if (showRequired.value && text.isEmpty()) {
+                    RequiredTextField()
+                }
+            }
 
-            CurrencyField(
-                onCurrencyChanged = { currency = it },
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(top = 8.dp)
-            )
+            Column {
+                PropertyTextField(
+                    label = stringResource(id = R.string.name),
+                    onValueChangeAction = { name = it },
+                    supportingText = requiredSupportingText
+                )
+
+                PropertyTextField(
+                    label = stringResource(id = R.string.type),
+                    onValueChangeAction = { type = it },
+                    supportingText = requiredSupportingText
+                )
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    PropertyTextField(
+                        label = stringResource(id = R.string.cost),
+                        onValueChangeAction = { cost = it },
+                        supportingText = { OptionalTextField() },
+                        numberOnly = true,
+                        modifier = Modifier.weight(0.6f)
+                    )
+
+                    CurrencyField(
+                        onCurrencyChanged = { currency = it },
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .padding(top = 8.dp)
+                            .weight(0.4f)
+                    )
+                }
+            }
         }
 
         PropertyTextBox(

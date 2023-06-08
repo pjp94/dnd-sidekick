@@ -1,12 +1,15 @@
 package com.pancholi.grabbag.ui.screen.shop
 
+import android.content.res.Resources
 import androidx.lifecycle.viewModelScope
 import com.pancholi.core.Result
+import com.pancholi.core.SidekickSnackbarVisuals
 import com.pancholi.core.coroutines.Dispatcher
 import com.pancholi.core.database.EmptyDatabaseException
+import com.pancholi.grabbag.R
 import com.pancholi.grabbag.mapper.ShopMapper
 import com.pancholi.grabbag.model.CategoryModel
-import com.pancholi.grabbag.model.Shop
+import com.pancholi.grabbag.model.ImportedModel
 import com.pancholi.grabbag.repository.ShopRepository
 import com.pancholi.grabbag.viewmodel.CategoryViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +25,8 @@ import javax.inject.Inject
 class ShopViewModel @Inject constructor(
     private val shopRepository: ShopRepository,
     private val shopMapper: ShopMapper,
-    private val dispatcher: Dispatcher
+    private val dispatcher: Dispatcher,
+    private val resources: Resources
 ) : CategoryViewModel() {
 
     private val _showRequired: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -40,21 +44,21 @@ class ShopViewModel @Inject constructor(
             shopRepository
                 .getAllShops()
                 .distinctUntilChanged()
-                .catch { _viewState.value = Result.Error(it) }
+                .catch { _viewState.emit(Result.Error(it)) }
                 .collect { entities ->
                     if (entities.isNotEmpty()) {
                         val shops = entities.map { shopMapper.fromEntity(it) }
                         val viewState = ViewState(items = shops)
-                        _viewState.value = Result.Success(viewState)
+                        _viewState.emit(Result.Success(viewState))
                     } else {
-                        _viewState.value = Result.Error(EmptyDatabaseException())
+                        _viewState.emit(Result.Error(EmptyDatabaseException()))
                     }
                 }
         }
     }
 
     override fun onSaveClicked(model: CategoryModel) {
-        val shop = model as Shop
+        val shop = model as CategoryModel.Shop
         val requiredFields = listOf(shop.name, shop.type)
 
         if (areFieldsMissing(requiredFields)) {
@@ -65,6 +69,39 @@ class ShopViewModel @Inject constructor(
             viewModelScope.launch(dispatcher.io) {
                 shopRepository.insertShop(entity)
                 _shopSaved.emit(true)
+            }
+
+            val visuals = SidekickSnackbarVisuals(
+                message = resources.getString(R.string.shop_saved)
+            )
+
+            showSnackbar(visuals)
+        }
+    }
+
+    override fun onModelsImported(models: List<ImportedModel>?) {
+        models?.let {
+            val shops = models.map { shopMapper.toEntity(it as ImportedModel.ImportedShop) }
+
+            viewModelScope.launch(dispatcher.io) {
+                shopRepository.insertAllShops(shops)
+            }
+        }
+    }
+
+    override fun onDeleteModel(model: CategoryModel) {
+        val shop = model as CategoryModel.Shop
+        val entity = shopMapper.toEntity(shop)
+
+        viewModelScope.launch(dispatcher.io) {
+            val deleted = shopRepository.deleteShop(entity)
+
+            if (deleted > 0) {
+                val visuals = SidekickSnackbarVisuals(
+                    message = resources.getString(R.string.shop_deleted)
+                )
+
+                showSnackbar(visuals)
             }
         }
     }

@@ -2,9 +2,21 @@ package com.pancholi.grabbag.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "shop")
+@Entity(
+    tableName = "shop",
+    indices = [
+        Index(
+            value = [
+                "name",
+                "type"
+            ],
+            unique = true
+        )
+    ]
+)
 data class ShopEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

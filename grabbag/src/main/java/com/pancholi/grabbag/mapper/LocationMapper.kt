@@ -1,19 +1,19 @@
 package com.pancholi.grabbag.mapper
 
 import android.content.res.Resources
-import com.google.gson.Gson
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.database.entity.LocationEntity
-import com.pancholi.grabbag.model.Location
+import com.pancholi.grabbag.model.CategoryModel
+import com.pancholi.grabbag.model.ImportedModel
+import com.pancholi.grabbag.requireString
 import javax.inject.Inject
 
 class LocationMapper @Inject constructor(
-    private val gson: Gson,
     private val resources: Resources
 ) {
 
-    fun fromEntity(entity: LocationEntity): Location {
-        return Location(
+    fun fromEntity(entity: LocationEntity): CategoryModel.Location {
+        return CategoryModel.Location(
             id = entity.id,
             name = entity.name,
             type = entity.type,
@@ -22,21 +22,21 @@ class LocationMapper @Inject constructor(
         )
     }
 
-    fun toEntity(location: Location): LocationEntity {
+    fun toEntity(location: CategoryModel.Location): LocationEntity {
         return LocationEntity(
             id = location.id,
             name = location.name,
             type = location.type,
-            description = requireString(location.description),
+            description = location.description.requireString { resources.getString(R.string.unspecified) },
             isUsed = location.isUsed
         )
     }
 
-    fun fromJson(json: String): LocationEntity {
-        TODO()
-    }
-
-    private fun requireString(value: String): String {
-        return value.ifBlank { resources.getString(R.string.unspecified) }
+    fun toEntity(importedLocation: ImportedModel.ImportedLocation): LocationEntity {
+        return LocationEntity(
+            name = importedLocation.name,
+            type = importedLocation.type,
+            description = importedLocation.description
+        )
     }
 }

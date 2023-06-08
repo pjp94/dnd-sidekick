@@ -7,6 +7,7 @@
     <string name="locations">Locations</string>
     <string name="items">Items</string>
     <string name="import_content">Import Content</string>
+    <string name="suggest">Suggest</string>
 
     <!-- Routes -->
     <string name="npcs_route">npcs_route</string>
@@ -21,6 +22,9 @@
     <string name="save_icon_description">Save Button</string>
     <string name="dropdown_icon_description">Currency Dropdown Button</string>
     <string name="add_icon_description">Add Button</string>
+    <string name="close_icon_description">Close Button</string>
+    <string name="delete_icon_description">Delete Button</string>
+    <string name="edit_icon_description">Edit Button</string>
 
     <!-- Labels -->
     <string name="name">Name</string>
@@ -45,4 +49,24 @@
     <!-- Import Messages -->
     <string name="import_success">Import successful!</string>
     <string name="import_fail">Failed to import file.</string>
+
+    <!-- Add Model -->
+    <string name="npc_saved">NPC saved.</string>
+    <string name="shop_saved">Shop saved.</string>
+    <string name="location_saved">Location saved.</string>
+    <string name="item_saved">Item saved.</string>
+
+    <!-- Delete Model -->
+    <string name="delete_dialog_title">Delete %s?</string>
+    <string name="delete_dialog_message">You can\'t undo this action.</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="npc_deleted">NPC deleted.</string>
+    <string name="shop_deleted">Shop deleted.</string>
+    <string name="location_deleted">Location deleted.</string>
+    <string name="item_deleted">Item deleted.</string>
+
+    <!-- Edit -->
+    <string name="edit_dialog_message">Discard changes?</string>
+    <string name="discard">Discard</string>
 </resources>

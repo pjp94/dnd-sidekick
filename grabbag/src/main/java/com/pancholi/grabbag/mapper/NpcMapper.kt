@@ -1,20 +1,19 @@
 package com.pancholi.grabbag.mapper
 
 import android.content.res.Resources
-import com.google.gson.Gson
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.database.entity.NpcEntity
-import com.pancholi.grabbag.database.entity.ShopEntity
-import com.pancholi.grabbag.model.Npc
+import com.pancholi.grabbag.model.CategoryModel
+import com.pancholi.grabbag.model.ImportedModel
+import com.pancholi.grabbag.requireString
 import javax.inject.Inject
 
 class NpcMapper @Inject constructor(
-    private val gson: Gson,
     private val resources: Resources
 ) {
 
-    fun fromEntity(entity: NpcEntity): Npc {
-        return Npc(
+    fun fromEntity(entity: NpcEntity): CategoryModel.Npc {
+        return CategoryModel.Npc(
             id = entity.id,
             name = entity.name,
             race = entity.race,
@@ -26,23 +25,27 @@ class NpcMapper @Inject constructor(
         )
     }
 
-    fun toEntity(npc: Npc): NpcEntity {
+    fun toEntity(npc: CategoryModel.Npc): NpcEntity {
         return NpcEntity(
+            id = npc.id,
             name = npc.name,
             race = npc.race,
             gender = npc.gender,
-            clss = requireString(npc.clss),
-            profession = requireString(npc.profession),
-            description = requireString(npc.description),
+            clss = npc.clss.requireString { resources.getString(R.string.unspecified) },
+            profession = npc.profession.requireString { resources.getString(R.string.unspecified) },
+            description = npc.description.requireString { resources.getString(R.string.unspecified) },
             isUsed = npc.isUsed
         )
     }
 
-    fun fromJson(json: String): ShopEntity {
-       TODO()
-    }
-
-    private fun requireString(value: String): String {
-        return value.ifBlank { resources.getString(R.string.unspecified) }
+    fun toEntity(importedNpc: ImportedModel.ImportedNpc): NpcEntity {
+        return NpcEntity(
+            name = importedNpc.name,
+            race = importedNpc.race,
+            gender = importedNpc.gender,
+            clss = importedNpc.clss.requireString { resources.getString(R.string.unspecified) },
+            profession = importedNpc.profession.requireString { resources.getString(R.string.unspecified) },
+            description = importedNpc.description.requireString { resources.getString(R.string.unspecified) }
+        )
     }
 }

@@ -1,14 +1,11 @@
 package com.pancholi.grabbag
 
-import com.pancholi.grabbag.model.Currency
-
-fun String.ifCostNotBlank(
-    currency: Currency,
+fun String?.requireString(
     defaultValue: () -> String
 ): String {
-    return if (this.isNotBlank()) {
-        "$this $currency"
-    } else {
+    return if (this.isNullOrBlank()) {
         defaultValue()
+    } else {
+        this
     }
 }

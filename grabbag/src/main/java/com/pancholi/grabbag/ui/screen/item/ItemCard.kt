@@ -8,12 +8,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import com.pancholi.grabbag.R
-import com.pancholi.grabbag.model.Item
+import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.ui.screen.CardPropertyRow
 
 @Composable
 fun ItemCard(
-    item: Item
+    item: CategoryModel.Item
 ) {
     Text(
         text = item.name,
@@ -30,7 +30,7 @@ fun ItemCard(
 
     CardPropertyRow(
         label = stringResource(id = R.string.cost),
-        text = item.cost
+        text = "${item.cost} ${item.currency?.toString() ?: ""}".trim()
     )
 
     CardPropertyRow(

@@ -2,10 +2,22 @@ package com.pancholi.grabbag.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.pancholi.grabbag.model.Currency
 
-@Entity(tableName = "item")
+@Entity(
+    tableName = "item",
+    indices = [
+        Index(
+            value = [
+                "name",
+                "type"
+            ],
+            unique = true
+        )
+    ]
+)
 data class ItemEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

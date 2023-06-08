@@ -3,19 +3,13 @@ package com.pancholi.grabbag.viewmodel
 import android.content.ContentResolver
 import android.content.res.Resources
 import android.net.Uri
-import android.util.Log
 import androidx.annotation.StringRes
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.pancholi.core.SidekickSnackbarVisuals
 import com.pancholi.grabbag.R
-import com.pancholi.grabbag.mapper.ItemMapper
-import com.pancholi.grabbag.mapper.LocationMapper
-import com.pancholi.grabbag.mapper.NpcMapper
-import com.pancholi.grabbag.mapper.ShopMapper
-import com.pancholi.grabbag.model.CategoryModel
+import com.pancholi.grabbag.model.ImportedContent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,17 +23,14 @@ import javax.inject.Inject
 @HiltViewModel
 class GrabBagHomeViewModel @Inject constructor(
     private val contentResolver: ContentResolver,
-    private val npcMapper: NpcMapper,
-    private val shopMapper: ShopMapper,
-    private val locationMapper: LocationMapper,
-    private val itemMapper: ItemMapper,
     private val resources: Resources,
     private val gson: Gson
 ) : ViewModel() {
 
     data class ViewState(
         val openFilePicker: List<String> = emptyList(),
-        val importSnackbarVisuals: ImportSnackbarVisuals? = null
+        val snackbarVisuals: SidekickSnackbarVisuals? = null,
+        val importedContent: ImportedContent? = null
     )
 
     companion object {
@@ -60,13 +51,12 @@ class GrabBagHomeViewModel @Inject constructor(
     }
 
     fun onFilePickerClosed() {
-        viewModelScope.launch {
-            _viewState.update { it.copy(openFilePicker = emptyList()) }
-        }
+        _viewState.update { it.copy(openFilePicker = emptyList()) }
     }
 
     fun onFilePicked(uri: Uri) {
         val builder = StringBuilder()
+        var content: ImportedContent? = null
         @StringRes var importMessageId: Int
 
         try {
@@ -79,34 +69,27 @@ class GrabBagHomeViewModel @Inject constructor(
                 line = bufferedReader.readLine()
             } while (line != null)
 
-            Log.d("FILE_TAG", builder.toString())
+            content = gson.fromJson(builder.toString(), ImportedContent::class.java)
             importMessageId = R.string.import_success
         } catch (exception: Exception) {
             importMessageId = R.string.import_fail
         }
 
-        viewModelScope.launch {
-            _viewState.update {
-                val visuals = ImportSnackbarVisuals(message = resources.getString(importMessageId))
-                it.copy(importSnackbarVisuals = visuals)
-            }
+
+        _viewState.update {
+            val visuals = SidekickSnackbarVisuals(message = resources.getString(importMessageId))
+            it.copy(
+                snackbarVisuals = visuals,
+                importedContent = content
+            )
         }
     }
 
-    fun onImportMessageShown() {
-        viewModelScope.launch {
-            _viewState.update { it.copy(importSnackbarVisuals = null) }
-        }
+    fun onSnackbarShown() {
+        _viewState.update { it.copy(snackbarVisuals = null) }
     }
 
-    private fun saveModels(models: List<CategoryModel>) {
-
+    fun onImportComplete() {
+        _viewState.update { it.copy(importedContent = null) }
     }
 }
-
-data class ImportSnackbarVisuals(
-    override val actionLabel: String? = null,
-    override val duration: SnackbarDuration = SnackbarDuration.Short,
-    override val message: String,
-    override val withDismissAction: Boolean = false
-) : SnackbarVisuals

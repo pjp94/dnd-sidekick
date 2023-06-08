@@ -9,7 +9,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.grabbag.R
-import com.pancholi.grabbag.model.Location
+import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.ui.OptionalTextField
 import com.pancholi.grabbag.ui.PropertyTextBox
 import com.pancholi.grabbag.ui.PropertyTextField
@@ -37,7 +37,7 @@ fun AddLocationScreen(
         title = title,
         onBackPressed = onBackPressed,
         onSaveClicked = {
-            val location = Location(
+            val location = CategoryModel.Location(
                 name = name,
                 type = type,
                 description = description

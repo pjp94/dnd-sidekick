@@ -2,6 +2,7 @@ package com.pancholi.grabbag.ui.screen.item
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -25,73 +26,37 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.pancholi.grabbag.R
-import com.pancholi.grabbag.model.Item
+import com.pancholi.grabbag.model.CategoryModel
+import com.pancholi.grabbag.ui.ConfirmDeleteDialog
 import com.pancholi.grabbag.ui.screen.CardPropertyRow
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemDialog(
-    item: Item,
-    onDismissRequest: () -> Unit
+    item: CategoryModel.Item,
+    innerPadding: PaddingValues
 ) {
-    Dialog(
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-        onDismissRequest = onDismissRequest
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .wrapContentSize()
+            .padding(innerPadding)
+            .padding(8.dp)
     ) {
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = { Text(item.name) },
-                        navigationIcon = {
-                            IconButton(
-                                onClick = { onDismissRequest() }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Close,
-                                    contentDescription = "Close Button"
-                                )
-                            }
-                        },
-                        actions = {
-                            IconButton(onClick = { /*TODO*/ }) {
-                                Icon(imageVector = Icons.Outlined.Delete, contentDescription = "")
-                            }
+        CardPropertyRow(
+            label = stringResource(id = R.string.type),
+            text = item.type
+        )
 
-                            IconButton(onClick = { /*TODO*/ }) {
-                                Icon(imageVector = Icons.Filled.Edit, contentDescription = "")
-                            }
-                        }
-                    )
-                }
-            ) { innerPadding ->
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                        .wrapContentSize()
-                        .padding(innerPadding)
-                        .padding(8.dp)
-                ) {
-                    CardPropertyRow(
-                        label = stringResource(id = R.string.type),
-                        text = item.type
-                    )
+        CardPropertyRow(
+            label = stringResource(id = R.string.cost),
+            text = "${item.cost} ${item.currency?.toString() ?: ""}".trim()
+        )
 
-                    CardPropertyRow(
-                        label = stringResource(id = R.string.cost),
-                        text = item.cost
-                    )
-
-                    CardPropertyRow(
-                        label = stringResource(id = R.string.description),
-                        text = item.description,
-                        singleField = true
-                    )
-                }
-            }
-        }
+        CardPropertyRow(
+            label = stringResource(id = R.string.description),
+            text = item.description,
+            singleField = true
+        )
     }
 }

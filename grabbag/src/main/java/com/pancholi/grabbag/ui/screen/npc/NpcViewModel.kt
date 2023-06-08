@@ -1,12 +1,15 @@
 package com.pancholi.grabbag.ui.screen.npc
 
+import android.content.res.Resources
 import androidx.lifecycle.viewModelScope
 import com.pancholi.core.Result
+import com.pancholi.core.SidekickSnackbarVisuals
 import com.pancholi.core.coroutines.Dispatcher
 import com.pancholi.core.database.EmptyDatabaseException
+import com.pancholi.grabbag.R
 import com.pancholi.grabbag.mapper.NpcMapper
 import com.pancholi.grabbag.model.CategoryModel
-import com.pancholi.grabbag.model.Npc
+import com.pancholi.grabbag.model.ImportedModel
 import com.pancholi.grabbag.repository.NpcRepository
 import com.pancholi.grabbag.viewmodel.CategoryViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +25,8 @@ import javax.inject.Inject
 class NpcViewModel @Inject constructor(
     private val npcRepository: NpcRepository,
     private val npcMapper: NpcMapper,
-    private val dispatcher: Dispatcher
+    private val dispatcher: Dispatcher,
+    private val resources: Resources
 ) : CategoryViewModel() {
 
     private val _showRequired: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -54,7 +58,7 @@ class NpcViewModel @Inject constructor(
     }
 
     override fun onSaveClicked(model: CategoryModel) {
-        val npc = model as Npc
+        val npc = model as CategoryModel.Npc
         val requiredFields = listOf(npc.name, npc.race, npc.gender)
 
         if (areFieldsMissing(requiredFields)) {
@@ -65,6 +69,39 @@ class NpcViewModel @Inject constructor(
             viewModelScope.launch(dispatcher.io) {
                 npcRepository.insertNpc(entity)
                 _npcSaved.emit(true)
+            }
+
+            val visuals = SidekickSnackbarVisuals(
+                message = resources.getString(R.string.npc_saved)
+            )
+
+            showSnackbar(visuals)
+        }
+    }
+
+    override fun onModelsImported(models: List<ImportedModel>?) {
+        models?.let {
+            val npcs = models.map { npcMapper.toEntity(it as ImportedModel.ImportedNpc) }
+
+            viewModelScope.launch(dispatcher.io) {
+                npcRepository.insertAllNpcs(npcs)
+            }
+        }
+    }
+
+    override fun onDeleteModel(model: CategoryModel) {
+        val npc = model as CategoryModel.Npc
+        val entity = npcMapper.toEntity(npc)
+
+        viewModelScope.launch(dispatcher.io) {
+            val deleted = npcRepository.deleteNpc(entity)
+
+            if (deleted > 0) {
+                val visuals = SidekickSnackbarVisuals(
+                    message = resources.getString(R.string.npc_deleted)
+                )
+
+                showSnackbar(visuals)
             }
         }
     }

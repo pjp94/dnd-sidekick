@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -19,6 +20,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -28,6 +30,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -133,9 +136,10 @@ fun BackButton(
 @Composable
 fun PropertyTextField(
     label: String,
+    modifier: Modifier = Modifier,
     onValueChangeAction: (String) -> Unit = {},
     supportingText: @Composable ((String) -> Unit) = {},
-    numberOnly: Boolean = false
+    numberOnly: Boolean = false,
 ) {
     var text by rememberSaveable { mutableStateOf("") }
 
@@ -154,7 +158,8 @@ fun PropertyTextField(
                 KeyboardType.Text
             }
         ),
-        supportingText = { supportingText(text) }
+        supportingText = { supportingText(text) },
+        modifier = modifier
     )
 }
 
@@ -202,4 +207,109 @@ fun RequiredTextField() {
         ),
         color = MaterialTheme.colorScheme.primary
     )
+}
+
+@Composable
+fun TopBarButton(
+    onClick: () -> Unit,
+    imageVector: ImageVector,
+    contentDescription: String
+) {
+    IconButton(
+        onClick = onClick
+    ) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = contentDescription
+        )
+    }
+}
+
+@Composable
+fun ConfirmDeleteDialog(
+    name: String,
+    onConfirmDeleteClicked: () -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = {
+            Text(
+                text = stringResource(id = R.string.delete_dialog_title, name)
+            )
+        },
+        text = {
+            Text(
+                text = stringResource(id = R.string.delete_dialog_message)
+            )
+       },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirmDeleteClicked
+            ) {
+                Text(
+                    text = stringResource(id = R.string.delete)
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismissRequest
+            ) {
+                Text(
+                    text = stringResource(id = R.string.cancel)
+                )
+            }
+        }
+    )
+
+//    Dialog(
+//        onDismissRequest = onDismissRequest
+//    ) {
+//        Surface(
+//            modifier = Modifier.wrapContentSize()
+//        ) {
+//            Column(
+//                modifier = Modifier.padding(16.dp)
+//            ) {
+//                Text(
+//                    text = stringResource(id = R.string.delete_dialog_title, name),
+//                    fontSize = 16.sp
+//                )
+//
+//                Spacer(
+//                    modifier = Modifier.height(16.dp)
+//                )
+//
+//                Text(
+//                    text = stringResource(id = R.string.delete_dialog_message)
+//                )
+//
+//                Spacer(
+//                    modifier = Modifier.height(16.dp)
+//                )
+//
+//                Row(
+//                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+//                    modifier = Modifier.align(Alignment.End)
+//                ) {
+//                    TextButton(
+//                        onClick = onDismissRequest
+//                    ) {
+//                        Text(
+//                            text = stringResource(id = R.string.cancel)
+//                        )
+//                    }
+//
+//                    TextButton(
+//                        onClick = onConfirmDeleteClicked
+//                    ) {
+//                        Text(
+//                            text = stringResource(id = R.string.delete)
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
 }

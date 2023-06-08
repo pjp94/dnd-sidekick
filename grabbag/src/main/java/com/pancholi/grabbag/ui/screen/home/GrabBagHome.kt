@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -27,16 +28,54 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.navigation.Category
+import com.pancholi.grabbag.ui.screen.item.ItemViewModel
+import com.pancholi.grabbag.ui.screen.location.LocationViewModel
+import com.pancholi.grabbag.ui.screen.npc.NpcViewModel
+import com.pancholi.grabbag.ui.screen.shop.ShopViewModel
 import com.pancholi.grabbag.viewmodel.GrabBagHomeViewModel
 
 @Composable
 fun GrabBagHome(
     viewModel: GrabBagHomeViewModel = hiltViewModel(),
+    npcViewModel: NpcViewModel = hiltViewModel(),
+    shopViewModel: ShopViewModel = hiltViewModel(),
+    locationViewModel: LocationViewModel = hiltViewModel(),
+    itemViewModel: ItemViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState,
     categories: List<Category>,
     onCategoryClicked: (Category) -> Unit
 ) {
+    val result = rememberSaveable { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
+        result.value = it
+        viewModel.onFilePickerClosed()
+    }
+
+    result.value?.let {
+        viewModel.onFilePicked(it)
+        result.value = null
+    }
+
     val viewState = viewModel.viewState.collectAsStateWithLifecycle()
+
+    if (viewState.value.openFilePicker.isNotEmpty()) {
+        launcher.launch(viewState.value.openFilePicker.toTypedArray())
+    }
+
+    viewState.value.snackbarVisuals?.let {
+        LaunchedEffect(snackbarHostState) {
+            snackbarHostState.showSnackbar(visuals = it)
+            viewModel.onSnackbarShown()
+        }
+    }
+
+    viewState.value.importedContent?.let {
+        npcViewModel.onModelsImported(it.npcs)
+        shopViewModel.onModelsImported(it.shops)
+        locationViewModel.onModelsImported(it.locations)
+        itemViewModel.onModelsImported(it.items)
+        viewModel.onImportComplete()
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -45,17 +84,25 @@ fun GrabBagHome(
         ) {
             CategoryButtonLayout(
                 categories = categories,
-                onCategoryClicked = onCategoryClicked
+                onCategoryClicked = {
+                    viewModel.onSnackbarShown()
+                    onCategoryClicked(it)
+                }
             )
 
             ImportContentButton(
-                snackbarHostState = snackbarHostState,
-                viewState = viewState.value,
                 onImportContentClicked = { viewModel.onImportContentClicked() },
-                onFilePickerClosed = { viewModel.onFilePickerClosed() },
-                onFilePicked = { viewModel.onFilePicked(it) },
-                onImportMessageShown = { viewModel.onImportMessageShown() }
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .align(Alignment.CenterHorizontally)
             )
+
+//            SuggestButton(
+//                onSuggestClicked = { /*TODO*/ },
+//                modifier = Modifier
+//                    .fillMaxWidth(0.5f)
+//                    .align(Alignment.CenterHorizontally)
+//            )
         }
     }
 }
@@ -63,62 +110,64 @@ fun GrabBagHome(
 @Composable
 fun CategoryButtonLayout(
     categories: List<Category>,
-    onCategoryClicked: (Category) -> Unit,
+    onCategoryClicked: (Category) -> Unit
 ) {
     categories.forEach { category ->
-        Button(
-            modifier = Modifier
-                .fillMaxWidth(0.5f),
-            onClick = { onCategoryClicked(category) },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.red)
-            )
-        ) {
-            Text(
-                text = stringResource(id = category.nameId),
-                modifier = Modifier.padding(8.dp)
-            )
-        }
+        CategoryButton(
+            category = category,
+            onCategoryClicked = { onCategoryClicked(category) },
+            modifier = Modifier.fillMaxWidth(0.5f),
+        )
+    }
+}
+
+@Composable
+fun CategoryButton(
+    category: Category,
+    onCategoryClicked: (Category) -> Unit,
+    modifier: Modifier
+) {
+    FilledTonalButton(
+        onClick = { onCategoryClicked(category) },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorResource(id = R.color.red)
+        ),
+        modifier = modifier
+    ) {
+        Text(
+            text = stringResource(id = category.nameId),
+            modifier = Modifier.padding(8.dp)
+        )
     }
 }
 
 @Composable
 fun ImportContentButton(
-    snackbarHostState: SnackbarHostState,
-    viewState: GrabBagHomeViewModel.ViewState,
     onImportContentClicked: () -> Unit,
-    onFilePickerClosed: () -> Unit,
-    onFilePicked: (Uri) -> Unit,
-    onImportMessageShown: () -> Unit
+    modifier: Modifier
 ) {
-    val result = rememberSaveable { mutableStateOf<Uri?>(null) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
-        result.value = it
-        onFilePickerClosed()
-    }
-
     OutlinedButton(
         onClick = onImportContentClicked,
-        modifier = Modifier.fillMaxWidth(0.5f),
+        modifier = modifier,
     ) {
         Text(
             text = stringResource(id = R.string.import_content)
         )
     }
+}
 
-    if (viewState.openFilePicker.isNotEmpty()) {
-        launcher.launch(viewState.openFilePicker.toTypedArray())
-    }
-
-    result.value?.let {
-        onFilePicked(it)
-        result.value = null
-    }
-
-    viewState.importSnackbarVisuals?.let {
-        LaunchedEffect(snackbarHostState) {
-            snackbarHostState.showSnackbar(visuals = it)
-            onImportMessageShown()
-        }
+@Composable
+fun SuggestButton(
+    onSuggestClicked: () -> Unit,
+    modifier: Modifier
+) {
+    Button(
+        onClick = onSuggestClicked,
+        modifier = modifier,
+    ) {
+        Text(
+            text = stringResource(id = R.string.suggest),
+            modifier = Modifier.padding(8.dp)
+        )
     }
 }
