@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,11 +30,13 @@ class LocationViewModel @Inject constructor(
     private val resources: Resources
 ) : CategoryViewModel() {
 
-    private val _showRequired: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val showRequired: StateFlow<Boolean> = _showRequired.asStateFlow()
+    data class LocationViewState(
+        val showRequired: Boolean = false,
+        val locationSaved: Boolean = false
+    )
 
-    private val _locationSaved: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val locationSaved: StateFlow<Boolean> = _locationSaved.asStateFlow()
+    private val _locationViewState: MutableStateFlow<LocationViewState> = MutableStateFlow(LocationViewState())
+    val locationViewState: StateFlow<LocationViewState> = _locationViewState.asStateFlow()
 
     init {
         loadData()
@@ -62,13 +65,13 @@ class LocationViewModel @Inject constructor(
         val requiredFields = listOf(location.name, location.type)
 
         if (areFieldsMissing(requiredFields)) {
-            viewModelScope.launch { _showRequired.emit(true) }
+            _locationViewState.update { it.copy(showRequired = true)}
         } else {
             val entity = locationMapper.toEntity(location)
 
             viewModelScope.launch(dispatcher.io) {
                 locationRepository.insertLocation(entity)
-                _locationSaved.emit(true)
+                _locationViewState.update { it.copy(locationSaved = true) }
             }
 
             val visuals = SidekickSnackbarVisuals(
@@ -104,5 +107,9 @@ class LocationViewModel @Inject constructor(
                 showSnackbar(visuals)
             }
         }
+    }
+
+    override fun onModelSaved() {
+        _locationViewState.update { it.copy(locationSaved = false) }
     }
 }

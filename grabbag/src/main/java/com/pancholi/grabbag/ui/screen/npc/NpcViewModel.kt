@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,11 +30,13 @@ class NpcViewModel @Inject constructor(
     private val resources: Resources
 ) : CategoryViewModel() {
 
-    private val _showRequired: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val showRequired: StateFlow<Boolean> = _showRequired.asStateFlow()
+    data class NpcViewState(
+        val showRequired: Boolean = false,
+        val npcSaved: Boolean = false
+    )
 
-    private val _npcSaved: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val npcSaved: StateFlow<Boolean> = _npcSaved.asStateFlow()
+    private val _npcViewState: MutableStateFlow<NpcViewState> = MutableStateFlow(NpcViewState())
+    val npcViewState: StateFlow<NpcViewState> = _npcViewState.asStateFlow()
 
     init {
         loadData()
@@ -62,13 +65,13 @@ class NpcViewModel @Inject constructor(
         val requiredFields = listOf(npc.name, npc.race, npc.gender)
 
         if (areFieldsMissing(requiredFields)) {
-            viewModelScope.launch { _showRequired.emit(true) }
+            _npcViewState.update { it.copy(showRequired = true) }
         } else {
             val entity = npcMapper.toEntity(npc)
 
             viewModelScope.launch(dispatcher.io) {
                 npcRepository.insertNpc(entity)
-                _npcSaved.emit(true)
+                _npcViewState.update { it.copy(npcSaved = true) }
             }
 
             val visuals = SidekickSnackbarVisuals(
@@ -104,5 +107,9 @@ class NpcViewModel @Inject constructor(
                 showSnackbar(visuals)
             }
         }
+    }
+
+    override fun onModelSaved() {
+        _npcViewState.update { it.copy(npcSaved = false) }
     }
 }

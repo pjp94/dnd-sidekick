@@ -6,8 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.ui.OptionalTextField
@@ -20,13 +18,15 @@ import com.pancholi.grabbag.ui.screen.AddScreenBase
 fun AddLocationScreen(
     title: String,
     onBackPressed: () -> Unit,
-    viewModel: LocationViewModel = hiltViewModel()
+    onLocationSaved: () -> Unit,
+    onSaveClicked: (CategoryModel.Location) -> Unit,
+    locationViewState: LocationViewModel.LocationViewState
 ) {
-    val showRequired = viewModel.showRequired.collectAsStateWithLifecycle()
-    val locationSaved = viewModel.locationSaved.collectAsStateWithLifecycle()
+    var saveHandled by rememberSaveable { mutableStateOf(false) }
 
-    if (locationSaved.value) {
-        onBackPressed()
+    if (locationViewState.locationSaved && saveHandled.not()) {
+        saveHandled = true
+        onLocationSaved()
     }
 
     var name by rememberSaveable { mutableStateOf("") }
@@ -43,11 +43,11 @@ fun AddLocationScreen(
                 description = description
             )
 
-            viewModel.onSaveClicked(location)
+            onSaveClicked(location)
         }
     ) {
         val requiredSupportingText: @Composable (String) -> Unit = { text ->
-            if (showRequired.value && text.isEmpty()) {
+            if (locationViewState.showRequired && text.isEmpty()) {
                 RequiredTextField()
             }
         }

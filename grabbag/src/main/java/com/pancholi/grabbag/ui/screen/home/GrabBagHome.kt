@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarHostState
@@ -21,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -129,9 +127,9 @@ fun CategoryButton(
 ) {
     FilledTonalButton(
         onClick = { onCategoryClicked(category) },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(id = R.color.red)
-        ),
+//        colors = ButtonDefaults.buttonColors(
+//            containerColor = colorResource(id = R.color.red)
+//        ),
         modifier = modifier
     ) {
         Text(

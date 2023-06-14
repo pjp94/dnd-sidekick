@@ -6,8 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.ui.OptionalTextField
@@ -20,13 +18,15 @@ import com.pancholi.grabbag.ui.screen.AddScreenBase
 fun AddNpcScreen(
     title: String,
     onBackPressed: () -> Unit,
-    viewModel: NpcViewModel = hiltViewModel()
+    onNpcSaved: () -> Unit,
+    onSaveClicked: (CategoryModel.Npc) -> Unit,
+    npcViewState: NpcViewModel.NpcViewState
 ) {
-    val showRequired = viewModel.showRequired.collectAsStateWithLifecycle()
-    val npcSaved = viewModel.npcSaved.collectAsStateWithLifecycle()
+    var saveHandled by rememberSaveable { mutableStateOf(false) }
 
-    if (npcSaved.value) {
-        onBackPressed()
+    if (npcViewState.npcSaved && saveHandled.not()) {
+        saveHandled = true
+        onNpcSaved()
     }
 
     var name by rememberSaveable { mutableStateOf("") }
@@ -49,11 +49,12 @@ fun AddNpcScreen(
                 description = description
             )
 
-            viewModel.onSaveClicked(npc)
+//            viewModel.onSaveClicked(npc)
+            onSaveClicked(npc)
         }
     ) {
         val requiredSupportingText: @Composable (String) -> Unit = { text ->
-            if (showRequired.value && text.isEmpty()) {
+            if (npcViewState.showRequired && text.isEmpty()) {
                 RequiredTextField()
             }
         }

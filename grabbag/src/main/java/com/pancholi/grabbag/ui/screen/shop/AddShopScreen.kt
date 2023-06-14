@@ -6,8 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.ui.OptionalTextField
@@ -20,13 +18,15 @@ import com.pancholi.grabbag.ui.screen.AddScreenBase
 fun AddShopScreen(
     title: String,
     onBackPressed: () -> Unit,
-    viewModel: ShopViewModel = hiltViewModel()
+    onShopSaved: () -> Unit,
+    onSaveClicked: (CategoryModel.Shop) -> Unit,
+    shopViewState: ShopViewModel.ShopViewState
 ) {
-    val showRequired = viewModel.showRequired.collectAsStateWithLifecycle()
-    val shopSaved = viewModel.shopSaved.collectAsStateWithLifecycle()
+    var saveHandled by rememberSaveable { mutableStateOf(false) }
 
-    if (shopSaved.value) {
-        onBackPressed()
+    if (shopViewState.shopSaved && saveHandled.not()) {
+        saveHandled = true
+        onShopSaved()
     }
 
     var name by rememberSaveable { mutableStateOf("") }
@@ -45,11 +45,11 @@ fun AddShopScreen(
                 description = description
             )
 
-            viewModel.onSaveClicked(shop)
+            onSaveClicked(shop)
         }
     ) {
         val requiredSupportingText: @Composable (String) -> Unit = { text ->
-            if (showRequired.value && text.isEmpty()) {
+            if (shopViewState.showRequired && text.isEmpty()) {
                 RequiredTextField()
             }
         }

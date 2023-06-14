@@ -26,8 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.model.Currency
@@ -41,13 +39,15 @@ import com.pancholi.grabbag.ui.screen.AddScreenBase
 fun AddItemScreen(
     title: String,
     onBackPressed: () -> Unit,
-    viewModel: ItemViewModel = hiltViewModel()
+    onItemSaved: () -> Unit,
+    onSaveClicked: (CategoryModel.Item) -> Unit,
+    itemViewState: ItemViewModel.ItemViewState
 ) {
-    val showRequired = viewModel.showRequired.collectAsStateWithLifecycle()
-    val itemSaved = viewModel.itemSaved.collectAsStateWithLifecycle()
+    var saveHandled by rememberSaveable { mutableStateOf(false) }
 
-    if (itemSaved.value) {
-        onBackPressed()
+    if (itemViewState.itemSaved && saveHandled.not()) {
+        saveHandled = true
+        onItemSaved()
     }
 
     var name by rememberSaveable { mutableStateOf("") }
@@ -68,14 +68,14 @@ fun AddItemScreen(
                 description = description
             )
 
-            viewModel.onSaveClicked(item)
+            onSaveClicked(item)
         }
     ) {
         Box(modifier = Modifier
             .width(OutlinedTextFieldDefaults.MinWidth)
         ) {
             val requiredSupportingText: @Composable (String) -> Unit = { text ->
-                if (showRequired.value && text.isEmpty()) {
+                if (itemViewState.showRequired && text.isEmpty()) {
                     RequiredTextField()
                 }
             }

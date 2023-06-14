@@ -85,7 +85,7 @@ fun CategoryScreen(
                             ModelDialog(
                                 category = category,
                                 model = it,
-                                showDeleteDialogForModel = viewState.showDeleteDialogForModel,
+                                showDeleteDialogForModel = viewState.showDeleteConfirmation,
                                 onDismissRequest = { viewModel.onDetailDialogDismissed() },
                                 onDeleteClicked = { viewModel.onDeleteClicked() },
                                 onConfirmDeleteClicked = {

@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,11 +30,13 @@ class ItemViewModel @Inject constructor(
     private val resources: Resources
 ) : CategoryViewModel() {
 
-    private val _showRequired: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val showRequired: StateFlow<Boolean> = _showRequired.asStateFlow()
+    data class ItemViewState(
+        val showRequired: Boolean = false,
+        val itemSaved: Boolean = false
+    )
 
-    private val _itemSaved: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val itemSaved: StateFlow<Boolean> = _itemSaved.asStateFlow()
+    private val _itemViewState: MutableStateFlow<ItemViewState> = MutableStateFlow(ItemViewState())
+    val itemViewState: StateFlow<ItemViewState> = _itemViewState.asStateFlow()
 
     init {
         loadData()
@@ -62,13 +65,13 @@ class ItemViewModel @Inject constructor(
         val requiredFields = listOf(item.name, item.type)
 
         if (areFieldsMissing(requiredFields)) {
-            viewModelScope.launch { _showRequired.emit(true) }
+            _itemViewState.update { it.copy(showRequired = true) }
         } else {
             val entity = itemMapper.toEntity(item)
 
             viewModelScope.launch(dispatcher.io) {
                 itemRepository.insertItem(entity)
-                _itemSaved.emit(true)
+                _itemViewState.update { it.copy(itemSaved = true) }
             }
 
             val visuals = SidekickSnackbarVisuals(
@@ -104,5 +107,9 @@ class ItemViewModel @Inject constructor(
                 showSnackbar(visuals)
             }
         }
+    }
+
+    override fun onModelSaved() {
+        _itemViewState.update { it.copy(itemSaved = false) }
     }
 }

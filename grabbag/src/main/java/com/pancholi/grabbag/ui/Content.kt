@@ -145,6 +145,7 @@ fun PropertyTextField(
 
     OutlinedTextField(
         value = text,
+        singleLine = true,
         onValueChange = {
             onValueChangeAction(it)
             text = it
@@ -262,54 +263,4 @@ fun ConfirmDeleteDialog(
             }
         }
     )
-
-//    Dialog(
-//        onDismissRequest = onDismissRequest
-//    ) {
-//        Surface(
-//            modifier = Modifier.wrapContentSize()
-//        ) {
-//            Column(
-//                modifier = Modifier.padding(16.dp)
-//            ) {
-//                Text(
-//                    text = stringResource(id = R.string.delete_dialog_title, name),
-//                    fontSize = 16.sp
-//                )
-//
-//                Spacer(
-//                    modifier = Modifier.height(16.dp)
-//                )
-//
-//                Text(
-//                    text = stringResource(id = R.string.delete_dialog_message)
-//                )
-//
-//                Spacer(
-//                    modifier = Modifier.height(16.dp)
-//                )
-//
-//                Row(
-//                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-//                    modifier = Modifier.align(Alignment.End)
-//                ) {
-//                    TextButton(
-//                        onClick = onDismissRequest
-//                    ) {
-//                        Text(
-//                            text = stringResource(id = R.string.cancel)
-//                        )
-//                    }
-//
-//                    TextButton(
-//                        onClick = onConfirmDeleteClicked
-//                    ) {
-//                        Text(
-//                            text = stringResource(id = R.string.delete)
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
 }
