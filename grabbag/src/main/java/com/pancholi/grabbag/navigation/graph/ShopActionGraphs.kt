@@ -22,7 +22,7 @@ fun NavGraphBuilder.addShopScreen(
             onBackPressed = onBackPressed,
             onShopSaved = {
                 onBackPressed()
-                viewModel.onModelSaved()
+                viewModel.onBackPressed()
             },
             onSaveClicked = { shop -> viewModel.onSaveClicked(shop) },
             shopViewState = shopViewState.value

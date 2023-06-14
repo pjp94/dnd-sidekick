@@ -86,7 +86,8 @@ fun AddButton(
             )
         },
         onClick = { onAddClicked(category.addAction) },
-        containerColor = colorResource(id = R.color.red)
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onSurface
     )
 }
 
@@ -110,7 +111,8 @@ fun BackableScreen(
                     },
                     actions = actions,
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = colorResource(id = R.color.red)
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        actionIconContentColor = MaterialTheme.colorScheme.onSurface
                     )
                 )
             }
@@ -127,7 +129,7 @@ fun BackButton(
     ) {
 
         Icon(
-            painterResource(id = R.drawable.icon_back),
+            painter = painterResource(id = R.drawable.icon_back),
             contentDescription = stringResource(id = R.string.back_icon_description)
         )
     }

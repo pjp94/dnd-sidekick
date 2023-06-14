@@ -22,7 +22,7 @@ fun NavGraphBuilder.addItemScreen(
             onBackPressed = onBackPressed,
             onItemSaved = {
                 onBackPressed()
-                viewModel.onModelSaved()
+                viewModel.onBackPressed()
             },
             onSaveClicked = { item -> viewModel.onSaveClicked(item) },
             itemViewState = itemViewState.value

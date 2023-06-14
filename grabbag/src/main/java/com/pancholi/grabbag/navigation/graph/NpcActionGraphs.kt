@@ -22,7 +22,7 @@ fun NavGraphBuilder.addNpcScreen(
             onBackPressed = { onBackPressed() },
             onNpcSaved = {
                 onBackPressed()
-                viewModel.onModelSaved()
+                viewModel.onBackPressed()
             },
             onSaveClicked = { npc -> viewModel.onSaveClicked(npc) },
             npcViewState = npcViewState.value

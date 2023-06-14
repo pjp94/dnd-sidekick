@@ -1,6 +1,5 @@
 package com.pancholi.grabbag.ui.screen.item
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.pancholi.grabbag.R
@@ -145,8 +143,7 @@ fun CurrencyField(
 
                 DropdownMenu(
                     expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.background(colorResource(id = R.color.light_gray)),
+                    onDismissRequest = { expanded = false }
                 ) {
                     Currency.values().forEach {
                         val value = it.name.lowercase()

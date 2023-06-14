@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.core.Result
 import com.pancholi.core.database.EmptyDatabaseException
-import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.navigation.Action
 import com.pancholi.grabbag.navigation.Category
@@ -195,7 +194,7 @@ fun CategoryCard(
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.white)
+//            containerColor = colorResource(id = R.color.white)
         ),
         elevation = CardDefaults.cardElevation(4.dp),
         modifier = Modifier
@@ -226,7 +225,7 @@ fun CategoryCard(
                     .background(
                         brush = Brush.verticalGradient(
                             0.0F to Color.Transparent,
-                            1.0F to Color.White
+                            1.0F to MaterialTheme.colorScheme.surfaceVariant
                         )
                     )
             )

@@ -112,4 +112,9 @@ class ShopViewModel @Inject constructor(
     override fun onModelSaved() {
         _shopViewState.update { it.copy(shopSaved = false) }
     }
+
+    override fun onBackPressed() {
+        _shopViewState.update { it.copy(showRequired = false) }
+        onModelSaved()
+    }
 }

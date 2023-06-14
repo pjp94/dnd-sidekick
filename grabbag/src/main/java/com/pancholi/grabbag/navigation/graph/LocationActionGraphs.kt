@@ -22,7 +22,7 @@ fun NavGraphBuilder.addLocationScreen(
             onBackPressed = onBackPressed,
             onLocationSaved = {
                 onBackPressed()
-                viewModel.onModelSaved()
+                viewModel.onBackPressed()
             },
             onSaveClicked = { location -> viewModel.onSaveClicked(location) },
             locationViewState = locationViewState.value

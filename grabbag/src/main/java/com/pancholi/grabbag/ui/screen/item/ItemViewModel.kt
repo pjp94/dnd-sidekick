@@ -112,4 +112,9 @@ class ItemViewModel @Inject constructor(
     override fun onModelSaved() {
         _itemViewState.update { it.copy(itemSaved = false) }
     }
+
+    override fun onBackPressed() {
+        _itemViewState.update { it.copy(showRequired = false) }
+        onModelSaved()
+    }
 }

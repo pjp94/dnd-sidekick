@@ -49,7 +49,6 @@ fun AddNpcScreen(
                 description = description
             )
 
-//            viewModel.onSaveClicked(npc)
             onSaveClicked(npc)
         }
     ) {

@@ -112,4 +112,9 @@ class NpcViewModel @Inject constructor(
     override fun onModelSaved() {
         _npcViewState.update { it.copy(npcSaved = false) }
     }
+
+    override fun onBackPressed() {
+        _npcViewState.update { it.copy(showRequired = false) }
+        onModelSaved()
+    }
 }

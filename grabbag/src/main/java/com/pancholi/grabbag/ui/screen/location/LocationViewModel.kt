@@ -112,4 +112,9 @@ class LocationViewModel @Inject constructor(
     override fun onModelSaved() {
         _locationViewState.update { it.copy(locationSaved = false) }
     }
+
+    override fun onBackPressed() {
+        _locationViewState.update { it.copy(showRequired = false) }
+        onModelSaved()
+    }
 }

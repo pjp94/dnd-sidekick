@@ -19,6 +19,7 @@ abstract class CategoryViewModel : ViewModel() {
     abstract fun onModelsImported(models: List<ImportedModel>?)
     abstract fun onDeleteModel(model: CategoryModel)
     abstract fun onModelSaved()
+    abstract fun onBackPressed()
 
     data class ViewState(
         val items: List<CategoryModel>,
