@@ -1,6 +1,5 @@
 package com.pancholi.grabbag.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.core.Result
+import com.pancholi.core.SidekickSnackbarVisuals
 import com.pancholi.core.database.EmptyDatabaseException
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.navigation.Action
@@ -55,7 +54,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun CategoryScreen(
     category: Category,
     title: String,
-    snackbarHostState: SnackbarHostState,
+    showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     errorMessage: String,
     viewModel: CategoryViewModel,
     addViewModel: AddViewModel,
@@ -83,15 +82,12 @@ fun CategoryScreen(
         )
     }
 
-    LaunchedEffect(snackbarHostState) {
-        Log.d("FLOW_TAG", "Inside LaunchedEffect")
+    LaunchedEffect(Unit) {
         viewModel.snackbarVisuals.collectLatest {
-            Log.d("FLOW_TAG", "Collecting snackbar visuals")
-            snackbarHostState.showSnackbar(visuals = it)
+            showSnackbar(it)
         }
-        addViewModel.addSnackbarVisuals.collectLatest {
-            Log.d("FLOW_TAG", "Collecting add snackbar visuals")
-            snackbarHostState.showSnackbar(visuals = it)
+        addViewModel.addSnackbarVisuals.collect {
+            showSnackbar(it)
         }
     }
 
@@ -193,7 +189,7 @@ fun CategoryCard(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+//                verticalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, start = 16.dp, end = 16.dp)

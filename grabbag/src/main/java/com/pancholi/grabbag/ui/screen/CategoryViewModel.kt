@@ -1,6 +1,5 @@
 package com.pancholi.grabbag.ui.screen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pancholi.core.Result
@@ -54,7 +53,6 @@ abstract class CategoryViewModel : ViewModel() {
 
     protected fun showSnackbar(visuals: SidekickSnackbarVisuals) {
         viewModelScope.launch {
-            Log.d("FLOW_TAG", "Emitting snackbar visuals from CategoryViewModel")
             _snackbarVisuals.emit(visuals)
         }
     }

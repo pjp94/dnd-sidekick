@@ -7,12 +7,10 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -31,10 +29,10 @@ internal fun SidekickApp(
     navController: NavHostController = rememberNavController(),
     items: List<Screen>
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+    val appState: SidekickAppState = rememberSidekickAppState()
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { SnackbarHost(appState.snackbarHost) },
         bottomBar = {
             NavigationBar(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -75,7 +73,7 @@ internal fun SidekickApp(
         CompositionLocalProvider(LocalNavController provides navController) {
             SidekickGraph(
                 navController = navController,
-                snackbarHostState = snackbarHostState,
+                showSnackbar = { appState.showSnackbar(it) },
                 modifier = Modifier.padding(innerPadding)
             )
         }

@@ -13,7 +13,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.pancholi.core.SidekickSnackbarVisuals
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.navigation.Category
 import kotlinx.coroutines.flow.collectLatest
@@ -33,7 +33,8 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun GrabBagHome(
     viewModel: GrabBagHomeViewModel = hiltViewModel(),
-    snackbarHostState: SnackbarHostState,
+//    snackbarHostState: SnackbarHostState,
+    showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     categories: List<Category>,
     onCategoryClicked: (Category) -> Unit
 ) {
@@ -54,9 +55,9 @@ fun GrabBagHome(
         launcher.launch(viewState.value.openFilePicker.toTypedArray())
     }
 
-    LaunchedEffect(snackbarHostState) {
+    LaunchedEffect(Unit) {
         viewModel.snackbarVisuals.collectLatest {
-            snackbarHostState.showSnackbar(visuals = it)
+            showSnackbar(it)
         }
     }
 

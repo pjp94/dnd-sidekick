@@ -1,11 +1,11 @@
 package com.pancholi.grabbag.navigation.graph
 
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.pancholi.core.SidekickSnackbarVisuals
 import com.pancholi.core.viewModelScopedTo
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.navigation.Action
@@ -21,7 +21,7 @@ import com.pancholi.grabbag.ui.screen.shop.AddShopViewModel
 import com.pancholi.grabbag.ui.screen.shop.ShopViewModel
 
 fun NavGraphBuilder.npcGraph(
-    snackbarHostState: SnackbarHostState,
+    showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     onBackPressed: () -> Unit,
     onAddClicked: (Action) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit,
@@ -36,7 +36,7 @@ fun NavGraphBuilder.npcGraph(
             CategoryScreen(
                 category = Category.NPC,
                 title = title,
-                snackbarHostState = snackbarHostState,
+                showSnackbar = showSnackbar,
                 errorMessage = errorMessage,
                 viewModel = npcViewModel,
                 addViewModel = addNpcViewModel,
@@ -49,7 +49,7 @@ fun NavGraphBuilder.npcGraph(
 }
 
 fun NavGraphBuilder.shopGraph(
-    snackbarHostState: SnackbarHostState,
+    showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     onBackPressed: () -> Unit,
     onAddClicked: (Action) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit
@@ -64,7 +64,7 @@ fun NavGraphBuilder.shopGraph(
             CategoryScreen(
                 category = Category.SHOP,
                 title = title,
-                snackbarHostState = snackbarHostState,
+                showSnackbar = showSnackbar,
                 errorMessage = errorMessage,
                 viewModel = shopViewModel,
                 addViewModel = addShopViewModel,
@@ -77,7 +77,7 @@ fun NavGraphBuilder.shopGraph(
 }
 
 fun NavGraphBuilder.locationGraph(
-    snackbarHostState: SnackbarHostState,
+    showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     onBackPressed: () -> Unit,
     onAddClicked: (Action) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit
@@ -92,7 +92,7 @@ fun NavGraphBuilder.locationGraph(
             CategoryScreen(
                 category = Category.LOCATION,
                 title = title,
-                snackbarHostState = snackbarHostState,
+                showSnackbar = showSnackbar,
                 errorMessage = errorMessage,
                 viewModel = locationViewModel,
                 addViewModel = addLocationViewModel,
@@ -105,7 +105,7 @@ fun NavGraphBuilder.locationGraph(
 }
 
 fun NavGraphBuilder.itemGraph(
-    snackbarHostState: SnackbarHostState,
+    showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     onBackPressed: () -> Unit,
     onAddClicked: (Action) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit
@@ -120,7 +120,7 @@ fun NavGraphBuilder.itemGraph(
             CategoryScreen(
                 category = Category.ITEM,
                 title = title,
-                snackbarHostState = snackbarHostState,
+                showSnackbar = showSnackbar,
                 errorMessage = errorMessage,
                 viewModel = itemViewModel,
                 addViewModel = addItemViewModel,

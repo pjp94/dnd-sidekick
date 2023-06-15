@@ -1,11 +1,11 @@
 package com.pancholi.dndsidekick.navigation
 
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.pancholi.battletracker.navigation.battleTrackerGraph
+import com.pancholi.core.SidekickSnackbarVisuals
 import com.pancholi.grabbag.navigation.graph.addItemScreen
 import com.pancholi.grabbag.navigation.graph.addLocationScreen
 import com.pancholi.grabbag.navigation.graph.addNpcScreen
@@ -19,7 +19,7 @@ import com.pancholi.grabbag.navigation.graph.shopGraph
 @Composable
 fun SidekickGraph(
     navController: NavHostController,
-    snackbarHostState: SnackbarHostState,
+    showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     modifier: Modifier
 ) {
     NavHost(
@@ -28,13 +28,13 @@ fun SidekickGraph(
         modifier = modifier
     ) {
         grabBagGraph(
-            snackbarHostState = snackbarHostState,
+            showSnackbar = showSnackbar,
             onCategoryClicked = { category ->
                 navController.navigate(category.route)
             },
             nestedGraphs = {
                 npcGraph(
-                    snackbarHostState = snackbarHostState,
+                    showSnackbar = showSnackbar,
                     onBackPressed = { navController.popBackStack() },
                     onAddClicked = { action -> navController.navigate(action.route) },
                     nestedGraphs = {
@@ -44,7 +44,7 @@ fun SidekickGraph(
                     }
                 )
                 shopGraph(
-                    snackbarHostState = snackbarHostState,
+                    showSnackbar = showSnackbar,
                     onBackPressed = { navController.popBackStack() },
                     onAddClicked = { action -> navController.navigate(action.route) },
                     nestedGraphs = {
@@ -54,7 +54,7 @@ fun SidekickGraph(
                     }
                 )
                 locationGraph(
-                    snackbarHostState = snackbarHostState,
+                    showSnackbar = showSnackbar,
                     onBackPressed = { navController.popBackStack() },
                     onAddClicked = { action -> navController.navigate(action.route) },
                     nestedGraphs = {
@@ -64,7 +64,7 @@ fun SidekickGraph(
                     }
                 )
                 itemGraph(
-                    snackbarHostState = snackbarHostState,
+                    showSnackbar = showSnackbar,
                     onBackPressed = { navController.popBackStack() },
                     onAddClicked = { action -> navController.navigate(action.route) },
                     nestedGraphs = {
