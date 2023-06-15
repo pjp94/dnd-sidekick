@@ -13,15 +13,18 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.ui.BackableScreen
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun AddScreenBase(
     title: String,
+    modelSaved: SharedFlow<Unit>,
     onBackPressed: () -> Unit,
     onSaveClicked: () -> Unit,
     innerContent: @Composable () -> Unit
@@ -47,6 +50,10 @@ fun AddScreenBase(
             }
         }
     )
+
+    LaunchedEffect(Unit) {
+        modelSaved.collect { onBackPressed() }
+    }
 }
 
 @Composable

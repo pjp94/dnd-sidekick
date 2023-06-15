@@ -8,24 +8,24 @@ import com.pancholi.core.viewModelScopedTo
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.navigation.Action
 import com.pancholi.grabbag.ui.screen.location.AddLocationScreen
-import com.pancholi.grabbag.ui.screen.location.LocationViewModel
+import com.pancholi.grabbag.ui.screen.location.AddLocationViewModel
 
 fun NavGraphBuilder.addLocationScreen(
     onBackPressed: () -> Unit
 ) {
     composable(Action.ADD_LOCATION.route) {
-        val viewModel: LocationViewModel = it.viewModelScopedTo(route = "grab_bag_home")
-        val locationViewState = viewModel.locationViewState.collectAsStateWithLifecycle()
+        val viewModel: AddLocationViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+        val viewState = viewModel.viewState.collectAsStateWithLifecycle()
 
         AddLocationScreen(
             title = stringResource(id = R.string.add_location),
-            onBackPressed = onBackPressed,
-            onLocationSaved = {
+            onBackPressed = {
                 onBackPressed()
-                viewModel.onBackPressed()
+                viewModel.resetViewState()
             },
             onSaveClicked = { location -> viewModel.onSaveClicked(location) },
-            locationViewState = locationViewState.value
+            viewState = viewState.value,
+            locationSaved = viewModel.modelSaved
         )
     }
 }

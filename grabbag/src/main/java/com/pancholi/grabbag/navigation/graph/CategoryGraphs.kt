@@ -2,6 +2,7 @@ package com.pancholi.grabbag.navigation.graph
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
@@ -10,9 +11,13 @@ import com.pancholi.grabbag.R
 import com.pancholi.grabbag.navigation.Action
 import com.pancholi.grabbag.navigation.Category
 import com.pancholi.grabbag.ui.screen.CategoryScreen
+import com.pancholi.grabbag.ui.screen.item.AddItemViewModel
 import com.pancholi.grabbag.ui.screen.item.ItemViewModel
+import com.pancholi.grabbag.ui.screen.location.AddLocationViewModel
 import com.pancholi.grabbag.ui.screen.location.LocationViewModel
+import com.pancholi.grabbag.ui.screen.npc.AddNpcViewModel
 import com.pancholi.grabbag.ui.screen.npc.NpcViewModel
+import com.pancholi.grabbag.ui.screen.shop.AddShopViewModel
 import com.pancholi.grabbag.ui.screen.shop.ShopViewModel
 
 fun NavGraphBuilder.npcGraph(
@@ -25,14 +30,16 @@ fun NavGraphBuilder.npcGraph(
         composable(Category.NPC.route) {
             val title = stringResource(id = R.string.npcs)
             val errorMessage = stringResource(id = R.string.empty_category, title)
-            val viewModel: NpcViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+            val npcViewModel: NpcViewModel = hiltViewModel()
+            val addNpcViewModel: AddNpcViewModel = it.viewModelScopedTo(route = "grab_bag_home")
 
             CategoryScreen(
                 category = Category.NPC,
                 title = title,
                 snackbarHostState = snackbarHostState,
                 errorMessage = errorMessage,
-                viewModel = viewModel,
+                viewModel = npcViewModel,
+                addViewModel = addNpcViewModel,
                 onBackPressed = onBackPressed,
                 onAddClicked = onAddClicked
             )
@@ -51,14 +58,16 @@ fun NavGraphBuilder.shopGraph(
         composable(Category.SHOP.route) {
             val title = stringResource(id = R.string.shops)
             val errorMessage = stringResource(id = R.string.empty_category, title.lowercase())
-            val viewModel: ShopViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+            val shopViewModel: ShopViewModel = hiltViewModel()
+            val addShopViewModel: AddShopViewModel = it.viewModelScopedTo(route = "grab_bag_home")
 
             CategoryScreen(
                 category = Category.SHOP,
                 title = title,
                 snackbarHostState = snackbarHostState,
                 errorMessage = errorMessage,
-                viewModel = viewModel,
+                viewModel = shopViewModel,
+                addViewModel = addShopViewModel,
                 onBackPressed = onBackPressed,
                 onAddClicked = onAddClicked
             )
@@ -77,14 +86,16 @@ fun NavGraphBuilder.locationGraph(
         composable(Category.LOCATION.route) {
             val title = stringResource(id = R.string.locations)
             val errorMessage = stringResource(id = R.string.empty_category, title.lowercase())
-            val viewModel: LocationViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+            val locationViewModel: LocationViewModel = hiltViewModel()
+            val addLocationViewModel: AddLocationViewModel = it.viewModelScopedTo(route = "grab_bag_home")
 
             CategoryScreen(
                 category = Category.LOCATION,
                 title = title,
                 snackbarHostState = snackbarHostState,
                 errorMessage = errorMessage,
-                viewModel = viewModel,
+                viewModel = locationViewModel,
+                addViewModel = addLocationViewModel,
                 onBackPressed = onBackPressed,
                 onAddClicked = onAddClicked
             )
@@ -103,14 +114,16 @@ fun NavGraphBuilder.itemGraph(
         composable(Category.ITEM.route) {
             val title = stringResource(id = R.string.items)
             val errorMessage = stringResource(id = R.string.empty_category, title.lowercase())
-            val viewModel: ItemViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+            val itemViewModel: ItemViewModel = hiltViewModel()
+            val addItemViewModel: AddItemViewModel = it.viewModelScopedTo(route = "grab_bag_home")
 
             CategoryScreen(
                 category = Category.ITEM,
                 title = title,
                 snackbarHostState = snackbarHostState,
                 errorMessage = errorMessage,
-                viewModel = viewModel,
+                viewModel = itemViewModel,
+                addViewModel = addItemViewModel,
                 onBackPressed = onBackPressed,
                 onAddClicked = onAddClicked
             )

@@ -13,22 +13,17 @@ import com.pancholi.grabbag.ui.PropertyTextBox
 import com.pancholi.grabbag.ui.PropertyTextField
 import com.pancholi.grabbag.ui.RequiredTextField
 import com.pancholi.grabbag.ui.screen.AddScreenBase
+import com.pancholi.grabbag.ui.screen.AddViewModel
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun AddNpcScreen(
     title: String,
     onBackPressed: () -> Unit,
-    onNpcSaved: () -> Unit,
     onSaveClicked: (CategoryModel.Npc) -> Unit,
-    npcViewState: NpcViewModel.NpcViewState
+    viewState: AddViewModel.ViewState,
+    npcSaved: SharedFlow<Unit>
 ) {
-    var saveHandled by rememberSaveable { mutableStateOf(false) }
-
-    if (npcViewState.npcSaved && saveHandled.not()) {
-        saveHandled = true
-        onNpcSaved()
-    }
-
     var name by rememberSaveable { mutableStateOf("") }
     var race by rememberSaveable { mutableStateOf("") }
     var gender by rememberSaveable { mutableStateOf("") }
@@ -38,6 +33,7 @@ fun AddNpcScreen(
 
     AddScreenBase(
         title = title,
+        modelSaved = npcSaved,
         onBackPressed = onBackPressed,
         onSaveClicked = {
             val npc = CategoryModel.Npc(
@@ -53,7 +49,7 @@ fun AddNpcScreen(
         }
     ) {
         val requiredSupportingText: @Composable (String) -> Unit = { text ->
-            if (npcViewState.showRequired && text.isEmpty()) {
+            if (viewState.showRequiredSupportingText && text.isEmpty()) {
                 RequiredTextField()
             }
         }

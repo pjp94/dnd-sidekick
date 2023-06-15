@@ -13,22 +13,17 @@ import com.pancholi.grabbag.ui.PropertyTextBox
 import com.pancholi.grabbag.ui.PropertyTextField
 import com.pancholi.grabbag.ui.RequiredTextField
 import com.pancholi.grabbag.ui.screen.AddScreenBase
+import com.pancholi.grabbag.ui.screen.AddViewModel
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun AddShopScreen(
     title: String,
     onBackPressed: () -> Unit,
-    onShopSaved: () -> Unit,
     onSaveClicked: (CategoryModel.Shop) -> Unit,
-    shopViewState: ShopViewModel.ShopViewState
+    viewState: AddViewModel.ViewState,
+    shopSaved: SharedFlow<Unit>
 ) {
-    var saveHandled by rememberSaveable { mutableStateOf(false) }
-
-    if (shopViewState.shopSaved && saveHandled.not()) {
-        saveHandled = true
-        onShopSaved()
-    }
-
     var name by rememberSaveable { mutableStateOf("") }
     var type by rememberSaveable { mutableStateOf("") }
     var owner by rememberSaveable { mutableStateOf("") }
@@ -36,6 +31,7 @@ fun AddShopScreen(
 
     AddScreenBase(
         title = title,
+        modelSaved = shopSaved,
         onBackPressed = onBackPressed,
         onSaveClicked = {
             val shop = CategoryModel.Shop(
@@ -49,7 +45,7 @@ fun AddShopScreen(
         }
     ) {
         val requiredSupportingText: @Composable (String) -> Unit = { text ->
-            if (shopViewState.showRequired && text.isEmpty()) {
+            if (viewState.showRequiredSupportingText && text.isEmpty()) {
                 RequiredTextField()
             }
         }

@@ -32,22 +32,17 @@ import com.pancholi.grabbag.ui.PropertyTextBox
 import com.pancholi.grabbag.ui.PropertyTextField
 import com.pancholi.grabbag.ui.RequiredTextField
 import com.pancholi.grabbag.ui.screen.AddScreenBase
+import com.pancholi.grabbag.ui.screen.AddViewModel
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun AddItemScreen(
     title: String,
     onBackPressed: () -> Unit,
-    onItemSaved: () -> Unit,
     onSaveClicked: (CategoryModel.Item) -> Unit,
-    itemViewState: ItemViewModel.ItemViewState
+    viewState: AddViewModel.ViewState,
+    itemSaved: SharedFlow<Unit>
 ) {
-    var saveHandled by rememberSaveable { mutableStateOf(false) }
-
-    if (itemViewState.itemSaved && saveHandled.not()) {
-        saveHandled = true
-        onItemSaved()
-    }
-
     var name by rememberSaveable { mutableStateOf("") }
     var type by rememberSaveable { mutableStateOf("") }
     var cost by rememberSaveable { mutableStateOf("") }
@@ -56,6 +51,7 @@ fun AddItemScreen(
 
     AddScreenBase(
         title = title,
+        modelSaved = itemSaved,
         onBackPressed = onBackPressed,
         onSaveClicked = {
             val item = CategoryModel.Item(
@@ -73,7 +69,7 @@ fun AddItemScreen(
             .width(OutlinedTextFieldDefaults.MinWidth)
         ) {
             val requiredSupportingText: @Composable (String) -> Unit = { text ->
-                if (itemViewState.showRequired && text.isEmpty()) {
+                if (viewState.showRequiredSupportingText && text.isEmpty()) {
                     RequiredTextField()
                 }
             }

@@ -28,19 +28,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.navigation.Category
-import com.pancholi.grabbag.ui.screen.item.ItemViewModel
-import com.pancholi.grabbag.ui.screen.location.LocationViewModel
-import com.pancholi.grabbag.ui.screen.npc.NpcViewModel
-import com.pancholi.grabbag.ui.screen.shop.ShopViewModel
-import com.pancholi.grabbag.viewmodel.GrabBagHomeViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun GrabBagHome(
     viewModel: GrabBagHomeViewModel = hiltViewModel(),
-    npcViewModel: NpcViewModel = hiltViewModel(),
-    shopViewModel: ShopViewModel = hiltViewModel(),
-    locationViewModel: LocationViewModel = hiltViewModel(),
-    itemViewModel: ItemViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState,
     categories: List<Category>,
     onCategoryClicked: (Category) -> Unit
@@ -62,19 +54,10 @@ fun GrabBagHome(
         launcher.launch(viewState.value.openFilePicker.toTypedArray())
     }
 
-    viewState.value.snackbarVisuals?.let {
-        LaunchedEffect(snackbarHostState) {
+    LaunchedEffect(snackbarHostState) {
+        viewModel.snackbarVisuals.collectLatest {
             snackbarHostState.showSnackbar(visuals = it)
-            viewModel.onSnackbarShown()
         }
-    }
-
-    viewState.value.importedContent?.let {
-        npcViewModel.onModelsImported(it.npcs)
-        shopViewModel.onModelsImported(it.shops)
-        locationViewModel.onModelsImported(it.locations)
-        itemViewModel.onModelsImported(it.items)
-        viewModel.onImportComplete()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -84,10 +67,7 @@ fun GrabBagHome(
         ) {
             CategoryButtonLayout(
                 categories = categories,
-                onCategoryClicked = {
-                    viewModel.onSnackbarShown()
-                    onCategoryClicked(it)
-                }
+                onCategoryClicked = onCategoryClicked
             )
 
             ImportContentButton(

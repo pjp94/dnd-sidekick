@@ -1,5 +1,6 @@
 package com.pancholi.grabbag.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,7 +49,7 @@ import com.pancholi.grabbag.ui.screen.npc.NpcCard
 import com.pancholi.grabbag.ui.screen.npc.NpcDialog
 import com.pancholi.grabbag.ui.screen.shop.ShopCard
 import com.pancholi.grabbag.ui.screen.shop.ShopDialog
-import com.pancholi.grabbag.viewmodel.CategoryViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CategoryScreen(
@@ -57,71 +58,62 @@ fun CategoryScreen(
     snackbarHostState: SnackbarHostState,
     errorMessage: String,
     viewModel: CategoryViewModel,
+    addViewModel: AddViewModel,
     onBackPressed: () -> Unit,
     onAddClicked: (Action) -> Unit,
 ) {
+    val state = viewModel.viewState.collectAsStateWithLifecycle()
+    val viewState = state.value
+
+    viewState.showDetailDialogForModel?.let {
+        ModelDialog(
+            category = category,
+            model = it,
+            showDeleteDialogForModel = viewState.showDeleteConfirmation,
+            onDismissRequest = { viewModel.onDetailDialogDismissed() },
+            onDeleteClicked = { viewModel.onDeleteClicked() },
+            onConfirmDeleteClicked = {
+                viewModel.apply {
+                    onDeleteModel(it)
+                    onDeleteDialogDismissed()
+                    onDetailDialogDismissed()
+                }
+            },
+            onDeleteDialogDismissed = { viewModel.onDeleteDialogDismissed() }
+        )
+    }
+
+    LaunchedEffect(snackbarHostState) {
+        Log.d("FLOW_TAG", "Inside LaunchedEffect")
+        viewModel.snackbarVisuals.collectLatest {
+            Log.d("FLOW_TAG", "Collecting snackbar visuals")
+            snackbarHostState.showSnackbar(visuals = it)
+        }
+        addViewModel.addSnackbarVisuals.collectLatest {
+            Log.d("FLOW_TAG", "Collecting add snackbar visuals")
+            snackbarHostState.showSnackbar(visuals = it)
+        }
+    }
+
     BackableScreen(
         title = title,
-        onBackPressed = {
-            onBackPressed()
-            viewModel.onSnackbarShown()
-        },
+        onBackPressed = onBackPressed,
         innerContent = { innerPadding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                val state = viewModel.viewState.collectAsStateWithLifecycle()
-                val snackbarVisuals = viewModel.snackbarVisuals.collectAsStateWithLifecycle()
-
-                when (state.value) {
-                    is Result.Success<*> -> {
-                        val result = state.value as Result.Success<*>
-                        val viewState = result.value as CategoryViewModel.ViewState
-
-                        viewState.showDetailDialogForModel?.let {
-                            ModelDialog(
-                                category = category,
-                                model = it,
-                                showDeleteDialogForModel = viewState.showDeleteConfirmation,
-                                onDismissRequest = { viewModel.onDetailDialogDismissed() },
-                                onDeleteClicked = { viewModel.onDeleteClicked() },
-                                onConfirmDeleteClicked = {
-                                    viewModel.apply {
-                                        onDeleteModel(it)
-                                        onDeleteDialogDismissed()
-                                        onDetailDialogDismissed()
-                                    }
-                                },
-                                onDeleteDialogDismissed = { viewModel.onDeleteDialogDismissed() }
-                            )
-                        }
-                    }
-                    else -> {}
-                }
-
-                snackbarVisuals.value?.let {
-                    LaunchedEffect(snackbarHostState) {
-                        snackbarHostState.showSnackbar(visuals = it)
-                        viewModel.onSnackbarShown()
-                    }
-                }
-
                 CategoryBody(
                     category = category,
-                    result = state.value,
+                    result = viewState.result,
                     errorMessage = errorMessage,
-                    onCardClicked = {
-                        viewModel.onCardClicked(it) }
+                    onCardClicked = { viewModel.onCardClicked(it) }
                 )
 
                 AddButton(
                     category = category,
-                    onAddClicked = {
-                        onAddClicked(it)
-                        viewModel.onSnackbarShown()
-                    },
+                    onAddClicked = onAddClicked,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(16.dp)
@@ -131,6 +123,7 @@ fun CategoryScreen(
     )
 }
 
+@Suppress("UNCHECKED_CAST")
 @Composable
 fun CategoryBody(
     category: Category,
@@ -141,8 +134,7 @@ fun CategoryBody(
     when (result) {
         is Result.Loading -> LoadingIndicator()
         is Result.Success<*> -> {
-            val viewState = result.value as CategoryViewModel.ViewState
-            val models = viewState.items
+            val models = result.value as List<CategoryModel>
 
             CardColumn(
                 category = category,
@@ -193,9 +185,6 @@ fun CategoryCard(
     onCardClicked: (CategoryModel) -> Unit
 ) {
     Card(
-        colors = CardDefaults.cardColors(
-//            containerColor = colorResource(id = R.color.white)
-        ),
         elevation = CardDefaults.cardElevation(4.dp),
         modifier = Modifier
             .fillMaxWidth()
@@ -207,7 +196,7 @@ fun CategoryCard(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                    .padding(top = 8.dp, start = 16.dp, end = 16.dp)
             ) {
                 when (category) {
                     Category.NPC -> NpcCard(npc = model as CategoryModel.Npc)

@@ -1,4 +1,4 @@
-package com.pancholi.grabbag.viewmodel
+package com.pancholi.grabbag.ui.screen.home
 
 import android.content.ContentResolver
 import android.content.res.Resources
@@ -8,14 +8,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.pancholi.core.SidekickSnackbarVisuals
+import com.pancholi.core.coroutines.Dispatcher
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.ImportedContent
+import com.pancholi.grabbag.usecase.ImportItemUseCase
+import com.pancholi.grabbag.usecase.ImportLocationUseCase
+import com.pancholi.grabbag.usecase.ImportNpcUseCase
+import com.pancholi.grabbag.usecase.ImportShopUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import javax.inject.Inject
@@ -23,14 +31,17 @@ import javax.inject.Inject
 @HiltViewModel
 class GrabBagHomeViewModel @Inject constructor(
     private val contentResolver: ContentResolver,
+    private val importNpcUseCase: ImportNpcUseCase,
+    private val importShopUseCase: ImportShopUseCase,
+    private val importLocationUseCase: ImportLocationUseCase,
+    private val importItemUseCase: ImportItemUseCase,
     private val resources: Resources,
-    private val gson: Gson
+    private val gson: Gson,
+    private val dispatcher: Dispatcher,
 ) : ViewModel() {
 
     data class ViewState(
-        val openFilePicker: List<String> = emptyList(),
-        val snackbarVisuals: SidekickSnackbarVisuals? = null,
-        val importedContent: ImportedContent? = null
+        val openFilePicker: List<String> = emptyList()
     )
 
     companion object {
@@ -43,6 +54,9 @@ class GrabBagHomeViewModel @Inject constructor(
 
     private val _viewState: MutableStateFlow<ViewState> = MutableStateFlow(ViewState())
     val viewState: StateFlow<ViewState> = _viewState.asStateFlow()
+
+    private val _snackbarVisuals: MutableSharedFlow<SidekickSnackbarVisuals> = MutableSharedFlow()
+    val snackbarVisuals: SharedFlow<SidekickSnackbarVisuals> = _snackbarVisuals
 
     fun onImportContentClicked() {
         viewModelScope.launch {
@@ -75,21 +89,19 @@ class GrabBagHomeViewModel @Inject constructor(
             importMessageId = R.string.import_fail
         }
 
+        val visuals = SidekickSnackbarVisuals(message = resources.getString(importMessageId))
 
-        _viewState.update {
-            val visuals = SidekickSnackbarVisuals(message = resources.getString(importMessageId))
-            it.copy(
-                snackbarVisuals = visuals,
-                importedContent = content
-            )
+        viewModelScope.launch {
+            _snackbarVisuals.emit(visuals)
+
+            withContext(dispatcher.io) {
+                content?.let {
+                    importNpcUseCase(models = it.npcs)
+                    importShopUseCase(models = it.shops)
+                    importLocationUseCase(models = it.locations)
+                    importItemUseCase(models = it.items)
+                }
+            }
         }
-    }
-
-    fun onSnackbarShown() {
-        _viewState.update { it.copy(snackbarVisuals = null) }
-    }
-
-    fun onImportComplete() {
-        _viewState.update { it.copy(importedContent = null) }
     }
 }

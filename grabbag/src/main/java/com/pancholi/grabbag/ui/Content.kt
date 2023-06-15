@@ -1,12 +1,20 @@
 package com.pancholi.grabbag.ui
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
@@ -26,6 +34,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -60,12 +69,18 @@ fun LoadingIndicator() {
 fun Message(
     message: String
 ) {
+    val color = if (isSystemInDarkTheme()) {
+        colorResource(id = R.color.dark_message_on_background)
+    } else {
+        colorResource(id = R.color.light_message_on_background)
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Text(
             text = message,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
-            color = colorResource(id = R.color.dark_gray),
+            color = color,
             modifier = Modifier.align(Alignment.Center)
         )
     }
@@ -99,6 +114,8 @@ fun BackableScreen(
     actions: @Composable RowScope.() -> Unit = {},
     innerContent: @Composable (PaddingValues) -> Unit,
 ) {
+    BackHandler { onBackPressed() }
+
     Scaffold(
         topBar = {
             Surface {
@@ -124,8 +141,15 @@ fun BackableScreen(
 fun BackButton(
     onClick: () -> Unit
 ) {
+    var handled by remember { mutableStateOf(false) }
+
     IconButton(
-        onClick = onClick
+        onClick = {
+            if (handled.not()) {
+                handled = true
+                onClick()
+            }
+        }
     ) {
 
         Icon(
@@ -265,4 +289,22 @@ fun ConfirmDeleteDialog(
             }
         }
     )
+}
+
+@Composable
+fun FullScreenDialogColumn(
+    innerPadding: PaddingValues,
+    content: @Composable () -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .wrapContentSize()
+            .padding(innerPadding)
+            .padding(horizontal = 24.dp)
+            .padding(vertical = 8.dp)
+    ) {
+        content()
+    }
 }
