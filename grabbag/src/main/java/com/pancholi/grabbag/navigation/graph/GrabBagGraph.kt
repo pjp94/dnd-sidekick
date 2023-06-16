@@ -8,7 +8,6 @@ import com.pancholi.grabbag.navigation.Category
 import com.pancholi.grabbag.ui.screen.home.GrabBagHome
 
 fun NavGraphBuilder.grabBagGraph(
-//    snackbarHostState: SnackbarHostState,
     showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     onCategoryClicked: (Category) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit
@@ -16,7 +15,6 @@ fun NavGraphBuilder.grabBagGraph(
     navigation(startDestination = "grab_bag_home", route = "grab_bag") {
         composable(route = "grab_bag_home") {
             GrabBagHome(
-//                snackbarHostState = snackbarHostState,
                 showSnackbar = showSnackbar,
                 categories = Category.values().toList(),
                 onCategoryClicked = onCategoryClicked

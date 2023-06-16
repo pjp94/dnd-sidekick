@@ -33,6 +33,12 @@ class ShopRepository @Inject constructor(
             .delete(shop)
     }
 
+    fun getById(id: Int): Flow<ShopEntity> {
+        return database
+            .shopDao()
+            .getById(id)
+    }
+
     fun getAllShops(): Flow<List<ShopEntity>> {
         return database
             .shopDao()

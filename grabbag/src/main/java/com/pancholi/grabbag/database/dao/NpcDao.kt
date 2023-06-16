@@ -24,6 +24,9 @@ interface NpcDao {
     @Delete
     suspend fun delete(npc: NpcEntity): Int
 
+    @Query("SELECT * FROM npc WHERE id = :id")
+    fun getById(id: Int): Flow<NpcEntity>
+
     @Query("SELECT * FROM npc")
     fun getAll(): Flow<List<NpcEntity>>
 

@@ -31,7 +31,7 @@ abstract class CategoryViewModel : ViewModel() {
     private val _snackbarVisuals: MutableSharedFlow<SidekickSnackbarVisuals> = MutableSharedFlow()
     val snackbarVisuals: SharedFlow<SidekickSnackbarVisuals> = _snackbarVisuals.asSharedFlow()
 
-    fun onCardClicked(model: CategoryModel) {
+    fun onShowDetailDialog(model: CategoryModel) {
         _viewState.update { it.copy(showDetailDialogForModel = model) }
     }
 
@@ -54,6 +54,14 @@ abstract class CategoryViewModel : ViewModel() {
     protected fun showSnackbar(visuals: SidekickSnackbarVisuals) {
         viewModelScope.launch {
             _snackbarVisuals.emit(visuals)
+        }
+    }
+
+    protected fun updateModelForDialog(models: List<CategoryModel>) {
+        _viewState.value.showDetailDialogForModel?.let { model ->
+            models.find { it.id == model.id }?.let { updatedModel ->
+                onShowDetailDialog(updatedModel)
+            }
         }
     }
 }

@@ -24,37 +24,89 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.pancholi.core.Result
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.model.Currency
+import com.pancholi.grabbag.ui.ConfirmationDialog
+import com.pancholi.grabbag.ui.LoadingIndicator
 import com.pancholi.grabbag.ui.OptionalTextField
 import com.pancholi.grabbag.ui.PropertyTextBox
 import com.pancholi.grabbag.ui.PropertyTextField
 import com.pancholi.grabbag.ui.RequiredTextField
-import com.pancholi.grabbag.ui.screen.AddScreenBase
-import com.pancholi.grabbag.ui.screen.AddViewModel
+import com.pancholi.grabbag.ui.screen.modelaction.ActionViewModel
+import com.pancholi.grabbag.ui.screen.modelaction.ModelAction
+import com.pancholi.grabbag.ui.screen.modelaction.ModelActionScreenBase
 import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
-fun AddItemScreen(
+fun ItemActionScreen(
+    modelAction: ModelAction,
     title: String,
     onBackPressed: () -> Unit,
-    onSaveClicked: (CategoryModel.Item) -> Unit,
-    viewState: AddViewModel.ViewState,
+    onBackConfirmed: () -> Unit,
+    onSaveClicked: (CategoryModel.Item, ModelAction) -> Unit,
+    onModelSaved: () -> Unit,
+    onDialogDismissed: () -> Unit,
+    viewState: ActionViewModel.ViewState,
     itemSaved: SharedFlow<Unit>
 ) {
-    var name by rememberSaveable { mutableStateOf("") }
-    var type by rememberSaveable { mutableStateOf("") }
-    var cost by rememberSaveable { mutableStateOf("") }
-    var currency by rememberSaveable { mutableStateOf(Currency.GP) }
-    var description by rememberSaveable { mutableStateOf("") }
+    var item: CategoryModel.Item? = null
+    var showContent = modelAction == ModelAction.ADD
 
-    AddScreenBase(
+    if (modelAction == ModelAction.EDIT) {
+        when (viewState.modelToEdit) {
+            Result.Loading -> LoadingIndicator()
+            is Result.Success<*> -> {
+                item = viewState.modelToEdit.value as CategoryModel.Item
+                showContent = true
+            }
+            is Result.Error -> {}
+        }
+    }
+
+    if (showContent) {
+        ActionScreen(
+            modelAction = modelAction,
+            title = title,
+            onBackPressed = onBackPressed,
+            onBackConfirmed = onBackConfirmed,
+            onSaveClicked = onSaveClicked,
+            onModelSaved = onModelSaved,
+            onDialogDismissed = onDialogDismissed,
+            viewState = viewState,
+            itemSaved = itemSaved,
+            item = item
+        )
+    }
+}
+
+@Composable
+private fun ActionScreen(
+    modelAction: ModelAction,
+    title: String,
+    onBackPressed: () -> Unit,
+    onBackConfirmed: () -> Unit,
+    onSaveClicked: (CategoryModel.Item, ModelAction) -> Unit,
+    onModelSaved: () -> Unit,
+    onDialogDismissed: () -> Unit,
+    viewState: ActionViewModel.ViewState,
+    itemSaved: SharedFlow<Unit>,
+    item: CategoryModel.Item?
+) {
+    var name by rememberSaveable { mutableStateOf(item?.name.orEmpty()) }
+    var type by rememberSaveable { mutableStateOf(item?.type.orEmpty()) }
+    var cost by rememberSaveable { mutableStateOf(item?.cost.orEmpty()) }
+    var currency by rememberSaveable { mutableStateOf(item?.currency ?: Currency.GP) }
+    var description by rememberSaveable { mutableStateOf(item?.description.orEmpty()) }
+
+    ModelActionScreenBase(
         title = title,
         modelSaved = itemSaved,
-        onBackPressed = onBackPressed,
+        onBackPressed =  onBackPressed,
         onSaveClicked = {
-            val item = CategoryModel.Item(
+            val model = CategoryModel.Item(
+                id = item?.id ?: 0,
                 name = name,
                 type = type,
                 cost = cost,
@@ -62,8 +114,9 @@ fun AddItemScreen(
                 description = description
             )
 
-            onSaveClicked(item)
-        }
+            onSaveClicked(model, modelAction)
+        },
+        onModelSaved = onModelSaved
     ) {
         Box(modifier = Modifier
             .width(OutlinedTextFieldDefaults.MinWidth)
@@ -78,12 +131,14 @@ fun AddItemScreen(
                 PropertyTextField(
                     label = stringResource(id = R.string.name),
                     onValueChangeAction = { name = it },
+                    startingText = item?.name.orEmpty(),
                     supportingText = requiredSupportingText
                 )
 
                 PropertyTextField(
                     label = stringResource(id = R.string.type),
                     onValueChangeAction = { type = it },
+                    startingText = item?.type.orEmpty(),
                     supportingText = requiredSupportingText
                 )
 
@@ -93,12 +148,14 @@ fun AddItemScreen(
                     PropertyTextField(
                         label = stringResource(id = R.string.cost),
                         onValueChangeAction = { cost = it },
+                        startingText = item?.cost.orEmpty(),
                         supportingText = { OptionalTextField() },
                         numberOnly = true,
                         modifier = Modifier.weight(0.6f)
                     )
 
                     CurrencyField(
+                        startingCurrency = item?.currency ?: Currency.GP,
                         onCurrencyChanged = { currency = it },
                         modifier = Modifier
                             .wrapContentWidth()
@@ -112,17 +169,29 @@ fun AddItemScreen(
         PropertyTextBox(
             label = stringResource(id = R.string.description),
             onValueChangeAction = { description = it },
+            startingText = item?.description.orEmpty(),
             supportingText = { OptionalTextField() }
+        )
+    }
+
+    viewState.discardConfirmationDialog?.let { messageId ->
+        ConfirmationDialog(
+            model = null,
+            messageId = messageId,
+            confirmTextId = R.string.discard,
+            onConfirmClicked = { onBackConfirmed() },
+            onDismissRequest = onDialogDismissed
         )
     }
 }
 
 @Composable
-fun CurrencyField(
+private fun CurrencyField(
+    startingCurrency: Currency,
     onCurrencyChanged: (Currency) -> Unit,
     modifier: Modifier
 ) {
-    var text by rememberSaveable { mutableStateOf(Currency.GP.name.lowercase()) }
+    var text by rememberSaveable { mutableStateOf(startingCurrency.name.lowercase()) }
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     OutlinedTextField(

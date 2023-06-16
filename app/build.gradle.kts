@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.runtime.livedata)
+    implementation(libs.window)
 
     // Hilt
     implementation(libs.hilt)

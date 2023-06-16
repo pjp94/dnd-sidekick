@@ -1,6 +1,8 @@
 package com.pancholi.grabbag.ui
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,6 +53,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pancholi.grabbag.R
+import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.navigation.Action
 import com.pancholi.grabbag.navigation.Category
 
@@ -89,7 +92,7 @@ fun Message(
 @Composable
 fun AddButton(
     category: Category,
-    onAddClicked: (Action) -> Unit,
+    onAddClicked: (Action, String?) -> Unit,
     modifier: Modifier
 ) {
     FloatingActionButton(
@@ -100,7 +103,7 @@ fun AddButton(
                 contentDescription = stringResource(id = R.string.add_icon_description)
             )
         },
-        onClick = { onAddClicked(category.addAction) },
+        onClick = { onAddClicked(category.addAction, "") },
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onSurface
     )
@@ -166,8 +169,10 @@ fun PropertyTextField(
     onValueChangeAction: (String) -> Unit = {},
     supportingText: @Composable ((String) -> Unit) = {},
     numberOnly: Boolean = false,
+    startingText: String = ""
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
+    Log.d("EDIT_TAG", "$label: $startingText")
+    var text by rememberSaveable { mutableStateOf(startingText) }
 
     OutlinedTextField(
         value = text,
@@ -194,9 +199,10 @@ fun PropertyTextField(
 fun PropertyTextBox(
     label: String,
     onValueChangeAction: (String) -> Unit = {},
-    supportingText: @Composable ((String) -> Unit) = {}
+    supportingText: @Composable ((String) -> Unit) = {},
+    startingText: String = ""
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
+    var text by rememberSaveable { mutableStateOf(startingText) }
 
     OutlinedTextField(
         value = text,
@@ -242,8 +248,15 @@ fun TopBarButton(
     imageVector: ImageVector,
     contentDescription: String
 ) {
+    var handled by remember { mutableStateOf(false) }
+
     IconButton(
-        onClick = onClick
+        onClick = {
+            if (handled.not()) {
+                handled = true
+                onClick()
+            }
+        }
     ) {
         Icon(
             imageVector = imageVector,
@@ -253,29 +266,29 @@ fun TopBarButton(
 }
 
 @Composable
-fun ConfirmDeleteDialog(
-    name: String,
-    onConfirmDeleteClicked: () -> Unit,
+fun ConfirmationDialog(
+    model: CategoryModel?,
+    title: @Composable (() -> Unit)? = null,
+    @StringRes messageId: Int,
+    @StringRes confirmTextId: Int,
+    onConfirmClicked: (CategoryModel?) -> Unit,
+    @StringRes dismissTextId: Int = R.string.cancel,
     onDismissRequest: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = {
-            Text(
-                text = stringResource(id = R.string.delete_dialog_title, name)
-            )
-        },
+        title = title,
         text = {
             Text(
-                text = stringResource(id = R.string.delete_dialog_message)
+                text = stringResource(id = messageId)
             )
        },
         confirmButton = {
             TextButton(
-                onClick = onConfirmDeleteClicked
+                onClick = { onConfirmClicked(model) }
             ) {
                 Text(
-                    text = stringResource(id = R.string.delete)
+                    text = stringResource(id = confirmTextId)
                 )
             }
         },
@@ -284,7 +297,7 @@ fun ConfirmDeleteDialog(
                 onClick = onDismissRequest
             ) {
                 Text(
-                    text = stringResource(id = R.string.cancel)
+                    text = stringResource(id = dismissTextId)
                 )
             }
         }

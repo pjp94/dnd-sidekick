@@ -1,4 +1,4 @@
-package com.pancholi.grabbag.ui.screen
+package com.pancholi.grabbag.ui.screen.modelaction
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,11 +22,12 @@ import com.pancholi.grabbag.ui.BackableScreen
 import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
-fun AddScreenBase(
+fun ModelActionScreenBase(
     title: String,
     modelSaved: SharedFlow<Unit>,
     onBackPressed: () -> Unit,
     onSaveClicked: () -> Unit,
+    onModelSaved: () -> Unit,
     innerContent: @Composable () -> Unit
 ) {
     BackableScreen(
@@ -52,7 +53,7 @@ fun AddScreenBase(
     )
 
     LaunchedEffect(Unit) {
-        modelSaved.collect { onBackPressed() }
+        modelSaved.collect { onModelSaved() }
     }
 }
 
@@ -68,4 +69,9 @@ fun TopBarSaveAction(
             contentDescription = stringResource(id = R.string.save_icon_description)
         )
     }
+}
+
+enum class ModelAction {
+    ADD,
+    EDIT
 }

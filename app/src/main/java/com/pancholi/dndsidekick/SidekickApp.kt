@@ -8,6 +8,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -27,6 +28,7 @@ import com.pancholi.dndsidekick.navigation.SidekickGraph
 @Composable
 internal fun SidekickApp(
     navController: NavHostController = rememberNavController(),
+    windowSizeClass: WindowSizeClass,
     items: List<Screen>
 ) {
     val appState: SidekickAppState = rememberSidekickAppState()

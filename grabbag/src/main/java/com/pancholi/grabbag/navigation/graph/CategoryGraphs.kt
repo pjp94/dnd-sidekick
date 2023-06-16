@@ -11,19 +11,19 @@ import com.pancholi.grabbag.R
 import com.pancholi.grabbag.navigation.Action
 import com.pancholi.grabbag.navigation.Category
 import com.pancholi.grabbag.ui.screen.CategoryScreen
-import com.pancholi.grabbag.ui.screen.item.AddItemViewModel
+import com.pancholi.grabbag.ui.screen.item.ItemActionViewModel
 import com.pancholi.grabbag.ui.screen.item.ItemViewModel
-import com.pancholi.grabbag.ui.screen.location.AddLocationViewModel
+import com.pancholi.grabbag.ui.screen.location.LocationActionViewModel
 import com.pancholi.grabbag.ui.screen.location.LocationViewModel
-import com.pancholi.grabbag.ui.screen.npc.AddNpcViewModel
+import com.pancholi.grabbag.ui.screen.npc.NpcActionViewModel
 import com.pancholi.grabbag.ui.screen.npc.NpcViewModel
-import com.pancholi.grabbag.ui.screen.shop.AddShopViewModel
+import com.pancholi.grabbag.ui.screen.shop.ShopActionViewModel
 import com.pancholi.grabbag.ui.screen.shop.ShopViewModel
 
 fun NavGraphBuilder.npcGraph(
     showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     onBackPressed: () -> Unit,
-    onAddClicked: (Action) -> Unit,
+    onNavigateAction: (Action, String?) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit,
 ) {
     navigation(startDestination = Category.NPC.route, route = "npc_home") {
@@ -31,7 +31,7 @@ fun NavGraphBuilder.npcGraph(
             val title = stringResource(id = R.string.npcs)
             val errorMessage = stringResource(id = R.string.empty_category, title)
             val npcViewModel: NpcViewModel = hiltViewModel()
-            val addNpcViewModel: AddNpcViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+            val npcActionViewModel: NpcActionViewModel = it.viewModelScopedTo(route = "grab_bag_home")
 
             CategoryScreen(
                 category = Category.NPC,
@@ -39,9 +39,9 @@ fun NavGraphBuilder.npcGraph(
                 showSnackbar = showSnackbar,
                 errorMessage = errorMessage,
                 viewModel = npcViewModel,
-                addViewModel = addNpcViewModel,
+                actionViewModel = npcActionViewModel,
                 onBackPressed = onBackPressed,
-                onAddClicked = onAddClicked
+                onNavigateAction = onNavigateAction
             )
         }
         nestedGraphs()
@@ -51,7 +51,7 @@ fun NavGraphBuilder.npcGraph(
 fun NavGraphBuilder.shopGraph(
     showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     onBackPressed: () -> Unit,
-    onAddClicked: (Action) -> Unit,
+    onNavigateAction: (Action, String?) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit
 ) {
     navigation(startDestination = Category.SHOP.route, route = "shop_home") {
@@ -59,7 +59,7 @@ fun NavGraphBuilder.shopGraph(
             val title = stringResource(id = R.string.shops)
             val errorMessage = stringResource(id = R.string.empty_category, title.lowercase())
             val shopViewModel: ShopViewModel = hiltViewModel()
-            val addShopViewModel: AddShopViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+            val shopActionViewModel: ShopActionViewModel = it.viewModelScopedTo(route = "grab_bag_home")
 
             CategoryScreen(
                 category = Category.SHOP,
@@ -67,9 +67,9 @@ fun NavGraphBuilder.shopGraph(
                 showSnackbar = showSnackbar,
                 errorMessage = errorMessage,
                 viewModel = shopViewModel,
-                addViewModel = addShopViewModel,
+                actionViewModel = shopActionViewModel,
                 onBackPressed = onBackPressed,
-                onAddClicked = onAddClicked
+                onNavigateAction = onNavigateAction
             )
         }
         nestedGraphs()
@@ -79,7 +79,7 @@ fun NavGraphBuilder.shopGraph(
 fun NavGraphBuilder.locationGraph(
     showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     onBackPressed: () -> Unit,
-    onAddClicked: (Action) -> Unit,
+    onNavigateAction: (Action, String?) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit
 ) {
     navigation(startDestination = Category.LOCATION.route, route = "location_home") {
@@ -87,7 +87,7 @@ fun NavGraphBuilder.locationGraph(
             val title = stringResource(id = R.string.locations)
             val errorMessage = stringResource(id = R.string.empty_category, title.lowercase())
             val locationViewModel: LocationViewModel = hiltViewModel()
-            val addLocationViewModel: AddLocationViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+            val locationActionViewModel: LocationActionViewModel = it.viewModelScopedTo(route = "grab_bag_home")
 
             CategoryScreen(
                 category = Category.LOCATION,
@@ -95,9 +95,9 @@ fun NavGraphBuilder.locationGraph(
                 showSnackbar = showSnackbar,
                 errorMessage = errorMessage,
                 viewModel = locationViewModel,
-                addViewModel = addLocationViewModel,
+                actionViewModel = locationActionViewModel,
                 onBackPressed = onBackPressed,
-                onAddClicked = onAddClicked
+                onNavigateAction = onNavigateAction
             )
         }
         nestedGraphs()
@@ -107,7 +107,7 @@ fun NavGraphBuilder.locationGraph(
 fun NavGraphBuilder.itemGraph(
     showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     onBackPressed: () -> Unit,
-    onAddClicked: (Action) -> Unit,
+    onNavigateAction: (Action, String?) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit
 ) {
     navigation(startDestination = Category.ITEM.route, route = "item_home") {
@@ -115,7 +115,7 @@ fun NavGraphBuilder.itemGraph(
             val title = stringResource(id = R.string.items)
             val errorMessage = stringResource(id = R.string.empty_category, title.lowercase())
             val itemViewModel: ItemViewModel = hiltViewModel()
-            val addItemViewModel: AddItemViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+            val itemActionViewModel: ItemActionViewModel = it.viewModelScopedTo(route = "grab_bag_home")
 
             CategoryScreen(
                 category = Category.ITEM,
@@ -123,9 +123,9 @@ fun NavGraphBuilder.itemGraph(
                 showSnackbar = showSnackbar,
                 errorMessage = errorMessage,
                 viewModel = itemViewModel,
-                addViewModel = addItemViewModel,
+                actionViewModel = itemActionViewModel,
                 onBackPressed = onBackPressed,
-                onAddClicked = onAddClicked
+                onNavigateAction = onNavigateAction
             )
         }
         nestedGraphs()

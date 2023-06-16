@@ -26,6 +26,7 @@ runtime-livedata = "1.4.3"
 turbine = "0.12.1"
 appcompat = "1.6.1"
 org-jetbrains-kotlin-jvm = "1.8.10"
+window = "1.1.0"
 
 [libraries]
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
@@ -66,7 +67,8 @@ ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version = "1.1.5" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidx-test-ext-junit" }
+window = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "window" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

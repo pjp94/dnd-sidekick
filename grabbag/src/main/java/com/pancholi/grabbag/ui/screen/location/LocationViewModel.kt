@@ -38,6 +38,8 @@ class LocationViewModel @Inject constructor(
                 .collect { entities ->
                     val result = if (entities.isNotEmpty()) {
                         val locations = entities.map { locationMapper.fromEntity(it) }
+                        updateModelForDialog(locations)
+
                         Result.Success(locations)
                     } else {
                         Result.Error(EmptyDatabaseException())

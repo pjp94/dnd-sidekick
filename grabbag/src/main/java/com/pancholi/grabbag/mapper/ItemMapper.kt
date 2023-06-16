@@ -3,6 +3,7 @@ package com.pancholi.grabbag.mapper
 import android.content.res.Resources
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.database.entity.ItemEntity
+import com.pancholi.grabbag.getOrEmptyForEdit
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.model.ImportedModel
 import com.pancholi.grabbag.requireString
@@ -20,6 +21,20 @@ class ItemMapper @Inject constructor(
             cost = entity.cost ?: resources.getString(R.string.unspecified),
             currency = entity.currency,
             description = entity.description ?: resources.getString(R.string.unspecified),
+            isUsed = entity.isUsed
+        )
+    }
+
+    fun fromEntityToEdit(entity: ItemEntity): CategoryModel.Item {
+        val unspecified = resources.getString(R.string.unspecified)
+
+        return CategoryModel.Item(
+            id = entity.id,
+            name = entity.name,
+            type = entity.type,
+            cost = entity.cost.getOrEmptyForEdit(unspecified),
+            currency = entity.currency,
+            description = entity.description.getOrEmptyForEdit(unspecified),
             isUsed = entity.isUsed
         )
     }

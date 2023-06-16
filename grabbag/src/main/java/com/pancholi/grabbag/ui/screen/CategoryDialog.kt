@@ -17,19 +17,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.pancholi.grabbag.R
-import com.pancholi.grabbag.ui.ConfirmDeleteDialog
+import com.pancholi.grabbag.model.CategoryModel
+import com.pancholi.grabbag.navigation.Action
+import com.pancholi.grabbag.navigation.Category
+import com.pancholi.grabbag.ui.ConfirmationDialog
 import com.pancholi.grabbag.ui.TopBarButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryDialog(
+    category: Category,
+    model: CategoryModel,
     name: String,
     content: @Composable (PaddingValues) -> Unit,
     showDeleteDialogForModel: Boolean,
     onDismissRequest: () -> Unit,
     onDeleteClicked: () -> Unit,
-    onConfirmDeleteClicked: () -> Unit,
-    onDeleteDialogDismissed: () -> Unit
+    onConfirmDeleteClicked: (CategoryModel?) -> Unit,
+    onDeleteDialogDismissed: () -> Unit,
+    onEditClicked: (Action, String?) -> Unit
 ) {
     Dialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -59,7 +65,7 @@ fun CategoryDialog(
                             )
 
                             TopBarButton(
-                                onClick = { /*TODO*/ },
+                                onClick = { onEditClicked(category.editAction, model.id.toString()) },
                                 imageVector = Icons.Filled.Edit,
                                 contentDescription = stringResource(id = R.string.edit_icon_description)
                             )
@@ -73,9 +79,12 @@ fun CategoryDialog(
     }
 
     if (showDeleteDialogForModel) {
-        ConfirmDeleteDialog(
-            name = name,
-            onConfirmDeleteClicked = onConfirmDeleteClicked,
+        ConfirmationDialog(
+            model = model,
+            title = { Text(text = stringResource(id = R.string.delete_dialog_title, name)) },
+            messageId = R.string.delete_dialog_message,
+            confirmTextId = R.string.delete,
+            onConfirmClicked = onConfirmDeleteClicked,
             onDismissRequest = onDeleteDialogDismissed
         )
     }

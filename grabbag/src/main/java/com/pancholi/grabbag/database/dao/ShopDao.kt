@@ -24,6 +24,9 @@ interface ShopDao {
     @Delete
     suspend fun delete(shop: ShopEntity): Int
 
+    @Query("SELECT * FROM shop WHERE id = :id")
+    fun getById(id: Int): Flow<ShopEntity>
+
     @Query("SELECT * FROM shop")
     fun getAll(): Flow<List<ShopEntity>>
 

@@ -9,3 +9,13 @@ fun String?.requireString(
         this
     }
 }
+
+fun String?.getOrEmptyForEdit(
+    unspecified: String
+): String {
+    return if (this.isNullOrBlank() || this == unspecified) {
+        ""
+    } else {
+        this
+    }
+}

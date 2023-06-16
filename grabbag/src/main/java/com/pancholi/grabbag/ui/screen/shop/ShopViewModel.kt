@@ -38,6 +38,8 @@ class ShopViewModel @Inject constructor(
                 .collect { entities ->
                     val result = if (entities.isNotEmpty()) {
                         val shops = entities.map { shopMapper.fromEntity(it) }
+                        updateModelForDialog(shops)
+
                         Result.Success(shops)
                     } else {
                         Result.Error(EmptyDatabaseException())

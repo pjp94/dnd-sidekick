@@ -3,6 +3,7 @@ package com.pancholi.grabbag.mapper
 import android.content.res.Resources
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.database.entity.NpcEntity
+import com.pancholi.grabbag.getOrEmptyForEdit
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.model.ImportedModel
 import com.pancholi.grabbag.requireString
@@ -21,6 +22,21 @@ class NpcMapper @Inject constructor(
             clss = entity.clss ?: resources.getString(R.string.unspecified),
             profession = entity.profession ?: resources.getString(R.string.unspecified),
             description = entity.description ?: resources.getString(R.string.unspecified),
+            isUsed = entity.isUsed
+        )
+    }
+
+    fun fromEntityToEdit(entity: NpcEntity): CategoryModel.Npc {
+        val unspecified = resources.getString(R.string.unspecified)
+
+        return CategoryModel.Npc(
+            id = entity.id,
+            name = entity.name,
+            race = entity.race,
+            gender = entity.gender,
+            clss = entity.clss.getOrEmptyForEdit(unspecified),
+            profession = entity.profession.getOrEmptyForEdit(unspecified),
+            description = entity.description.getOrEmptyForEdit(unspecified),
             isUsed = entity.isUsed
         )
     }

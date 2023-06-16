@@ -3,6 +3,7 @@ package com.pancholi.grabbag.mapper
 import android.content.res.Resources
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.database.entity.LocationEntity
+import com.pancholi.grabbag.getOrEmptyForEdit
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.model.ImportedModel
 import com.pancholi.grabbag.requireString
@@ -18,6 +19,18 @@ class LocationMapper @Inject constructor(
             name = entity.name,
             type = entity.type,
             description = entity.description ?: resources.getString(R.string.unspecified),
+            isUsed = entity.isUsed
+        )
+    }
+
+    fun fromEntityToEdit(entity: LocationEntity): CategoryModel.Location {
+        val unspecified = resources.getString(R.string.unspecified)
+
+        return CategoryModel.Location(
+            id = entity.id,
+            name = entity.name,
+            type = entity.type,
+            description = entity.description.getOrEmptyForEdit(unspecified),
             isUsed = entity.isUsed
         )
     }

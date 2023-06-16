@@ -33,6 +33,12 @@ class ItemRepository @Inject constructor(
             .delete(item)
     }
 
+    fun getById(id: Int): Flow<ItemEntity> {
+        return database
+            .itemDao()
+            .getById(id)
+    }
+
     fun getAllItems(): Flow<List<ItemEntity>> {
         return database
             .itemDao()

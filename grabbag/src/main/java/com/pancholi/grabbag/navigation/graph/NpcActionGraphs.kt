@@ -7,23 +7,56 @@ import androidx.navigation.compose.composable
 import com.pancholi.core.viewModelScopedTo
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.navigation.Action
-import com.pancholi.grabbag.ui.screen.npc.AddNpcScreen
-import com.pancholi.grabbag.ui.screen.npc.AddNpcViewModel
+import com.pancholi.grabbag.ui.screen.modelaction.ModelAction
+import com.pancholi.grabbag.ui.screen.npc.NpcActionScreen
+import com.pancholi.grabbag.ui.screen.npc.NpcActionViewModel
 
 fun NavGraphBuilder.addNpcScreen(
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    onModelSaved: () -> Unit
 ) {
     composable(Action.ADD_NPC.route) {
-        val viewModel: AddNpcViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+        val viewModel: NpcActionViewModel = it.viewModelScopedTo(route = "grab_bag_home")
         val viewState = viewModel.viewState.collectAsStateWithLifecycle()
 
-        AddNpcScreen(
+        NpcActionScreen(
+            modelAction = ModelAction.ADD,
             title = stringResource(id = R.string.add_npc),
-            onBackPressed = {
+            onBackPressed = { viewModel.onBackPressed(ModelAction.ADD) },
+            onBackConfirmed = {
                 onBackPressed()
                 viewModel.resetViewState()
             },
-            onSaveClicked = { npc -> viewModel.onSaveClicked(npc) },
+            onSaveClicked = { npc, action -> viewModel.onSaveClicked(npc, action) },
+            onModelSaved = onModelSaved,
+            onDialogDismissed = { viewModel.onDialogDismissed() },
+            viewState = viewState.value,
+            npcSaved = viewModel.modelSaved
+        )
+    }
+}
+
+fun NavGraphBuilder.editNpcScreen(
+    onBackPressed: () -> Unit,
+    onModelSaved: () -> Unit
+) {
+    composable("${Action.EDIT_NPC.route}{id}") {
+        val viewModel: NpcActionViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+        val viewState = viewModel.viewState.collectAsStateWithLifecycle()
+
+        it.arguments?.getString("id")?.let { id -> viewModel.getModelById(id = id.toInt()) }
+
+        NpcActionScreen(
+            modelAction = ModelAction.EDIT,
+            title = stringResource(id = R.string.edit_npc),
+            onBackPressed = { viewModel.onBackPressed(ModelAction.EDIT) },
+            onBackConfirmed = {
+                onBackPressed()
+                viewModel.resetViewState()
+            },
+            onSaveClicked = { npc, action -> viewModel.onSaveClicked(npc, action) },
+            onModelSaved = onModelSaved,
+            onDialogDismissed = { viewModel.onDialogDismissed() },
             viewState = viewState.value,
             npcSaved = viewModel.modelSaved
         )

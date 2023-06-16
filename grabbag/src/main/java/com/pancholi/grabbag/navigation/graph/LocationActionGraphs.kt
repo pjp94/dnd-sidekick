@@ -7,23 +7,56 @@ import androidx.navigation.compose.composable
 import com.pancholi.core.viewModelScopedTo
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.navigation.Action
-import com.pancholi.grabbag.ui.screen.location.AddLocationScreen
-import com.pancholi.grabbag.ui.screen.location.AddLocationViewModel
+import com.pancholi.grabbag.ui.screen.location.LocationActionScreen
+import com.pancholi.grabbag.ui.screen.location.LocationActionViewModel
+import com.pancholi.grabbag.ui.screen.modelaction.ModelAction
 
 fun NavGraphBuilder.addLocationScreen(
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    onModelSaved: () -> Unit
 ) {
     composable(Action.ADD_LOCATION.route) {
-        val viewModel: AddLocationViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+        val viewModel: LocationActionViewModel = it.viewModelScopedTo(route = "grab_bag_home")
         val viewState = viewModel.viewState.collectAsStateWithLifecycle()
 
-        AddLocationScreen(
+        LocationActionScreen(
+            modelAction = ModelAction.ADD,
             title = stringResource(id = R.string.add_location),
-            onBackPressed = {
+            onBackPressed = { viewModel.onBackPressed(ModelAction.ADD) },
+            onBackConfirmed = {
                 onBackPressed()
                 viewModel.resetViewState()
             },
-            onSaveClicked = { location -> viewModel.onSaveClicked(location) },
+            onSaveClicked = { location, action -> viewModel.onSaveClicked(location, action) },
+            onModelSaved = onModelSaved,
+            onDialogDismissed = { viewModel.onDialogDismissed() },
+            viewState = viewState.value,
+            locationSaved = viewModel.modelSaved
+        )
+    }
+}
+
+fun NavGraphBuilder.editLocationScreen(
+    onBackPressed: () -> Unit,
+    onModelSaved: () -> Unit
+) {
+    composable("${Action.EDIT_LOCATION.route}{id}") {
+        val viewModel: LocationActionViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+        val viewState = viewModel.viewState.collectAsStateWithLifecycle()
+
+        it.arguments?.getString("id")?.let { id -> viewModel.getModelById(id = id.toInt()) }
+
+        LocationActionScreen(
+            modelAction = ModelAction.EDIT,
+            title = stringResource(id = R.string.edit_location),
+            onBackPressed = { viewModel.onBackPressed(ModelAction.ADD) },
+            onBackConfirmed = {
+                onBackPressed()
+                viewModel.resetViewState()
+            },
+            onSaveClicked = { location, action -> viewModel.onSaveClicked(location, action) },
+            onModelSaved = onModelSaved,
+            onDialogDismissed = { viewModel.onDialogDismissed() },
             viewState = viewState.value,
             locationSaved = viewModel.modelSaved
         )

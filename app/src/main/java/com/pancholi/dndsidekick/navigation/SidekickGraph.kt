@@ -10,6 +10,10 @@ import com.pancholi.grabbag.navigation.graph.addItemScreen
 import com.pancholi.grabbag.navigation.graph.addLocationScreen
 import com.pancholi.grabbag.navigation.graph.addNpcScreen
 import com.pancholi.grabbag.navigation.graph.addShopScreen
+import com.pancholi.grabbag.navigation.graph.editItemScreen
+import com.pancholi.grabbag.navigation.graph.editLocationScreen
+import com.pancholi.grabbag.navigation.graph.editNpcScreen
+import com.pancholi.grabbag.navigation.graph.editShopScreen
 import com.pancholi.grabbag.navigation.graph.grabBagGraph
 import com.pancholi.grabbag.navigation.graph.itemGraph
 import com.pancholi.grabbag.navigation.graph.locationGraph
@@ -36,40 +40,68 @@ fun SidekickGraph(
                 npcGraph(
                     showSnackbar = showSnackbar,
                     onBackPressed = { navController.popBackStack() },
-                    onAddClicked = { action -> navController.navigate(action.route) },
+                    onNavigateAction = { action, id ->
+                        navController.navigate("${action.route}$id")
+                    },
                     nestedGraphs = {
                         addNpcScreen(
-                            onBackPressed = { navController.popBackStack() }
+                            onBackPressed = { navController.popBackStack() },
+                            onModelSaved = { navController.popBackStack() }
+                        )
+                        editNpcScreen(
+                            onBackPressed = { navController.popBackStack() },
+                            onModelSaved = { navController.popBackStack() }
                         )
                     }
                 )
                 shopGraph(
                     showSnackbar = showSnackbar,
                     onBackPressed = { navController.popBackStack() },
-                    onAddClicked = { action -> navController.navigate(action.route) },
+                    onNavigateAction = { action, id ->
+                        navController.navigate("${action.route}$id")
+                    },
                     nestedGraphs = {
                         addShopScreen(
-                            onBackPressed = { navController.popBackStack() }
+                            onBackPressed = { navController.popBackStack() },
+                            onModelSaved = { navController.popBackStack() }
+                        )
+                        editShopScreen(
+                            onBackPressed = { navController.popBackStack() },
+                            onModelSaved = { navController.popBackStack() }
                         )
                     }
                 )
                 locationGraph(
                     showSnackbar = showSnackbar,
                     onBackPressed = { navController.popBackStack() },
-                    onAddClicked = { action -> navController.navigate(action.route) },
+                    onNavigateAction = { action, id ->
+                        navController.navigate("${action.route}$id")
+                   },
                     nestedGraphs = {
                         addLocationScreen(
-                            onBackPressed = { navController.popBackStack() }
+                            onBackPressed = { navController.popBackStack() },
+                            onModelSaved = { navController.popBackStack() }
+                        )
+                        editLocationScreen(
+                            onBackPressed = { navController.popBackStack() },
+                            onModelSaved = { navController.popBackStack() }
                         )
                     }
                 )
                 itemGraph(
                     showSnackbar = showSnackbar,
                     onBackPressed = { navController.popBackStack() },
-                    onAddClicked = { action -> navController.navigate(action.route) },
+                    onNavigateAction = { action, id ->
+                        navController.navigate("${action.route}$id")
+                   },
                     nestedGraphs = {
                         addItemScreen(
-                            onBackPressed = { navController.popBackStack() }
+                            onBackPressed = { navController.popBackStack() },
+                            onModelSaved = { navController.popBackStack() }
+                        )
+                        editItemScreen(
+                            onBackPressed = { navController.popBackStack() },
+                            onModelSaved = { navController.popBackStack() }
                         )
                     }
                 )

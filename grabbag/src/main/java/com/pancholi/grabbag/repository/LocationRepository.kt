@@ -33,6 +33,12 @@ class LocationRepository @Inject constructor(
             .delete(location)
     }
 
+    fun getById(id: Int): Flow<LocationEntity> {
+        return database
+            .locationDao()
+            .getById(id)
+    }
+
     fun getAllLocations(): Flow<List<LocationEntity>> {
         return database
             .locationDao()

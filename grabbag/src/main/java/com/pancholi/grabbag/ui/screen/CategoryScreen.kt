@@ -44,6 +44,7 @@ import com.pancholi.grabbag.ui.screen.item.ItemCard
 import com.pancholi.grabbag.ui.screen.item.ItemDialog
 import com.pancholi.grabbag.ui.screen.location.LocationCard
 import com.pancholi.grabbag.ui.screen.location.LocationDialog
+import com.pancholi.grabbag.ui.screen.modelaction.ActionViewModel
 import com.pancholi.grabbag.ui.screen.npc.NpcCard
 import com.pancholi.grabbag.ui.screen.npc.NpcDialog
 import com.pancholi.grabbag.ui.screen.shop.ShopCard
@@ -57,36 +58,21 @@ fun CategoryScreen(
     showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     errorMessage: String,
     viewModel: CategoryViewModel,
-    addViewModel: AddViewModel,
+    actionViewModel: ActionViewModel,
     onBackPressed: () -> Unit,
-    onAddClicked: (Action) -> Unit,
+    onNavigateAction: (Action, String?) -> Unit
 ) {
     val state = viewModel.viewState.collectAsStateWithLifecycle()
     val viewState = state.value
-
-    viewState.showDetailDialogForModel?.let {
-        ModelDialog(
-            category = category,
-            model = it,
-            showDeleteDialogForModel = viewState.showDeleteConfirmation,
-            onDismissRequest = { viewModel.onDetailDialogDismissed() },
-            onDeleteClicked = { viewModel.onDeleteClicked() },
-            onConfirmDeleteClicked = {
-                viewModel.apply {
-                    onDeleteModel(it)
-                    onDeleteDialogDismissed()
-                    onDetailDialogDismissed()
-                }
-            },
-            onDeleteDialogDismissed = { viewModel.onDeleteDialogDismissed() }
-        )
-    }
 
     LaunchedEffect(Unit) {
         viewModel.snackbarVisuals.collectLatest {
             showSnackbar(it)
         }
-        addViewModel.addSnackbarVisuals.collect {
+    }
+
+    LaunchedEffect(Unit) {
+        actionViewModel.addSnackbarVisuals.collectLatest {
             showSnackbar(it)
         }
     }
@@ -104,12 +90,25 @@ fun CategoryScreen(
                     category = category,
                     result = viewState.result,
                     errorMessage = errorMessage,
-                    onCardClicked = { viewModel.onCardClicked(it) }
+                    onCardClicked = { viewModel.onShowDetailDialog(it) },
+                    showDetailDialogForModel = viewState.showDetailDialogForModel,
+                    showDeleteDialogForModel = viewState.showDeleteConfirmation,
+                    onDismissRequest = { viewModel.onDetailDialogDismissed() },
+                    onDeleteClicked = { viewModel.onDeleteClicked() },
+                    onConfirmDeleteClicked = { model ->
+                        viewModel.apply {
+                            model?.let { onDeleteModel(model) }
+                            onDeleteDialogDismissed()
+                            onDetailDialogDismissed()
+                        }
+                    },
+                    onDeleteDialogDismissed = { viewModel.onDeleteDialogDismissed() },
+                    onEditClicked = onNavigateAction
                 )
 
                 AddButton(
                     category = category,
-                    onAddClicked = onAddClicked,
+                    onAddClicked = onNavigateAction,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(16.dp)
@@ -125,7 +124,14 @@ fun CategoryBody(
     category: Category,
     result: Result,
     errorMessage: String,
-    onCardClicked: (CategoryModel) -> Unit
+    onCardClicked: (CategoryModel) -> Unit,
+    showDetailDialogForModel: CategoryModel?,
+    showDeleteDialogForModel: Boolean,
+    onDismissRequest: () -> Unit,
+    onDeleteClicked: () -> Unit,
+    onConfirmDeleteClicked: (CategoryModel?) -> Unit,
+    onDeleteDialogDismissed: () -> Unit,
+    onEditClicked: (Action, String?) -> Unit
 ) {
     when (result) {
         is Result.Loading -> LoadingIndicator()
@@ -135,7 +141,14 @@ fun CategoryBody(
             CardColumn(
                 category = category,
                 models = models,
-                onCardClicked = onCardClicked
+                onCardClicked = onCardClicked,
+                showDetailDialogForModel = showDetailDialogForModel,
+                showDeleteDialogForModel = showDeleteDialogForModel,
+                onDismissRequest = onDismissRequest,
+                onDeleteClicked = onDeleteClicked,
+                onConfirmDeleteClicked = onConfirmDeleteClicked,
+                onDeleteDialogDismissed = onDeleteDialogDismissed,
+                onEditClicked = onEditClicked
             )
         }
         is Result.Error -> {
@@ -151,7 +164,14 @@ fun CategoryBody(
 fun CardColumn(
     category: Category,
     models: List<CategoryModel>,
-    onCardClicked: (CategoryModel) -> Unit
+    onCardClicked: (CategoryModel) -> Unit,
+    showDetailDialogForModel: CategoryModel?,
+    showDeleteDialogForModel: Boolean,
+    onDismissRequest: () -> Unit,
+    onDeleteClicked: () -> Unit,
+    onConfirmDeleteClicked: (CategoryModel?) -> Unit,
+    onDeleteDialogDismissed: () -> Unit,
+    onEditClicked: (Action, String?) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -172,6 +192,19 @@ fun CardColumn(
 
         Spacer(modifier = Modifier.height(8.dp))
     }
+
+    showDetailDialogForModel?.let {
+        ModelDialog(
+            category = category,
+            model = it,
+            showDeleteDialogForModel = showDeleteDialogForModel,
+            onDismissRequest = onDismissRequest,
+            onDeleteClicked = onDeleteClicked,
+            onConfirmDeleteClicked = onConfirmDeleteClicked,
+            onDeleteDialogDismissed = onDeleteDialogDismissed,
+            onEditClicked = onEditClicked
+        )
+    }
 }
 
 @Composable
@@ -189,7 +222,6 @@ fun CategoryCard(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
-//                verticalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, start = 16.dp, end = 16.dp)
@@ -263,8 +295,9 @@ private fun ModelDialog(
     showDeleteDialogForModel: Boolean,
     onDismissRequest: () -> Unit,
     onDeleteClicked: () -> Unit,
-    onConfirmDeleteClicked: () -> Unit,
+    onConfirmDeleteClicked: (CategoryModel?) -> Unit,
     onDeleteDialogDismissed: () -> Unit,
+    onEditClicked: (Action, String?) -> Unit
 ) {
     val name: String
     val content: @Composable (PaddingValues) -> Unit
@@ -313,12 +346,15 @@ private fun ModelDialog(
     }
 
     CategoryDialog(
+        category = category,
+        model = model,
         name = name,
         content = content,
         showDeleteDialogForModel = showDeleteDialogForModel,
         onDismissRequest = onDismissRequest,
         onDeleteClicked = onDeleteClicked,
         onConfirmDeleteClicked = onConfirmDeleteClicked,
-        onDeleteDialogDismissed = onDeleteDialogDismissed
+        onDeleteDialogDismissed = onDeleteDialogDismissed,
+        onEditClicked = onEditClicked
     )
 }

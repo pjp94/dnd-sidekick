@@ -38,6 +38,8 @@ class NpcViewModel @Inject constructor(
                 .collect { entities ->
                     val result = if (entities.isNotEmpty()) {
                         val npcs = entities.map { npcMapper.fromEntity(it) }
+                        updateModelForDialog(models = npcs)
+
                         Result.Success(npcs)
                     } else {
                         Result.Error(EmptyDatabaseException())

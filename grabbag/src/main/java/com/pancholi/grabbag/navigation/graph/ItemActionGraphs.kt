@@ -7,23 +7,56 @@ import androidx.navigation.compose.composable
 import com.pancholi.core.viewModelScopedTo
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.navigation.Action
-import com.pancholi.grabbag.ui.screen.item.AddItemScreen
-import com.pancholi.grabbag.ui.screen.item.AddItemViewModel
+import com.pancholi.grabbag.ui.screen.item.ItemActionScreen
+import com.pancholi.grabbag.ui.screen.item.ItemActionViewModel
+import com.pancholi.grabbag.ui.screen.modelaction.ModelAction
 
 fun NavGraphBuilder.addItemScreen(
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    onModelSaved: () -> Unit
 ) {
     composable(Action.ADD_ITEM.route) {
-        val viewModel: AddItemViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+        val viewModel: ItemActionViewModel = it.viewModelScopedTo(route = "grab_bag_home")
         val viewState = viewModel.viewState.collectAsStateWithLifecycle()
 
-        AddItemScreen(
+        ItemActionScreen(
+            modelAction = ModelAction.ADD,
             title = stringResource(id = R.string.add_item),
-            onBackPressed = {
+            onBackPressed = { viewModel.onBackPressed(ModelAction.ADD) },
+            onBackConfirmed = {
                 onBackPressed()
                 viewModel.resetViewState()
             },
-            onSaveClicked = { item -> viewModel.onSaveClicked(item) },
+            onSaveClicked = { item, action -> viewModel.onSaveClicked(item, action) },
+            onModelSaved = onModelSaved,
+            onDialogDismissed = { viewModel.onDialogDismissed() },
+            viewState = viewState.value,
+            itemSaved = viewModel.modelSaved
+        )
+    }
+}
+
+fun NavGraphBuilder.editItemScreen(
+    onBackPressed: () -> Unit,
+    onModelSaved: () -> Unit
+) {
+    composable("${Action.EDIT_ITEM.route}{id}") {
+        val viewModel: ItemActionViewModel = it.viewModelScopedTo(route = "grab_bag_home")
+        val viewState = viewModel.viewState.collectAsStateWithLifecycle()
+
+        it.arguments?.getString("id")?.let { id -> viewModel.getModelById(id = id.toInt()) }
+
+        ItemActionScreen(
+            modelAction = ModelAction.EDIT,
+            title = stringResource(id = R.string.edit_item),
+            onBackPressed = { viewModel.onBackPressed(ModelAction.EDIT) },
+            onBackConfirmed = {
+                onBackPressed()
+                viewModel.resetViewState()
+            },
+            onSaveClicked = { item, action -> viewModel.onSaveClicked(item, action) },
+            onModelSaved = onModelSaved,
+            onDialogDismissed = { viewModel.onDialogDismissed() },
             viewState = viewState.value,
             itemSaved = viewModel.modelSaved
         )

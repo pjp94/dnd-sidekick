@@ -33,6 +33,12 @@ class NpcRepository @Inject constructor(
             .delete(npc)
     }
 
+    fun getById(id: Int): Flow<NpcEntity> {
+        return database
+            .npcDao()
+            .getById(id)
+    }
+
     fun getAllNpcs(): Flow<List<NpcEntity>> {
         return database
             .npcDao()

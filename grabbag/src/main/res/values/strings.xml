@@ -46,6 +46,11 @@
     <string name="add_location">Add Location</string>
     <string name="add_item">Add Item</string>
 
+    <string name="edit_npc">Edit NPC</string>
+    <string name="edit_shop">Edit Shop</string>
+    <string name="edit_location">Edit Location</string>
+    <string name="edit_item">Edit Item</string>
+
     <!-- Import Messages -->
     <string name="import_success">Import successful!</string>
     <string name="import_fail">Failed to import file.</string>
@@ -55,6 +60,12 @@
     <string name="shop_saved">Shop saved.</string>
     <string name="location_saved">Location saved.</string>
     <string name="item_saved">Item saved.</string>
+
+    <!-- Update Model -->
+    <string name="npc_updated">NPC updated.</string>
+    <string name="shop_updated">Shop updated.</string>
+    <string name="location_updated">Location updated.</string>
+    <string name="item_updated">Item updated.</string>
 
     <!-- Delete Model -->
     <string name="delete_dialog_title">Delete %s?</string>
@@ -66,7 +77,8 @@
     <string name="location_deleted">Location deleted.</string>
     <string name="item_deleted">Item deleted.</string>
 
-    <!-- Edit -->
-    <string name="edit_dialog_message">Discard changes?</string>
+    <!-- Discard -->
+    <string name="discard_draft">Discard draft?</string>
+    <string name="discard_changes">Discard changes?</string>
     <string name="discard">Discard</string>
 </resources>
