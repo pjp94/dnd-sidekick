@@ -22,7 +22,17 @@ fun NavGraphBuilder.addItemScreen(
         ItemActionScreen(
             modelAction = ModelAction.ADD,
             title = stringResource(id = R.string.add_item),
-            onBackPressed = { viewModel.onBackPressed(ModelAction.ADD) },
+            onBackPressed = { oldModel, newModel ->
+                viewModel.onBackPressed(
+                    action = ModelAction.ADD,
+                    oldModel = oldModel,
+                    newModel = newModel,
+                    onBackConfirmed = {
+                        onBackPressed()
+                        viewModel.resetViewState()
+                    }
+                )
+            },
             onBackConfirmed = {
                 onBackPressed()
                 viewModel.resetViewState()
@@ -49,7 +59,17 @@ fun NavGraphBuilder.editItemScreen(
         ItemActionScreen(
             modelAction = ModelAction.EDIT,
             title = stringResource(id = R.string.edit_item),
-            onBackPressed = { viewModel.onBackPressed(ModelAction.EDIT) },
+            onBackPressed = { oldModel, newModel ->
+                viewModel.onBackPressed(
+                    action = ModelAction.EDIT,
+                    oldModel = oldModel,
+                    newModel = newModel,
+                    onBackConfirmed = {
+                        onBackPressed()
+                        viewModel.resetViewState()
+                    }
+                )
+            },
             onBackConfirmed = {
                 onBackPressed()
                 viewModel.resetViewState()

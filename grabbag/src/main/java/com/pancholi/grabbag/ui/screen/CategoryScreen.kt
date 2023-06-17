@@ -79,6 +79,7 @@ fun CategoryScreen(
 
     BackableScreen(
         title = title,
+        backSingleClick = true,
         onBackPressed = onBackPressed,
         innerContent = { innerPadding ->
             Box(

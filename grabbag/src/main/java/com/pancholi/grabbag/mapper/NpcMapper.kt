@@ -1,17 +1,11 @@
 package com.pancholi.grabbag.mapper
 
-import android.content.res.Resources
-import com.pancholi.grabbag.R
 import com.pancholi.grabbag.database.entity.NpcEntity
-import com.pancholi.grabbag.getOrEmptyForEdit
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.model.ImportedModel
-import com.pancholi.grabbag.requireString
 import javax.inject.Inject
 
-class NpcMapper @Inject constructor(
-    private val resources: Resources
-) {
+class NpcMapper @Inject constructor() {
 
     fun fromEntity(entity: NpcEntity): CategoryModel.Npc {
         return CategoryModel.Npc(
@@ -19,24 +13,22 @@ class NpcMapper @Inject constructor(
             name = entity.name,
             race = entity.race,
             gender = entity.gender,
-            clss = entity.clss ?: resources.getString(R.string.unspecified),
-            profession = entity.profession ?: resources.getString(R.string.unspecified),
-            description = entity.description ?: resources.getString(R.string.unspecified),
+            clss = entity.clss.orEmpty(),
+            profession = entity.profession.orEmpty(),
+            description = entity.description.orEmpty(),
             isUsed = entity.isUsed
         )
     }
 
     fun fromEntityToEdit(entity: NpcEntity): CategoryModel.Npc {
-        val unspecified = resources.getString(R.string.unspecified)
-
         return CategoryModel.Npc(
             id = entity.id,
             name = entity.name,
             race = entity.race,
             gender = entity.gender,
-            clss = entity.clss.getOrEmptyForEdit(unspecified),
-            profession = entity.profession.getOrEmptyForEdit(unspecified),
-            description = entity.description.getOrEmptyForEdit(unspecified),
+            clss = entity.clss.orEmpty(),
+            profession = entity.profession.orEmpty(),
+            description = entity.description.orEmpty(),
             isUsed = entity.isUsed
         )
     }
@@ -47,9 +39,9 @@ class NpcMapper @Inject constructor(
             name = npc.name,
             race = npc.race,
             gender = npc.gender,
-            clss = npc.clss.requireString { resources.getString(R.string.unspecified) },
-            profession = npc.profession.requireString { resources.getString(R.string.unspecified) },
-            description = npc.description.requireString { resources.getString(R.string.unspecified) },
+            clss = npc.clss,
+            profession = npc.profession,
+            description = npc.description,
             isUsed = npc.isUsed
         )
     }
@@ -59,9 +51,9 @@ class NpcMapper @Inject constructor(
             name = importedNpc.name,
             race = importedNpc.race,
             gender = importedNpc.gender,
-            clss = importedNpc.clss.requireString { resources.getString(R.string.unspecified) },
-            profession = importedNpc.profession.requireString { resources.getString(R.string.unspecified) },
-            description = importedNpc.description.requireString { resources.getString(R.string.unspecified) }
+            clss = importedNpc.clss,
+            profession = importedNpc.profession,
+            description = importedNpc.description
         )
     }
 }

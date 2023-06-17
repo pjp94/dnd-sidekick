@@ -1,40 +1,32 @@
 package com.pancholi.grabbag.mapper
 
-import android.content.res.Resources
-import com.pancholi.grabbag.R
 import com.pancholi.grabbag.database.entity.ItemEntity
-import com.pancholi.grabbag.getOrEmptyForEdit
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.model.ImportedModel
-import com.pancholi.grabbag.requireString
 import javax.inject.Inject
 
-class ItemMapper @Inject constructor(
-    private val resources: Resources
-) {
+class ItemMapper @Inject constructor() {
 
     fun fromEntity(entity: ItemEntity): CategoryModel.Item {
         return CategoryModel.Item(
             id = entity.id,
             name = entity.name,
             type = entity.type,
-            cost = entity.cost ?: resources.getString(R.string.unspecified),
+            cost = entity.cost.orEmpty(),
             currency = entity.currency,
-            description = entity.description ?: resources.getString(R.string.unspecified),
+            description = entity.description.orEmpty(),
             isUsed = entity.isUsed
         )
     }
 
     fun fromEntityToEdit(entity: ItemEntity): CategoryModel.Item {
-        val unspecified = resources.getString(R.string.unspecified)
-
         return CategoryModel.Item(
             id = entity.id,
             name = entity.name,
             type = entity.type,
-            cost = entity.cost.getOrEmptyForEdit(unspecified),
+            cost = entity.cost.orEmpty(),
             currency = entity.currency,
-            description = entity.description.getOrEmptyForEdit(unspecified),
+            description = entity.description.orEmpty(),
             isUsed = entity.isUsed
         )
     }
@@ -44,9 +36,9 @@ class ItemMapper @Inject constructor(
             id = item.id,
             name = item.name,
             type = item.type,
-            cost = item.cost.requireString { resources.getString(R.string.unspecified) },
+            cost = item.cost,
             currency = if (item.cost.isNotBlank()) item.currency else null,
-            description = item.description.requireString { resources.getString(R.string.unspecified) },
+            description = item.description,
             isUsed = item.isUsed
         )
     }
@@ -57,7 +49,7 @@ class ItemMapper @Inject constructor(
             type = importedItem.type,
             cost = importedItem.cost,
             currency = if (importedItem.cost?.isNotBlank() == true) importedItem.currency else null,
-            description = importedItem.description.requireString { resources.getString(R.string.unspecified) },
+            description = importedItem.description,
         )
     }
 }

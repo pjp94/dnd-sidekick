@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.SharedFlow
 fun ShopActionScreen(
     modelAction: ModelAction,
     title: String,
-    onBackPressed: () -> Unit,
+    onBackPressed: (CategoryModel?, CategoryModel) -> Unit,
     onBackConfirmed: () -> Unit,
     onSaveClicked: (CategoryModel.Shop, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
@@ -66,7 +66,7 @@ fun ShopActionScreen(
 private fun ActionContent(
     modelAction: ModelAction,
     title: String,
-    onBackPressed: () -> Unit,
+    onBackPressed: (CategoryModel?, CategoryModel) -> Unit,
     onBackConfirmed: () -> Unit,
     onSaveClicked: (CategoryModel.Shop, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
@@ -83,7 +83,17 @@ private fun ActionContent(
     ModelActionScreenBase(
         title = title,
         modelSaved = shopSaved,
-        onBackPressed = onBackPressed,
+        onBackPressed = {
+            val newModel = CategoryModel.Shop(
+                id = shop?.id ?: 0,
+                name = name,
+                type = type,
+                owner = owner,
+                description = description
+            )
+
+            onBackPressed(shop, newModel)
+        },
         onSaveClicked = {
             val model = CategoryModel.Shop(
                 id = shop?.id ?: 0,

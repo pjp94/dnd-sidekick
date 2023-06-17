@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.pancholi.core.Result
 import com.pancholi.grabbag.R
+import com.pancholi.grabbag.getOrNull
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.model.Currency
 import com.pancholi.grabbag.ui.ConfirmationDialog
@@ -43,7 +44,7 @@ import kotlinx.coroutines.flow.SharedFlow
 fun ItemActionScreen(
     modelAction: ModelAction,
     title: String,
-    onBackPressed: () -> Unit,
+    onBackPressed: (CategoryModel?, CategoryModel) -> Unit,
     onBackConfirmed: () -> Unit,
     onSaveClicked: (CategoryModel.Item, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
@@ -85,7 +86,7 @@ fun ItemActionScreen(
 private fun ActionScreen(
     modelAction: ModelAction,
     title: String,
-    onBackPressed: () -> Unit,
+    onBackPressed: (CategoryModel?, CategoryModel) -> Unit,
     onBackConfirmed: () -> Unit,
     onSaveClicked: (CategoryModel.Item, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
@@ -103,7 +104,18 @@ private fun ActionScreen(
     ModelActionScreenBase(
         title = title,
         modelSaved = itemSaved,
-        onBackPressed =  onBackPressed,
+        onBackPressed =  {
+            val newModel = CategoryModel.Item(
+                id = item?.id ?: 0,
+                name = name,
+                type = type,
+                cost = cost,
+                currency = currency.getOrNull(cost),
+                description = description
+            )
+
+            onBackPressed(item, newModel)
+        },
         onSaveClicked = {
             val model = CategoryModel.Item(
                 id = item?.id ?: 0,

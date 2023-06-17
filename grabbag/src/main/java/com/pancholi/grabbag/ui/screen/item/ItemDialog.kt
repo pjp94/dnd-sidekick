@@ -13,6 +13,8 @@ fun ItemDialog(
     item: CategoryModel.Item,
     innerPadding: PaddingValues
 ) {
+    val unspecified = stringResource(id = R.string.unspecified)
+
     FullScreenDialogColumn(
         innerPadding = innerPadding
     ) {
@@ -23,12 +25,12 @@ fun ItemDialog(
 
         CardPropertyRow(
             label = stringResource(id = R.string.cost),
-            text = "${item.cost} ${item.currency?.toString() ?: ""}".trim()
+            text = "${item.cost} ${item.currency?.toString() ?: unspecified}".trim()
         )
 
         CardPropertyRow(
             label = stringResource(id = R.string.description),
-            text = item.description,
+            text = item.description.ifEmpty { unspecified },
             singleField = true
         )
     }

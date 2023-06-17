@@ -35,17 +35,17 @@ fun NpcCard(
 
     CardPropertyRow(
         label = stringResource(id = R.string.clss),
-        text = npc.clss
+        text = npc.clss.ifEmpty { stringResource(id = R.string.unspecified) }
     )
 
     CardPropertyRow(
         label = stringResource(id = R.string.profession),
-        text = npc.profession
+        text = npc.profession.ifEmpty { stringResource(id = R.string.unspecified) }
     )
 
     CardPropertyRow(
         label = stringResource(id = R.string.description),
-        text = npc.description,
+        text = npc.description.ifEmpty { stringResource(id = R.string.unspecified) },
         singleField = true
     )
 }

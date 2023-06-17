@@ -37,23 +37,20 @@ class ItemActionViewModel @Inject constructor(
 
             viewModelScope.launch(dispatcher.io) {
                 when (action) {
-                    ModelAction.ADD -> itemRepository.insertItem(entity)
+                    ModelAction.ADD -> {
+                        itemRepository.insertItem(entity)
+                        val visuals = SidekickSnackbarVisuals(
+                            message = resources.getString(R.string.item_saved)
+                        )
+
+                        showSnackbar(visuals)
+                    }
                     ModelAction.EDIT -> itemRepository.updateItem(entity)
                 }
             }
 
             onModelSaved()
-
-            val messageId = when (action) {
-                ModelAction.ADD -> R.string.item_saved
-                ModelAction.EDIT -> R.string.item_updated
-            }
-
-            val visuals = SidekickSnackbarVisuals(
-                message = resources.getString(messageId)
-            )
-
-            showSnackbar(visuals)
+            resetViewState()
         }
     }
 

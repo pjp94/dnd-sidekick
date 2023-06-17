@@ -13,6 +13,8 @@ fun ShopDialog(
     shop: CategoryModel.Shop,
     innerPadding: PaddingValues
 ) {
+    val unspecified = stringResource(id = R.string.unspecified)
+
     FullScreenDialogColumn(
         innerPadding = innerPadding
     ) {
@@ -23,12 +25,12 @@ fun ShopDialog(
 
         CardPropertyRow(
             label = stringResource(id = R.string.owner),
-            text = shop.owner
+            text = shop.owner.ifEmpty { unspecified }
         )
 
         CardPropertyRow(
             label = stringResource(id = R.string.description),
-            text = shop.description,
+            text = shop.description.ifEmpty { unspecified },
             singleField = true
         )
     }

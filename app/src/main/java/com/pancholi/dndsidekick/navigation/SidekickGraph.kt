@@ -41,7 +41,9 @@ fun SidekickGraph(
                     showSnackbar = showSnackbar,
                     onBackPressed = { navController.popBackStack() },
                     onNavigateAction = { action, id ->
-                        navController.navigate("${action.route}$id")
+                        navController.navigate("${action.route}$id") {
+                            launchSingleTop = true
+                        }
                     },
                     nestedGraphs = {
                         addNpcScreen(
@@ -58,7 +60,9 @@ fun SidekickGraph(
                     showSnackbar = showSnackbar,
                     onBackPressed = { navController.popBackStack() },
                     onNavigateAction = { action, id ->
-                        navController.navigate("${action.route}$id")
+                        navController.navigate("${action.route}$id") {
+                            launchSingleTop = true
+                        }
                     },
                     nestedGraphs = {
                         addShopScreen(
@@ -75,7 +79,9 @@ fun SidekickGraph(
                     showSnackbar = showSnackbar,
                     onBackPressed = { navController.popBackStack() },
                     onNavigateAction = { action, id ->
-                        navController.navigate("${action.route}$id")
+                        navController.navigate("${action.route}$id") {
+                            launchSingleTop = true
+                        }
                    },
                     nestedGraphs = {
                         addLocationScreen(
@@ -92,7 +98,9 @@ fun SidekickGraph(
                     showSnackbar = showSnackbar,
                     onBackPressed = { navController.popBackStack() },
                     onNavigateAction = { action, id ->
-                        navController.navigate("${action.route}$id")
+                        navController.navigate("${action.route}$id") {
+                            launchSingleTop = true
+                        }
                    },
                     nestedGraphs = {
                         addItemScreen(

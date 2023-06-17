@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.SharedFlow
 fun LocationActionScreen(
     modelAction: ModelAction,
     title: String,
-    onBackPressed: () -> Unit,
+    onBackPressed: (CategoryModel?, CategoryModel) -> Unit,
     onBackConfirmed: () -> Unit,
     onSaveClicked: (CategoryModel.Location, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
@@ -66,7 +66,7 @@ fun LocationActionScreen(
 private fun ActionContent(
     modelAction: ModelAction,
     title: String,
-    onBackPressed: () -> Unit,
+    onBackPressed: (CategoryModel?, CategoryModel) -> Unit,
     onBackConfirmed: () -> Unit,
     onSaveClicked: (CategoryModel.Location, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
@@ -82,7 +82,16 @@ private fun ActionContent(
     ModelActionScreenBase(
         title = title,
         modelSaved = locationSaved,
-        onBackPressed = onBackPressed,
+        onBackPressed = {
+            val newModel = CategoryModel.Location(
+                id = location?.id ?: 0,
+                name = name,
+                type = type,
+                description = description
+            )
+
+            onBackPressed(location, newModel)
+        },
         onSaveClicked = {
             val model = CategoryModel.Location(
                 id = location?.id ?: 0,

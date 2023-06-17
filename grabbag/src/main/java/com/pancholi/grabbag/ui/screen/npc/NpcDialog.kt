@@ -13,6 +13,8 @@ fun NpcDialog(
     npc: CategoryModel.Npc,
     innerPadding: PaddingValues
 ) {
+    val unspecified = stringResource(id = R.string.unspecified)
+
     FullScreenDialogColumn(
         innerPadding = innerPadding
     ) {
@@ -28,17 +30,17 @@ fun NpcDialog(
 
         CardPropertyRow(
             label = stringResource(id = R.string.clss),
-            text = npc.clss
+            text = npc.clss.ifEmpty { unspecified }
         )
 
         CardPropertyRow(
             label = stringResource(id = R.string.profession),
-            text = npc.profession
+            text = npc.profession.ifEmpty { unspecified }
         )
 
         CardPropertyRow(
             label = stringResource(id = R.string.description),
-            text = npc.description,
+            text = npc.description.ifEmpty { unspecified },
             singleField = true
         )
     }

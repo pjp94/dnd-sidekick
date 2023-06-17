@@ -1,5 +1,7 @@
 package com.pancholi.grabbag
 
+import com.pancholi.grabbag.model.Currency
+
 fun String?.requireString(
     defaultValue: () -> String
 ): String {
@@ -17,5 +19,25 @@ fun String?.getOrEmptyForEdit(
         ""
     } else {
         this
+    }
+}
+
+fun String?.ifEmptyOrNull(
+    defaultValue: () -> String
+): String {
+    return if (this.isNullOrEmpty()) {
+        defaultValue()
+    } else {
+        this
+    }
+}
+
+fun Currency.getOrNull(
+    cost: String?
+): Currency? {
+    return if (cost.isNullOrEmpty().not()) {
+        this
+    } else {
+        null
     }
 }

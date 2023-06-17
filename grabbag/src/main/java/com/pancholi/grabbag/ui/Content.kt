@@ -113,6 +113,7 @@ fun AddButton(
 @Composable
 fun BackableScreen(
     title: String,
+    backSingleClick: Boolean? = false,
     onBackPressed: () -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
     innerContent: @Composable (PaddingValues) -> Unit,
@@ -126,7 +127,8 @@ fun BackableScreen(
                     title = { Text(title) },
                     navigationIcon = {
                         BackButton(
-                            onClick = onBackPressed
+                            onClick = onBackPressed,
+                            singleClick = backSingleClick
                         )
                     },
                     actions = actions,
@@ -142,14 +144,17 @@ fun BackableScreen(
 
 @Composable
 fun BackButton(
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    singleClick: Boolean? = false
 ) {
     var handled by remember { mutableStateOf(false) }
 
     IconButton(
         onClick = {
             if (handled.not()) {
-                handled = true
+                if (singleClick == true) {
+                    handled = true
+                }
                 onClick()
             }
         }
@@ -248,14 +253,14 @@ fun TopBarButton(
     imageVector: ImageVector,
     contentDescription: String
 ) {
-    var handled by remember { mutableStateOf(false) }
+//    var handled by remember { mutableStateOf(false) }
 
     IconButton(
         onClick = {
-            if (handled.not()) {
-                handled = true
+//            if (handled.not()) {
+//                handled = true
                 onClick()
-            }
+//            }
         }
     ) {
         Icon(
@@ -275,33 +280,42 @@ fun ConfirmationDialog(
     @StringRes dismissTextId: Int = R.string.cancel,
     onDismissRequest: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        title = title,
-        text = {
-            Text(
-                text = stringResource(id = messageId)
-            )
-       },
-        confirmButton = {
-            TextButton(
-                onClick = { onConfirmClicked(model) }
-            ) {
+    var isShowing by rememberSaveable { mutableStateOf(false) }
+
+    if (isShowing.not()) {
+        isShowing = true
+
+        AlertDialog(
+            onDismissRequest = onDismissRequest,
+            title = title,
+            text = {
                 Text(
-                    text = stringResource(id = confirmTextId)
+                    text = stringResource(id = messageId)
                 )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        isShowing = false
+                        onConfirmClicked(model)
+                    }
+                ) {
+                    Text(
+                        text = stringResource(id = confirmTextId)
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = onDismissRequest
+                ) {
+                    Text(
+                        text = stringResource(id = dismissTextId)
+                    )
+                }
             }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismissRequest
-            ) {
-                Text(
-                    text = stringResource(id = dismissTextId)
-                )
-            }
-        }
-    )
+        )
+    }
 }
 
 @Composable

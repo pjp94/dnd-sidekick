@@ -33,7 +33,6 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun GrabBagHome(
     viewModel: GrabBagHomeViewModel = hiltViewModel(),
-//    snackbarHostState: SnackbarHostState,
     showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     categories: List<Category>,
     onCategoryClicked: (Category) -> Unit

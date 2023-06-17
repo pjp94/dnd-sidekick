@@ -6,15 +6,12 @@ import com.pancholi.core.Result
 import com.pancholi.core.SidekickSnackbarVisuals
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.CategoryModel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -34,8 +31,8 @@ abstract class ActionViewModel : ViewModel() {
     private val _viewState: MutableStateFlow<ViewState> = MutableStateFlow(ViewState())
     val viewState: StateFlow<ViewState> = _viewState.asStateFlow()
 
-    private val _addSnackbarVisuals = Channel<SidekickSnackbarVisuals>()
-    val addSnackbarVisuals: Flow<SidekickSnackbarVisuals> = _addSnackbarVisuals.receiveAsFlow()
+    private val _addSnackbarVisuals: MutableSharedFlow<SidekickSnackbarVisuals> = MutableSharedFlow()
+    val addSnackbarVisuals: SharedFlow<SidekickSnackbarVisuals> = _addSnackbarVisuals.asSharedFlow()
 
     private val _modelSaved: MutableSharedFlow<Unit> = MutableSharedFlow()
     val modelSaved: SharedFlow<Unit> = _modelSaved.asSharedFlow()
@@ -43,14 +40,27 @@ abstract class ActionViewModel : ViewModel() {
     fun onBackPressed(
         action: ModelAction,
         oldModel: CategoryModel?,
-        newModel: CategoryModel
+        newModel: CategoryModel,
+        onBackConfirmed: () -> Unit
     ) {
-        val messageId = when (action) {
-            ModelAction.ADD -> R.string.discard_draft
-            ModelAction.EDIT -> R.string.discard_changes
+        var messageId: Int? = null
+
+        when (action) {
+            ModelAction.ADD -> {
+                if (newModel.isDrafted()) {
+                    messageId = R.string.discard_draft
+                }
+            }
+            ModelAction.EDIT -> {
+                if (oldModel != newModel) {
+                    messageId = R.string.discard_changes
+                }
+            }
         }
 
-        _viewState.update { it.copy(discardConfirmationDialog = messageId) }
+        messageId?.let {
+            _viewState.update { it.copy(discardConfirmationDialog = messageId) }
+        } ?: onBackConfirmed()
     }
 
     fun onDialogDismissed() {
@@ -71,7 +81,7 @@ abstract class ActionViewModel : ViewModel() {
 
     protected fun showSnackbar(visuals: SidekickSnackbarVisuals) {
         viewModelScope.launch {
-            _addSnackbarVisuals.send(visuals)
+            _addSnackbarVisuals.emit(visuals)
         }
     }
 

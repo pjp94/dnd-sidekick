@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.SharedFlow
 fun NpcActionScreen(
     modelAction: ModelAction,
     title: String,
-    onBackPressed: () -> Unit,
+    onBackPressed: (CategoryModel?, CategoryModel) -> Unit,
     onBackConfirmed: () -> Unit,
     onSaveClicked: (CategoryModel.Npc, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
@@ -66,7 +66,7 @@ fun NpcActionScreen(
 private fun ActionContent(
     modelAction: ModelAction,
     title: String,
-    onBackPressed: () -> Unit,
+    onBackPressed: (CategoryModel?, CategoryModel) -> Unit,
     onBackConfirmed: () -> Unit,
     onSaveClicked: (CategoryModel.Npc, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
@@ -85,7 +85,19 @@ private fun ActionContent(
     ModelActionScreenBase(
         title = title,
         modelSaved = npcSaved,
-        onBackPressed = onBackPressed,
+        onBackPressed = {
+            val newModel = CategoryModel.Npc(
+                id = npc?.id ?: 0,
+                name = name,
+                race = race,
+                gender = gender,
+                clss = clss,
+                profession = profession,
+                description = description
+            )
+
+            onBackPressed(npc, newModel)
+        },
         onSaveClicked = {
             val model = CategoryModel.Npc(
                 id = npc?.id ?: 0,

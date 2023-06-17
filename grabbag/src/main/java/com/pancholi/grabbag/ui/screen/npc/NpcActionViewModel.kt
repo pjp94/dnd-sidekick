@@ -37,23 +37,20 @@ class NpcActionViewModel @Inject constructor(
 
             viewModelScope.launch(dispatcher.io) {
                 when (action) {
-                    ModelAction.ADD -> npcRepository.insertNpc(entity)
+                    ModelAction.ADD -> {
+                        npcRepository.insertNpc(entity)
+                        val visuals = SidekickSnackbarVisuals(
+                            message = resources.getString(R.string.npc_saved)
+                        )
+
+                        showSnackbar(visuals)
+                    }
                     ModelAction.EDIT -> npcRepository.updateNpc(entity)
                 }
             }
 
             onModelSaved()
-
-            val messageId = when (action) {
-                ModelAction.ADD -> R.string.npc_saved
-                ModelAction.EDIT -> R.string.npc_updated
-            }
-
-            val visuals = SidekickSnackbarVisuals(
-                message = resources.getString(messageId)
-            )
-
-            showSnackbar(visuals)
+            resetViewState()
         }
     }
 

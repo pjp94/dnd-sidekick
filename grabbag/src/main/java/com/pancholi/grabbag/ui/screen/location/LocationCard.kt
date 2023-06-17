@@ -30,7 +30,7 @@ fun LocationCard(
 
     CardPropertyRow(
         label = stringResource(id = R.string.description),
-        text = location.description,
+        text = location.description.ifEmpty { stringResource(id = R.string.unspecified) },
         singleField = true
     )
 }

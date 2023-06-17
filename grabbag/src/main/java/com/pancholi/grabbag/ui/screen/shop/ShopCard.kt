@@ -15,6 +15,8 @@ import com.pancholi.grabbag.ui.screen.CardPropertyRow
 fun ShopCard(
     shop: CategoryModel.Shop
 ) {
+    val unspecified = stringResource(id = R.string.unspecified)
+
     Text(
         text = shop.name,
         fontWeight = FontWeight.Bold,
@@ -30,12 +32,12 @@ fun ShopCard(
 
     CardPropertyRow(
         label = stringResource(id = R.string.owner),
-        text = shop.owner
+        text = shop.owner.ifEmpty { unspecified }
     )
 
     CardPropertyRow(
         label = stringResource(id = R.string.description),
-        text = shop.description,
+        text = shop.description.ifEmpty { unspecified },
         singleField = true
     )
 }

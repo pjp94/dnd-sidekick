@@ -37,23 +37,20 @@ class LocationActionViewModel @Inject constructor(
 
             viewModelScope.launch(dispatcher.io) {
                 when (action) {
-                    ModelAction.ADD -> locationRepository.insertLocation(entity)
+                    ModelAction.ADD -> {
+                        locationRepository.insertLocation(entity)
+                        val visuals = SidekickSnackbarVisuals(
+                            message = resources.getString(R.string.location_saved)
+                        )
+
+                        showSnackbar(visuals)
+                    }
                     ModelAction.EDIT -> locationRepository.updateLocation(entity)
                 }
             }
 
             onModelSaved()
-
-            val messageId = when (action) {
-                ModelAction.ADD -> R.string.location_saved
-                ModelAction.EDIT -> R.string.location_updated
-            }
-
-            val visuals = SidekickSnackbarVisuals(
-                message = resources.getString(messageId)
-            )
-
-            showSnackbar(visuals)
+            resetViewState()
         }
     }
 
