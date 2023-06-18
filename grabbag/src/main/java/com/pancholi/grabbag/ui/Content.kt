@@ -1,6 +1,5 @@
 package com.pancholi.grabbag.ui
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -176,7 +175,6 @@ fun PropertyTextField(
     numberOnly: Boolean = false,
     startingText: String = ""
 ) {
-    Log.d("EDIT_TAG", "$label: $startingText")
     var text by rememberSaveable { mutableStateOf(startingText) }
 
     OutlinedTextField(

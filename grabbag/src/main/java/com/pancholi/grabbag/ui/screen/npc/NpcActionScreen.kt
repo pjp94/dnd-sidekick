@@ -1,10 +1,12 @@
 package com.pancholi.grabbag.ui.screen.npc
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.pancholi.core.Result
 import com.pancholi.grabbag.R
@@ -15,6 +17,7 @@ import com.pancholi.grabbag.ui.OptionalTextField
 import com.pancholi.grabbag.ui.PropertyTextBox
 import com.pancholi.grabbag.ui.PropertyTextField
 import com.pancholi.grabbag.ui.RequiredTextField
+import com.pancholi.grabbag.ui.TEXT_FIELD_WIDTH_FRACTION
 import com.pancholi.grabbag.ui.screen.modelaction.ActionViewModel
 import com.pancholi.grabbag.ui.screen.modelaction.ModelAction
 import com.pancholi.grabbag.ui.screen.modelaction.ModelActionScreenBase
@@ -123,35 +126,40 @@ private fun ActionContent(
             label = stringResource(id = R.string.name),
             onValueChangeAction = { name = it },
             startingText = npc?.name.orEmpty(),
-            supportingText = requiredSupportingText
+            supportingText = requiredSupportingText,
+            modifier = Modifier.fillMaxWidth(TEXT_FIELD_WIDTH_FRACTION)
         )
 
         PropertyTextField(
             label = stringResource(id = R.string.race),
             onValueChangeAction = { race = it },
             startingText = npc?.race.orEmpty(),
-            supportingText = requiredSupportingText
+            supportingText = requiredSupportingText,
+            modifier = Modifier.fillMaxWidth(TEXT_FIELD_WIDTH_FRACTION)
         )
 
         PropertyTextField(
             label = stringResource(id = R.string.gender),
             onValueChangeAction = { gender = it },
             startingText = npc?.gender.orEmpty(),
-            supportingText = requiredSupportingText
+            supportingText = requiredSupportingText,
+            modifier = Modifier.fillMaxWidth(TEXT_FIELD_WIDTH_FRACTION)
         )
 
         PropertyTextField(
             label = stringResource(id = R.string.clss),
             onValueChangeAction = { clss = it },
             startingText = npc?.clss.orEmpty(),
-            supportingText = { OptionalTextField() }
+            supportingText = { OptionalTextField() },
+            modifier = Modifier.fillMaxWidth(TEXT_FIELD_WIDTH_FRACTION)
         )
 
         PropertyTextField(
             label = stringResource(id = R.string.profession),
             onValueChangeAction = { profession = it },
             startingText = npc?.profession.orEmpty(),
-            supportingText = { OptionalTextField() }
+            supportingText = { OptionalTextField() },
+            modifier = Modifier.fillMaxWidth(TEXT_FIELD_WIDTH_FRACTION)
         )
 
         PropertyTextBox(
