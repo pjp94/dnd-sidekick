@@ -12,6 +12,7 @@ import com.pancholi.grabbag.ui.screen.modelaction.ActionViewModel
 import com.pancholi.grabbag.ui.screen.modelaction.ModelAction
 import com.pancholi.grabbag.ui.screen.modelaction.ModelEditor
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,6 +23,10 @@ class NpcActionViewModel @Inject constructor(
     private val dispatcher: Dispatcher,
     private val resources: Resources
 ) : ActionViewModel(), ModelEditor {
+
+    private val races = resources.getStringArray(R.array.races)
+    private val classes = resources.getStringArray(R.array.classes)
+    private val professions = resources.getStringArray(R.array.professions)
 
     override fun onSaveClicked(
         model: CategoryModel,
@@ -58,10 +63,32 @@ class NpcActionViewModel @Inject constructor(
         viewModelScope.launch(dispatcher.io) {
             npcRepository
                 .getById(id)
+                .filterNotNull()
                 .collect {
                     val npc = npcMapper.fromEntityToEdit(it)
                     onModelToEditLoaded(npc)
                 }
         }
+    }
+
+    fun onRaceChanged(text: String) {
+        onPropertyFieldTextChanged(
+            text = text,
+            options = races
+        )
+    }
+
+    fun onClassChanged(text: String) {
+        onPropertyFieldTextChanged(
+            text = text,
+            options = classes
+        )
+    }
+
+    fun onProfessionChanged(text: String) {
+        onPropertyFieldTextChanged(
+            text = text,
+            options = professions
+        )
     }
 }

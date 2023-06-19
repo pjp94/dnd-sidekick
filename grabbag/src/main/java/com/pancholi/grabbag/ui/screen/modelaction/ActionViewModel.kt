@@ -25,8 +25,13 @@ abstract class ActionViewModel : ViewModel() {
     data class ViewState(
         val showRequiredSupportingText: Boolean = false,
         val discardConfirmationDialog: Int? = null,
-        val modelToEdit: Result = Result.Loading
+        val modelToEdit: Result = Result.Loading,
+        val filteredOptions: List<String> = listOf()
     )
+
+    companion object {
+        private const val FILTER_TAKE_AMOUNT = 5
+    }
 
     private val _viewState: MutableStateFlow<ViewState> = MutableStateFlow(ViewState())
     val viewState: StateFlow<ViewState> = _viewState.asStateFlow()
@@ -93,5 +98,22 @@ abstract class ActionViewModel : ViewModel() {
         viewModelScope.launch {
             _modelSaved.emit(Unit)
         }
+    }
+
+    protected fun onPropertyFieldTextChanged(
+        text: String,
+        options: Array<String>
+    ) {
+        val filtered = options.filter {
+            it.contains(text, ignoreCase = true)
+        }.take(FILTER_TAKE_AMOUNT)
+
+        val updatedOptions = if (filtered.size == 1 && filtered.first().equals(text, ignoreCase = true)) {
+            emptyList()
+        } else {
+            filtered
+        }
+
+        _viewState.update { it.copy(filteredOptions = updatedOptions) }
     }
 }

@@ -20,7 +20,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,17 +44,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.navigation.Action
@@ -173,7 +181,8 @@ fun PropertyTextField(
     onValueChangeAction: (String) -> Unit = {},
     supportingText: @Composable ((String) -> Unit) = {},
     numberOnly: Boolean = false,
-    startingText: String = ""
+    startingText: String = "",
+    widthFaction: Float = TEXT_FIELD_COMPACT_WIDTH_FRACTION
 ) {
     var text by rememberSaveable { mutableStateOf(startingText) }
 
@@ -194,8 +203,77 @@ fun PropertyTextField(
             }
         ),
         supportingText = { supportingText(text) },
-        modifier = modifier
+        modifier = modifier.fillMaxWidth(fraction = widthFaction)
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AutocompletePropertyField(
+    label: String,
+    modifier: Modifier = Modifier,
+    onValueChangeAction: (String) -> Unit = {},
+    supportingText: @Composable ((String) -> Unit) = {},
+    numberOnly: Boolean = false,
+    startingText: String = "",
+    widthFaction: Float = TEXT_FIELD_COMPACT_WIDTH_FRACTION,
+    filteredOptions: List<String> = emptyList()
+) {
+    var textValue by remember { mutableStateOf(TextFieldValue(startingText)) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var focused by rememberSaveable { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = {}
+    ) {
+        OutlinedTextField(
+            value = textValue,
+            singleLine = true,
+            onValueChange = {
+                onValueChangeAction(it.text)
+                textValue = it
+            },
+            label = { Text(label) },
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Words,
+                keyboardType = if (numberOnly) {
+                    KeyboardType.Number
+                } else {
+                    KeyboardType.Text
+                }
+            ),
+            supportingText = { supportingText(textValue.text) },
+            modifier = modifier
+                .menuAnchor()
+                .fillMaxWidth(fraction = widthFaction)
+                .onFocusChanged { focused = it.isFocused }
+        )
+
+        expanded = focused && textValue.text.isNotEmpty() && filteredOptions.isNotEmpty()
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            properties = PopupProperties(focusable = false),
+            modifier = Modifier.fillMaxWidth(fraction = widthFaction)
+        ) {
+            filteredOptions.forEach {
+                DropdownMenuItem(
+                    text = { Text(text = it) },
+                    onClick = {
+                        onValueChangeAction(it)
+                        textValue = textValue.copy(
+                            text = it,
+                            selection = TextRange(index = it.length)
+                        )
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                )
+            }
+        }
+    }
 }
 
 @Composable

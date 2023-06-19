@@ -40,6 +40,9 @@ fun NavGraphBuilder.addNpcScreen(
             onSaveClicked = { npc, action -> viewModel.onSaveClicked(npc, action) },
             onModelSaved = onModelSaved,
             onDialogDismissed = { viewModel.onDialogDismissed() },
+            onRaceChanged = { race -> viewModel.onRaceChanged(race) },
+            onClassChanged = { clss -> viewModel.onClassChanged(clss) },
+            onProfessionChanged =  { profession -> viewModel.onProfessionChanged(profession) },
             viewState = viewState.value,
             npcSaved = viewModel.modelSaved
         )
@@ -77,6 +80,9 @@ fun NavGraphBuilder.editNpcScreen(
             onSaveClicked = { npc, action -> viewModel.onSaveClicked(npc, action) },
             onModelSaved = onModelSaved,
             onDialogDismissed = { viewModel.onDialogDismissed() },
+            onRaceChanged = { race -> viewModel.onRaceChanged(race) },
+            onClassChanged = { clss -> viewModel.onClassChanged(clss) },
+            onProfessionChanged =  { profession -> viewModel.onProfessionChanged(profession) },
             viewState = viewState.value,
             npcSaved = viewModel.modelSaved
         )

@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -14,7 +14,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,11 +29,14 @@ import com.pancholi.grabbag.getOrNull
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.model.Currency
 import com.pancholi.grabbag.ui.ConfirmationDialog
+import com.pancholi.grabbag.ui.ITEM_COST_FIELD_COMPACT_WEIGHT
+import com.pancholi.grabbag.ui.ITEM_CURRENCY_FIELD_COMPACT_WEIGHT
 import com.pancholi.grabbag.ui.LoadingIndicator
 import com.pancholi.grabbag.ui.OptionalTextField
 import com.pancholi.grabbag.ui.PropertyTextBox
 import com.pancholi.grabbag.ui.PropertyTextField
 import com.pancholi.grabbag.ui.RequiredTextField
+import com.pancholi.grabbag.ui.TEXT_FIELD_COMPACT_WIDTH_FRACTION
 import com.pancholi.grabbag.ui.screen.modelaction.ActionViewModel
 import com.pancholi.grabbag.ui.screen.modelaction.ModelAction
 import com.pancholi.grabbag.ui.screen.modelaction.ModelActionScreenBase
@@ -131,7 +133,7 @@ private fun ActionScreen(
         onModelSaved = onModelSaved
     ) {
         Box(modifier = Modifier
-            .width(OutlinedTextFieldDefaults.MinWidth)
+            .fillMaxWidth(TEXT_FIELD_COMPACT_WIDTH_FRACTION)
         ) {
             val requiredSupportingText: @Composable (String) -> Unit = { text ->
                 if (viewState.showRequiredSupportingText && text.isEmpty()) {
@@ -144,14 +146,16 @@ private fun ActionScreen(
                     label = stringResource(id = R.string.name),
                     onValueChangeAction = { name = it },
                     startingText = item?.name.orEmpty(),
-                    supportingText = requiredSupportingText
+                    supportingText = requiredSupportingText,
+                    widthFaction = 1.0f
                 )
 
                 PropertyTextField(
                     label = stringResource(id = R.string.type),
                     onValueChangeAction = { type = it },
                     startingText = item?.type.orEmpty(),
-                    supportingText = requiredSupportingText
+                    supportingText = requiredSupportingText,
+                    widthFaction = 1.0f
                 )
 
                 Row(
@@ -163,7 +167,7 @@ private fun ActionScreen(
                         startingText = item?.cost.orEmpty(),
                         supportingText = { OptionalTextField() },
                         numberOnly = true,
-                        modifier = Modifier.weight(0.6f)
+                        modifier = Modifier.weight(ITEM_COST_FIELD_COMPACT_WEIGHT)
                     )
 
                     CurrencyField(
@@ -172,7 +176,7 @@ private fun ActionScreen(
                         modifier = Modifier
                             .wrapContentWidth()
                             .padding(top = 8.dp)
-                            .weight(0.4f)
+                            .weight(ITEM_CURRENCY_FIELD_COMPACT_WEIGHT)
                     )
                 }
             }

@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.appcompat)
 
     // Compose
+    api(libs.compose.foundation)
     api(libs.compose.material3)
     api(libs.lifecycle.runtime.compose)
 

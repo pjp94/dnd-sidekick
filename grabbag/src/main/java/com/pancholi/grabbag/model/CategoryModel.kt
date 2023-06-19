@@ -73,7 +73,7 @@ sealed class CategoryModel(
             return name.isNotEmpty()
                     || type.isNotEmpty()
                     || cost.isNotEmpty()
-                    || currency != Currency.GP
+                    || currency != null
                     || description.isNotEmpty()
         }
     }

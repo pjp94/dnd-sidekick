@@ -81,4 +81,111 @@
     <string name="discard_draft">Discard draft?</string>
     <string name="discard_changes">Discard changes?</string>
     <string name="discard">Discard</string>
+
+    <!-- Races -->
+    <string-array name="races">
+        <item name="dragonborn">Dragonborn</item>
+        <item name="dwarf">Dwarf</item>
+        <item name="elf">Elf</item>
+        <item name="gnome">Gnome</item>
+        <item name="half-elf">Half-Elf</item>
+        <item name="halfling">Halfling</item>
+        <item name="half-orc">Half-Orc</item>
+        <item name="human">Human</item>
+        <item name="tiefling">Tiefling</item>
+    </string-array>
+
+    <!-- Classes -->
+    <string-array name="classes">
+        <item name="artificer">Artificer</item>
+        <item name="barbarian">Barbarian</item>
+        <item name="bard">Bard</item>
+        <item name="blood_hunter">Blood Hunter</item>
+        <item name="cleric">Cleric</item>
+        <item name="druid">Druid</item>
+        <item name="fighter">Fighter</item>
+        <item name="monk">Monk</item>
+        <item name="paladin">Paladin</item>
+        <item name="ranger">Ranger</item>
+        <item name="rogue">Rogue</item>
+        <item name="sorcerer">Sorcerer</item>
+        <item name="warlock">Warlock</item>
+        <item name="wizard">Wizard</item>
+    </string-array>
+
+    <!-- Professions -->
+    <string-array name="professions">
+        <item name="alchemist">Alchemist</item>
+        <item name="apothecary">Apothecary</item>
+        <item name="armorer">Armorer</item>
+        <item name="bartender">Bartender</item>
+        <item name="blacksmith">Blacksmith</item>
+        <item name="cartographer">Cartographer</item>
+        <item name="cook">Cook</item>
+        <item name="farmer">Farmer</item>
+        <item name="fisherman">Fisherman</item>
+        <item name="healer">Healer</item>
+        <item name="hunter">Hunter</item>
+        <item name="innkeeper">Innkeeper</item>
+        <item name="merchant">Merchant</item>
+        <item name="priest">Priest</item>
+        <item name="sailor">Sailor</item>
+        <item name="soldier">Soldier</item>
+    </string-array>
+
+    <!-- Locations -->
+    <string-array name="locations">
+        <item name="canyon">Canyon</item>
+        <item name="castle">Castle</item>
+        <item name="cave">Cave</item>
+        <item name="city">City</item>
+        <item name="desert">Desert</item>
+        <item name="farm">Farm</item>
+        <item name="forest">Forest</item>
+        <item name="island">Island</item>
+        <item name="lake">Lake</item>
+        <item name="mountain">Mountain</item>
+        <item name="ocean">Ocean</item>
+        <item name="river">River</item>
+        <item name="swamp">Swamp</item>
+        <item name="temple">Temple</item>
+        <item name="tower">Tower</item>
+        <item name="town">Town</item>
+        <item name="valley">Valley</item>
+        <item name="village">Village</item>
+        <item name="volcano">Volcano</item>
+    </string-array>
+
+    <!-- Shops -->
+    <string-array name="shops">
+        <item name="alchemist">Alchemist</item>
+        <item name="apothecary">Apothecary</item>
+        <item name="bank">Bank</item>
+        <item name="blacksmith">Blacksmith</item>
+        <item name="cartographer">Cartographer</item>
+        <item name="general_goods">General Goods</item>
+        <item name="inn">Inn</item>
+        <item name="library">Library</item>
+        <item name="tannery">Tannery</item>
+        <item name="tavern">Tavern</item>
+    </string-array>
+
+    <!-- Items -->
+    <string-array name="items">
+        <item name="adventuring_gear">Adventuring Gear</item>
+        <item name="ammunition">Ammunition</item>
+        <item name="armor">Armor</item>
+        <item name="book">Book</item>
+        <item name="clothing">Clothing</item>
+        <item name="consumable">Consumable</item>
+        <item name="gemstone">Gemstone</item>
+        <item name="instrument">Instrument</item>
+        <item name="jewelry">Jewelry</item>
+        <item name="magical">Magical</item>
+        <item name="material_component">Material Component</item>
+        <item name="scroll">Scroll</item>
+        <item name="tool">Tool</item>
+        <item name="weapon">Weapon</item>
+    </string-array>
+
 </resources>

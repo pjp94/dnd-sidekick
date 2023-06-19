@@ -12,6 +12,7 @@ import com.pancholi.grabbag.ui.screen.modelaction.ActionViewModel
 import com.pancholi.grabbag.ui.screen.modelaction.ModelAction
 import com.pancholi.grabbag.ui.screen.modelaction.ModelEditor
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -58,6 +59,7 @@ class LocationActionViewModel @Inject constructor(
         viewModelScope.launch(dispatcher.io) {
             locationRepository
                 .getById(id)
+                .filterNotNull()
                 .collect {
                     val npc = locationMapper.fromEntityToEdit(it)
                     onModelToEditLoaded(npc)
