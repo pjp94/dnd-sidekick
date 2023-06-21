@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -132,6 +132,10 @@ class SuggestViewModel @Inject constructor(
     }
 
     private fun getAllNpcFilters(): Flow<NpcFieldFilters> {
+        val defaultRaces = resources.getStringArray(R.array.races).toMutableList()
+        val defaultClasses = resources.getStringArray(R.array.classes).toMutableList()
+        val defaultProfessions = resources.getStringArray(R.array.professions).toMutableList()
+
         with (npcRepository) {
             return combine(
                 getAllRaces(),
@@ -139,10 +143,6 @@ class SuggestViewModel @Inject constructor(
                 getAllClasses(),
                 getAllProfessions()
             ) { races, genders, classes, professions ->
-                val defaultRaces = resources.getStringArray(R.array.races).toMutableList()
-                val defaultClasses = resources.getStringArray(R.array.classes).toMutableList()
-                val defaultProfessions = resources.getStringArray(R.array.professions).toMutableList()
-
                 val allRaces = defaultRaces
                     .apply { addAll(races) }
                     .map {
@@ -196,53 +196,83 @@ class SuggestViewModel @Inject constructor(
     }
 
     private fun getAllShopFilters(): Flow<ShopFieldFilters> {
+        val defaultTypes = resources.getStringArray(R.array.shops).toMutableList()
+
         with (shopRepository) {
-            return getAllTypes()
-                .map { types ->
-                    ShopFieldFilters(
-                        types = types.map {
-                            Filter(
-                                name = it,
-                                category = Filter.Category.SHOP,
-                                field = Filter.Field.TYPE
-                            )
-                        }
-                    )
-                }
+            return combine(
+                flowOf(defaultTypes),
+                getAllTypes()
+            ) { default, saved ->
+                val allTypes = default
+                    .apply { addAll(saved) }
+                    .map {
+                        Filter(
+                            name = it,
+                            category = Filter.Category.SHOP,
+                            field = Filter.Field.TYPE
+                        )
+                    }
+                    .distinct()
+                    .sortedBy { it.name }
+
+                ShopFieldFilters(
+                    types = allTypes
+                )
+            }
         }
     }
 
     private fun getAllLocationFilters(): Flow<LocationFieldFilters> {
+        val defaultTypes = resources.getStringArray(R.array.locations).toMutableList()
+
         with (locationRepository) {
-            return getAllTypes()
-                .map { locations ->
-                    LocationFieldFilters(
-                        types = locations.map {
-                            Filter(
-                                name = it,
-                                category = Filter.Category.LOCATION,
-                                field = Filter.Field.TYPE
-                            )
-                        }
-                    )
-                }
+            return combine(
+                flowOf(defaultTypes),
+                getAllTypes()
+            ) { default, saved ->
+                val allTypes = default
+                    .apply { addAll(saved) }
+                    .map {
+                        Filter(
+                            name = it,
+                            category = Filter.Category.SHOP,
+                            field = Filter.Field.TYPE
+                        )
+                    }
+                    .distinct()
+                    .sortedBy { it.name }
+
+                LocationFieldFilters(
+                    types = allTypes
+                )
+            }
         }
     }
 
     private fun getAllItemFilters(): Flow<ItemFieldFilters> {
+        val defaultTypes = resources.getStringArray(R.array.items).toMutableList()
+
         with (itemRepository) {
-            return getAllTypes()
-                .map { items ->
-                    ItemFieldFilters(
-                        types = items.map {
-                            Filter(
-                                name = it,
-                                category = Filter.Category.ITEM,
-                                field = Filter.Field.TYPE
-                            )
-                        }
-                    )
-                }
+            return combine(
+                flowOf(defaultTypes),
+                getAllTypes()
+            ) { default, saved ->
+                val allTypes = default
+                    .apply { addAll(saved) }
+                    .map {
+                        Filter(
+                            name = it,
+                            category = Filter.Category.SHOP,
+                            field = Filter.Field.TYPE
+                        )
+                    }
+                    .distinct()
+                    .sortedBy { it.name }
+
+                ItemFieldFilters(
+                    types = allTypes
+                )
+            }
         }
     }
 }

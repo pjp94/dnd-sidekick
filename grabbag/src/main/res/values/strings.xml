@@ -197,5 +197,6 @@
     <!-- Suggest -->
     <string name="suggest">Suggest</string>
     <string name="suggest_title">Get a suggestion</string>
+    <string name="unused">Unused</string>
 
 </resources>
