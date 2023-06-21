@@ -28,6 +28,7 @@ import com.pancholi.grabbag.R
 import com.pancholi.grabbag.getOrNull
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.model.Currency
+import com.pancholi.grabbag.ui.AutocompletePropertyField
 import com.pancholi.grabbag.ui.ConfirmationDialog
 import com.pancholi.grabbag.ui.ITEM_COST_FIELD_COMPACT_WEIGHT
 import com.pancholi.grabbag.ui.ITEM_CURRENCY_FIELD_COMPACT_WEIGHT
@@ -51,6 +52,7 @@ fun ItemActionScreen(
     onSaveClicked: (CategoryModel.Item, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
     onDialogDismissed: () -> Unit,
+    onTypeChanged: (String) -> Unit,
     viewState: ActionViewModel.ViewState,
     itemSaved: SharedFlow<Unit>
 ) {
@@ -77,6 +79,7 @@ fun ItemActionScreen(
             onSaveClicked = onSaveClicked,
             onModelSaved = onModelSaved,
             onDialogDismissed = onDialogDismissed,
+            onTypeChanged = onTypeChanged,
             viewState = viewState,
             itemSaved = itemSaved,
             item = item
@@ -93,6 +96,7 @@ private fun ActionScreen(
     onSaveClicked: (CategoryModel.Item, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
     onDialogDismissed: () -> Unit,
+    onTypeChanged: (String) -> Unit,
     viewState: ActionViewModel.ViewState,
     itemSaved: SharedFlow<Unit>,
     item: CategoryModel.Item?
@@ -150,11 +154,15 @@ private fun ActionScreen(
                     widthFaction = 1.0f
                 )
 
-                PropertyTextField(
+                AutocompletePropertyField(
                     label = stringResource(id = R.string.type),
-                    onValueChangeAction = { type = it },
+                    onValueChangeAction = {
+                        type = it
+                        onTypeChanged(it)
+                    },
                     startingText = item?.type.orEmpty(),
                     supportingText = requiredSupportingText,
+                    filteredOptions = viewState.filteredOptions,
                     widthFaction = 1.0f
                 )
 

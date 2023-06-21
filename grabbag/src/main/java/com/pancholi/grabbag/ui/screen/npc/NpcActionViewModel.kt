@@ -24,9 +24,19 @@ class NpcActionViewModel @Inject constructor(
     private val resources: Resources
 ) : ActionViewModel(), ModelEditor {
 
-    private val races = resources.getStringArray(R.array.races)
-    private val classes = resources.getStringArray(R.array.classes)
-    private val professions = resources.getStringArray(R.array.professions)
+    private val defaultRaces = resources.getStringArray(R.array.races)
+    private val defaultClasses = resources.getStringArray(R.array.classes)
+    private val defaultProfessions = resources.getStringArray(R.array.professions)
+
+    private lateinit var races: List<String>
+    private lateinit var classes: List<String>
+    private lateinit var professions: List<String>
+
+    init {
+        getAllRaces()
+        getAllClasses()
+        getAllProfessions()
+    }
 
     override fun onSaveClicked(
         model: CategoryModel,
@@ -90,5 +100,53 @@ class NpcActionViewModel @Inject constructor(
             text = text,
             options = professions
         )
+    }
+
+    private fun getAllRaces() {
+        viewModelScope.launch(dispatcher.io) {
+            npcRepository
+                .getAllRaces()
+                .collect {savedRaces ->
+                    savedRaces
+                        .filter { it.isNotBlank() }
+                        .toMutableList()
+                        .apply { addAll(defaultRaces) }
+                        .distinct()
+                        .sorted()
+                        .also { races = it }
+                }
+        }
+    }
+
+    private fun getAllClasses() {
+        viewModelScope.launch(dispatcher.io) {
+            npcRepository
+                .getAllClasses()
+                .collect {savedClasses ->
+                    savedClasses
+                        .filter { it.isNotBlank() }
+                        .toMutableList()
+                        .apply { addAll(defaultClasses) }
+                        .distinct()
+                        .sorted()
+                        .also { classes = it }
+                }
+        }
+    }
+
+    private fun getAllProfessions() {
+        viewModelScope.launch(dispatcher.io) {
+            npcRepository
+                .getAllProfessions()
+                .collect { savedProfessions ->
+                    savedProfessions
+                        .filter { it.isNotBlank() }
+                        .toMutableList()
+                        .apply { addAll(defaultProfessions) }
+                        .distinct()
+                        .sorted()
+                        .also { professions = it }
+                }
+        }
     }
 }

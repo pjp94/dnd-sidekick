@@ -11,10 +11,10 @@ import com.pancholi.core.SidekickSnackbarVisuals
 import com.pancholi.core.coroutines.Dispatcher
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.ImportedContent
-import com.pancholi.grabbag.usecase.ImportItemUseCase
-import com.pancholi.grabbag.usecase.ImportLocationUseCase
-import com.pancholi.grabbag.usecase.ImportNpcUseCase
-import com.pancholi.grabbag.usecase.ImportShopUseCase
+import com.pancholi.grabbag.importcontent.ImportItemUseCase
+import com.pancholi.grabbag.importcontent.ImportLocationUseCase
+import com.pancholi.grabbag.importcontent.ImportNpcUseCase
+import com.pancholi.grabbag.importcontent.ImportShopUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

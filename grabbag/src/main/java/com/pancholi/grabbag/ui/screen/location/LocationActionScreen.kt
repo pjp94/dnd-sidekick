@@ -9,6 +9,7 @@ import androidx.compose.ui.res.stringResource
 import com.pancholi.core.Result
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.CategoryModel
+import com.pancholi.grabbag.ui.AutocompletePropertyField
 import com.pancholi.grabbag.ui.ConfirmationDialog
 import com.pancholi.grabbag.ui.LoadingIndicator
 import com.pancholi.grabbag.ui.OptionalTextField
@@ -29,6 +30,7 @@ fun LocationActionScreen(
     onSaveClicked: (CategoryModel.Location, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
     onDialogDismissed: () -> Unit,
+    onTypeChanged: (String) -> Unit,
     viewState: ActionViewModel.ViewState,
     locationSaved: SharedFlow<Unit>
 ) {
@@ -55,6 +57,7 @@ fun LocationActionScreen(
             onSaveClicked = onSaveClicked,
             onModelSaved = onModelSaved,
             onDialogDismissed = onDialogDismissed,
+            onTypeChanged = onTypeChanged,
             viewState = viewState,
             locationSaved = locationSaved,
             location = location
@@ -71,6 +74,7 @@ private fun ActionContent(
     onSaveClicked: (CategoryModel.Location, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
     onDialogDismissed: () -> Unit,
+    onTypeChanged: (String) -> Unit,
     viewState: ActionViewModel.ViewState,
     locationSaved: SharedFlow<Unit>,
     location: CategoryModel.Location?
@@ -117,11 +121,15 @@ private fun ActionContent(
             supportingText = requiredSupportingText
         )
 
-        PropertyTextField(
+        AutocompletePropertyField(
             label = stringResource(id = R.string.type),
-            onValueChangeAction = { type = it },
+            onValueChangeAction = {
+                type = it
+                onTypeChanged(it)
+            },
             startingText = location?.type.orEmpty(),
-            supportingText = requiredSupportingText
+            supportingText = requiredSupportingText,
+            filteredOptions = viewState.filteredOptions
         )
 
         PropertyTextBox(

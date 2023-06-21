@@ -44,4 +44,10 @@ class ItemRepository @Inject constructor(
             .itemDao()
             .getAll()
     }
+
+    fun getAllTypes(): Flow<List<String>> {
+        return database
+            .itemDao()
+            .getAllTypes()
+    }
 }

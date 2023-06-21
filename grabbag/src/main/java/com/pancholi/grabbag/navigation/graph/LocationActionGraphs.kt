@@ -40,6 +40,7 @@ fun NavGraphBuilder.addLocationScreen(
             onSaveClicked = { location, action -> viewModel.onSaveClicked(location, action) },
             onModelSaved = onModelSaved,
             onDialogDismissed = { viewModel.onDialogDismissed() },
+            onTypeChanged = { type -> viewModel.onTypeChanged(type) },
             viewState = viewState.value,
             locationSaved = viewModel.modelSaved
         )
@@ -77,6 +78,7 @@ fun NavGraphBuilder.editLocationScreen(
             onSaveClicked = { location, action -> viewModel.onSaveClicked(location, action) },
             onModelSaved = onModelSaved,
             onDialogDismissed = { viewModel.onDialogDismissed() },
+            onTypeChanged = { type -> viewModel.onTypeChanged(type) },
             viewState = viewState.value,
             locationSaved = viewModel.modelSaved
         )

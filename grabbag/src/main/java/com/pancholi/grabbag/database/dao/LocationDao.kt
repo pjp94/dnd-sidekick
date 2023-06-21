@@ -29,4 +29,7 @@ interface LocationDao {
 
     @Query("SELECT * FROM location")
     fun getAll(): Flow<List<LocationEntity>>
+
+    @Query("SELECT type FROM location WHERE type IS NOT NULL")
+    fun getAllTypes(): Flow<List<String>>
 }

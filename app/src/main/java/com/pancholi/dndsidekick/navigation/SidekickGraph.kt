@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.pancholi.battletracker.navigation.battleTrackerGraph
 import com.pancholi.core.SidekickSnackbarVisuals
+import com.pancholi.grabbag.navigation.Routes
 import com.pancholi.grabbag.navigation.graph.addItemScreen
 import com.pancholi.grabbag.navigation.graph.addLocationScreen
 import com.pancholi.grabbag.navigation.graph.addNpcScreen
@@ -19,6 +20,7 @@ import com.pancholi.grabbag.navigation.graph.itemGraph
 import com.pancholi.grabbag.navigation.graph.locationGraph
 import com.pancholi.grabbag.navigation.graph.npcGraph
 import com.pancholi.grabbag.navigation.graph.shopGraph
+import com.pancholi.grabbag.navigation.graph.suggestGraph
 
 @Composable
 fun SidekickGraph(
@@ -35,6 +37,9 @@ fun SidekickGraph(
             showSnackbar = showSnackbar,
             onCategoryClicked = { category ->
                 navController.navigate(category.route)
+            },
+            onSuggestClicked = {
+                navController.navigate(Routes.SUGGEST_SCREEN)
             },
             nestedGraphs = {
                 npcGraph(
@@ -101,7 +106,7 @@ fun SidekickGraph(
                         navController.navigate("${action.route}$id") {
                             launchSingleTop = true
                         }
-                   },
+                    },
                     nestedGraphs = {
                         addItemScreen(
                             onBackPressed = { navController.popBackStack() },
@@ -112,6 +117,12 @@ fun SidekickGraph(
                             onModelSaved = { navController.popBackStack() }
                         )
                     }
+                )
+                suggestGraph(
+                    showSnackbar = showSnackbar,
+                    onBackPressed = { navController.popBackStack() },
+                    onNavigateAction = { _, _ -> },
+                    nestedGraphs = {}
                 )
             }
         )

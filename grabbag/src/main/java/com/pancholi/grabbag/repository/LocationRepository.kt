@@ -44,4 +44,10 @@ class LocationRepository @Inject constructor(
             .locationDao()
             .getAll()
     }
+
+    fun getAllTypes(): Flow<List<String>> {
+        return database
+            .locationDao()
+            .getAllTypes()
+    }
 }

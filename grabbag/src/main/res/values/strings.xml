@@ -2,12 +2,18 @@
     <string name="grab_bag">Grab Bag</string>
 
     <!-- Categories -->
+    <string name="npc">NPC</string>
     <string name="npcs">NPCs</string>
+    <string name="shop">Shop</string>
     <string name="shops">Shops</string>
+    <string name="location">Location</string>
     <string name="locations">Locations</string>
+    <string name="item">Item</string>
     <string name="items">Items</string>
+    <string name="category">Category</string>
+
+    <!-- Import -->
     <string name="import_content">Import Content</string>
-    <string name="suggest">Suggest</string>
 
     <!-- Routes -->
     <string name="npcs_route">npcs_route</string>
@@ -187,5 +193,9 @@
         <item name="tool">Tool</item>
         <item name="weapon">Weapon</item>
     </string-array>
+
+    <!-- Suggest -->
+    <string name="suggest">Suggest</string>
+    <string name="suggest_title">Get a suggestion</string>
 
 </resources>

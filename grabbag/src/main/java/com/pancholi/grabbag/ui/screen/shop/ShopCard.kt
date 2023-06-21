@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.CategoryModel
-import com.pancholi.grabbag.ui.screen.CardPropertyRow
+import com.pancholi.grabbag.ui.screen.category.CardPropertyRow
 
 @Composable
 fun ShopCard(

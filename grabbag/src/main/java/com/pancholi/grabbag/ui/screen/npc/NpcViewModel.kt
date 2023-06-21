@@ -10,7 +10,7 @@ import com.pancholi.grabbag.R
 import com.pancholi.grabbag.mapper.NpcMapper
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.repository.NpcRepository
-import com.pancholi.grabbag.ui.screen.CategoryViewModel
+import com.pancholi.grabbag.ui.screen.category.CategoryViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged

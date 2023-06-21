@@ -1,4 +1,4 @@
-package com.pancholi.grabbag.ui.screen
+package com.pancholi.grabbag.ui.screen.category
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize

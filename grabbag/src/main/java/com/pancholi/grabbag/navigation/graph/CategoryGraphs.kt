@@ -10,7 +10,7 @@ import com.pancholi.core.viewModelScopedTo
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.navigation.Action
 import com.pancholi.grabbag.navigation.Category
-import com.pancholi.grabbag.ui.screen.CategoryScreen
+import com.pancholi.grabbag.ui.screen.category.CategoryScreen
 import com.pancholi.grabbag.ui.screen.item.ItemActionViewModel
 import com.pancholi.grabbag.ui.screen.item.ItemViewModel
 import com.pancholi.grabbag.ui.screen.location.LocationActionViewModel

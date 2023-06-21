@@ -29,4 +29,7 @@ interface ItemDao {
 
     @Query("SELECT * FROM item")
     fun getAll(): Flow<List<ItemEntity>>
+
+    @Query("SELECT type FROM item WHERE type IS NOT NULL")
+    fun getAllTypes(): Flow<List<String>>
 }

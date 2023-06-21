@@ -10,6 +10,7 @@ import com.pancholi.grabbag.ui.screen.home.GrabBagHome
 fun NavGraphBuilder.grabBagGraph(
     showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     onCategoryClicked: (Category) -> Unit,
+    onSuggestClicked: () -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit
 ) {
     navigation(startDestination = "grab_bag_home", route = "grab_bag") {
@@ -17,7 +18,8 @@ fun NavGraphBuilder.grabBagGraph(
             GrabBagHome(
                 showSnackbar = showSnackbar,
                 categories = Category.values().toList(),
-                onCategoryClicked = onCategoryClicked
+                onCategoryClicked = onCategoryClicked,
+                onSuggestClicked = onSuggestClicked
             )
         }
         nestedGraphs()

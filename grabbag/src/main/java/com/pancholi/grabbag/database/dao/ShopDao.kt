@@ -32,4 +32,7 @@ interface ShopDao {
 
     @Query("SELECT * FROM shop WHERE is_used = 0")
     fun getAllUnused(): Flow<List<ShopEntity>>
+
+    @Query("SELECT type FROM shop WHERE type IS NOT NULL")
+    fun getAllTypes(): Flow<List<String>>
 }

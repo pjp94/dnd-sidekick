@@ -40,6 +40,8 @@ fun NavGraphBuilder.addShopScreen(
             onSaveClicked = { shop, action -> viewModel.onSaveClicked(shop, action) },
             onModelSaved = onModelSaved,
             onDialogDismissed = { viewModel.onDialogDismissed() },
+            onTypeChanged = { type -> viewModel.onTypeChanged(type) },
+            onOwnerChanged = { owner -> viewModel.onOwnerChanged(owner) },
             viewState = viewState.value,
             shopSaved = viewModel.modelSaved
         )
@@ -77,6 +79,8 @@ fun NavGraphBuilder.editShopScreen(
             onSaveClicked = { shop, action -> viewModel.onSaveClicked(shop, action) },
             onModelSaved = onModelSaved,
             onDialogDismissed = { viewModel.onDialogDismissed() },
+            onTypeChanged = { type -> viewModel.onTypeChanged(type) },
+            onOwnerChanged = { owner -> viewModel.onOwnerChanged(owner) },
             viewState = viewState.value,
             shopSaved = viewModel.modelSaved
         )

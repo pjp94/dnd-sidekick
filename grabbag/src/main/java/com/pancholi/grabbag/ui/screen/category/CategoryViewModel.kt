@@ -1,4 +1,4 @@
-package com.pancholi.grabbag.ui.screen
+package com.pancholi.grabbag.ui.screen.category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -44,4 +44,28 @@ class NpcRepository @Inject constructor(
             .npcDao()
             .getAll()
     }
+
+    fun getAllRaces(): Flow<List<String>> {
+        return database
+            .npcDao()
+            .getAllRaces()
+    }
+
+    fun getAllGenders(): Flow<List<String>> {
+        return database
+            .npcDao()
+            .getAllGenders()
+    }
+
+    fun getAllClasses(): Flow<List<String>> {
+        return database
+            .npcDao()
+            .getAllClasses()
+    }
+
+    fun getAllProfessions(): Flow<List<String>> {
+        return database
+            .npcDao()
+            .getAllProfessions()
+    }
 }

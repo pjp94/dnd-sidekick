@@ -102,7 +102,7 @@ abstract class ActionViewModel : ViewModel() {
 
     protected fun onPropertyFieldTextChanged(
         text: String,
-        options: Array<String>
+        options: List<String>
     ) {
         val filtered = options.filter {
             it.contains(text, ignoreCase = true)

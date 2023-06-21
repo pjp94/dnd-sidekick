@@ -1,4 +1,4 @@
-package com.pancholi.grabbag.ui.screen
+package com.pancholi.grabbag.ui.screen.category
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -80,8 +80,8 @@ fun CategoryScreen(
     BackableScreen(
         title = title,
         backSingleClick = true,
-        onBackPressed = onBackPressed,
-        innerContent = { innerPadding ->
+        onBackPressed = onBackPressed
+    ) { innerPadding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -116,7 +116,6 @@ fun CategoryScreen(
                 )
             }
         }
-    )
 }
 
 @Suppress("UNCHECKED_CAST")

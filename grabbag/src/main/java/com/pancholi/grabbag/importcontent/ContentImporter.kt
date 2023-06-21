@@ -1,4 +1,4 @@
-package com.pancholi.grabbag.usecase
+package com.pancholi.grabbag.importcontent
 
 import com.pancholi.grabbag.model.ImportedModel
 

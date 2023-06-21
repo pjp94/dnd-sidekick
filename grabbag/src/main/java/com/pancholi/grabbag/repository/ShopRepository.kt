@@ -44,4 +44,16 @@ class ShopRepository @Inject constructor(
             .shopDao()
             .getAll()
     }
+
+    fun getAllNpcNames(): Flow<List<String>> {
+        return database
+            .npcDao()
+            .getAllNames()
+    }
+
+    fun getAllTypes(): Flow<List<String>> {
+        return database
+            .shopDao()
+            .getAllTypes()
+    }
 }

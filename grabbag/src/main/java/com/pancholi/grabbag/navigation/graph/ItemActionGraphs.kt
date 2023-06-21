@@ -40,6 +40,7 @@ fun NavGraphBuilder.addItemScreen(
             onSaveClicked = { item, action -> viewModel.onSaveClicked(item, action) },
             onModelSaved = onModelSaved,
             onDialogDismissed = { viewModel.onDialogDismissed() },
+            onTypeChanged = { type -> viewModel.onTypeChanged(type) },
             viewState = viewState.value,
             itemSaved = viewModel.modelSaved
         )
@@ -77,6 +78,7 @@ fun NavGraphBuilder.editItemScreen(
             onSaveClicked = { item, action -> viewModel.onSaveClicked(item, action) },
             onModelSaved = onModelSaved,
             onDialogDismissed = { viewModel.onDialogDismissed() },
+            onTypeChanged = { type -> viewModel.onTypeChanged(type) },
             viewState = viewState.value,
             itemSaved = viewModel.modelSaved
         )

@@ -24,6 +24,16 @@ class ShopActionViewModel @Inject constructor(
     private val resources: Resources
 ) : ActionViewModel(), ModelEditor {
 
+    private val defaultShops = resources.getStringArray(R.array.shops)
+    private val npcs = mutableListOf<String>()
+
+    private lateinit var shops: List<String>
+
+    init {
+        getAllTypes()
+        getAllNpcNames()
+    }
+
     override fun onSaveClicked(
         model: CategoryModel,
         action: ModelAction
@@ -63,6 +73,49 @@ class ShopActionViewModel @Inject constructor(
                 .collect {
                     val shop = shopMapper.fromEntityToEdit(it)
                     onModelToEditLoaded(shop)
+                }
+        }
+    }
+
+    fun onTypeChanged(text: String) {
+        onPropertyFieldTextChanged(
+            text = text,
+            options = shops
+        )
+    }
+
+    fun onOwnerChanged(text: String) {
+        onPropertyFieldTextChanged(
+            text = text,
+            options = npcs
+        )
+    }
+
+    private fun getAllTypes() {
+        viewModelScope.launch(dispatcher.io) {
+            shopRepository
+                .getAllTypes()
+                .collect { savedTypes ->
+                    savedTypes
+                        .filter { it.isNotBlank() }
+                        .toMutableList()
+                        .apply { addAll(defaultShops) }
+                        .distinct()
+                        .sorted()
+                        .also { shops = it }
+                }
+        }
+    }
+
+    private fun getAllNpcNames() {
+        viewModelScope.launch(dispatcher.io) {
+            shopRepository
+                .getAllNpcNames()
+                .collect { savedNpcs ->
+                    npcs.apply {
+                        clear()
+                        addAll(savedNpcs)
+                    }
                 }
         }
     }

@@ -9,6 +9,7 @@ import androidx.compose.ui.res.stringResource
 import com.pancholi.core.Result
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.CategoryModel
+import com.pancholi.grabbag.ui.AutocompletePropertyField
 import com.pancholi.grabbag.ui.ConfirmationDialog
 import com.pancholi.grabbag.ui.LoadingIndicator
 import com.pancholi.grabbag.ui.OptionalTextField
@@ -29,6 +30,8 @@ fun ShopActionScreen(
     onSaveClicked: (CategoryModel.Shop, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
     onDialogDismissed: () -> Unit,
+    onTypeChanged: (String) -> Unit,
+    onOwnerChanged: (String) -> Unit,
     viewState: ActionViewModel.ViewState,
     shopSaved: SharedFlow<Unit>
 ) {
@@ -55,6 +58,8 @@ fun ShopActionScreen(
             onSaveClicked = onSaveClicked,
             onModelSaved = onModelSaved,
             onDialogDismissed = onDialogDismissed,
+            onTypeChanged = onTypeChanged,
+            onOwnerChanged = onOwnerChanged,
             viewState = viewState,
             shopSaved = shopSaved,
             shop = shop
@@ -71,6 +76,8 @@ private fun ActionContent(
     onSaveClicked: (CategoryModel.Shop, ModelAction) -> Unit,
     onModelSaved: () -> Unit,
     onDialogDismissed: () -> Unit,
+    onTypeChanged: (String) -> Unit,
+    onOwnerChanged: (String) -> Unit,
     viewState: ActionViewModel.ViewState,
     shopSaved: SharedFlow<Unit>,
     shop: CategoryModel.Shop?
@@ -120,18 +127,26 @@ private fun ActionContent(
             supportingText = requiredSupportingText
         )
 
-        PropertyTextField(
+        AutocompletePropertyField(
             label = stringResource(id = R.string.type),
-            onValueChangeAction = { type = it },
+            onValueChangeAction = {
+                type = it
+                onTypeChanged(it)
+            },
             startingText = shop?.type.orEmpty(),
-            supportingText = requiredSupportingText
+            supportingText = requiredSupportingText,
+            filteredOptions = viewState.filteredOptions
         )
 
-        PropertyTextField(
+        AutocompletePropertyField(
             label = stringResource(id = R.string.owner),
-            onValueChangeAction = { owner = it },
+            onValueChangeAction = {
+                owner = it
+                onOwnerChanged(it)
+            },
             startingText = shop?.owner.orEmpty(),
-            supportingText = { OptionalTextField() }
+            supportingText = { OptionalTextField() },
+            filteredOptions = viewState.filteredOptions
         )
 
         PropertyTextBox(

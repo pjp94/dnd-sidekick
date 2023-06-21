@@ -6,7 +6,7 @@ import androidx.compose.ui.res.stringResource
 import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.CategoryModel
 import com.pancholi.grabbag.ui.FullScreenDialogColumn
-import com.pancholi.grabbag.ui.screen.CardPropertyRow
+import com.pancholi.grabbag.ui.screen.category.CardPropertyRow
 
 @Composable
 fun NpcDialog(

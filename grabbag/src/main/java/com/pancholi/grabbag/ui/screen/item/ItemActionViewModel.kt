@@ -24,6 +24,14 @@ class ItemActionViewModel @Inject constructor(
     private val resources: Resources
 ) : ActionViewModel(), ModelEditor {
 
+    private val defaultItems = resources.getStringArray(R.array.items)
+
+    private lateinit var items: List<String>
+
+    init {
+        getAllTypes()
+    }
+
     override fun onSaveClicked(
         model: CategoryModel,
         action: ModelAction
@@ -63,6 +71,29 @@ class ItemActionViewModel @Inject constructor(
                 .collect {
                     val item = itemMapper.fromEntityToEdit(it)
                     onModelToEditLoaded(item)
+                }
+        }
+    }
+
+    fun onTypeChanged(text: String) {
+        onPropertyFieldTextChanged(
+            text = text,
+            options = items
+        )
+    }
+
+    private fun getAllTypes() {
+        viewModelScope.launch(dispatcher.io) {
+            itemRepository
+                .getAllTypes()
+                .collect { savedTypes ->
+                    savedTypes
+                        .filter { it.isNotBlank() }
+                        .toMutableList()
+                        .apply { addAll(defaultItems) }
+                        .distinct()
+                        .sorted()
+                        .also { items = it }
                 }
         }
     }

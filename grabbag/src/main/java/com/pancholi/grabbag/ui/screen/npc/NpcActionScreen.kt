@@ -136,13 +136,6 @@ private fun ActionContent(
             supportingText = requiredSupportingText
         )
 
-//        PropertyTextField(
-//            label = stringResource(id = R.string.race),
-//            onValueChangeAction = { race = it },
-//            startingText = npc?.race.orEmpty(),
-//            supportingText = requiredSupportingText
-//        )
-
         AutocompletePropertyField(
             label = stringResource(id = R.string.race),
             onValueChangeAction = {
@@ -160,13 +153,6 @@ private fun ActionContent(
             startingText = npc?.gender.orEmpty(),
             supportingText = requiredSupportingText
         )
-
-//        PropertyTextField(
-//            label = stringResource(id = R.string.clss),
-//            onValueChangeAction = { clss = it },
-//            startingText = npc?.clss.orEmpty(),
-//            supportingText = { OptionalTextField() }
-//        )
 
         AutocompletePropertyField(
             label = stringResource(id = R.string.clss),
@@ -189,13 +175,6 @@ private fun ActionContent(
             supportingText = { OptionalTextField() },
             filteredOptions = viewState.filteredOptions
         )
-
-//        PropertyTextField(
-//            label = stringResource(id = R.string.profession),
-//            onValueChangeAction = { profession = it },
-//            startingText = npc?.profession.orEmpty(),
-//            supportingText = { OptionalTextField() }
-//        )
 
         PropertyTextBox(
             label = stringResource(id = R.string.description),

@@ -34,7 +34,8 @@ fun GrabBagHome(
     viewModel: GrabBagHomeViewModel = hiltViewModel(),
     showSnackbar: (SidekickSnackbarVisuals) -> Unit,
     categories: List<Category>,
-    onCategoryClicked: (Category) -> Unit
+    onCategoryClicked: (Category) -> Unit,
+    onSuggestClicked: () -> Unit
 ) {
     val result = rememberSaveable { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
@@ -76,12 +77,12 @@ fun GrabBagHome(
                     .align(Alignment.CenterHorizontally)
             )
 
-//            SuggestButton(
-//                onSuggestClicked = { /*TODO*/ },
-//                modifier = Modifier
-//                    .fillMaxWidth(0.5f)
-//                    .align(Alignment.CenterHorizontally)
-//            )
+            SuggestButton(
+                onSuggestClicked = onSuggestClicked,
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .align(Alignment.CenterHorizontally)
+            )
         }
     }
 }

@@ -24,6 +24,14 @@ class LocationActionViewModel @Inject constructor(
     private val resources: Resources
 ) : ActionViewModel(), ModelEditor {
 
+    private val defaultLocations = resources.getStringArray(R.array.locations)
+
+    private lateinit var locations: List<String>
+
+    init {
+        getAllTypes()
+    }
+
     override fun onSaveClicked(
         model: CategoryModel,
         action: ModelAction
@@ -63,6 +71,29 @@ class LocationActionViewModel @Inject constructor(
                 .collect {
                     val npc = locationMapper.fromEntityToEdit(it)
                     onModelToEditLoaded(npc)
+                }
+        }
+    }
+
+    fun onTypeChanged(text: String) {
+        onPropertyFieldTextChanged(
+            text = text,
+            options = locations
+        )
+    }
+
+    private fun getAllTypes() {
+        viewModelScope.launch(dispatcher.io) {
+            locationRepository
+                .getAllTypes()
+                .collect { savedTypes ->
+                    savedTypes
+                        .filter { it.isNotBlank() }
+                        .toMutableList()
+                        .apply { addAll(defaultLocations) }
+                        .distinct()
+                        .sorted()
+                        .also { locations = it }
                 }
         }
     }
