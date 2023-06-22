@@ -1,26 +1,44 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
+    ExperimentalFoundationApi::class
+)
 
 package com.pancholi.grabbag.ui.screen.suggest
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -34,8 +52,10 @@ import com.pancholi.grabbag.R
 import com.pancholi.grabbag.model.filter.CategoryFilter
 import com.pancholi.grabbag.model.filter.FieldFilters
 import com.pancholi.grabbag.model.filter.Filter
+import com.pancholi.grabbag.model.filter.FilterCollection
 import com.pancholi.grabbag.ui.BackableScreen
 import com.pancholi.grabbag.ui.LoadingIndicator
+import kotlinx.coroutines.launch
 
 @Composable
 fun SuggestScreen(
@@ -55,16 +75,16 @@ fun SuggestScreen(
             when (val filters = viewState.value.filters) {
                 is Result.Loading -> LoadingIndicator()
                 is Result.Success<*> -> {
-                    SuggestBody(
+                    TabbedCategoryLayout(
                         categories = viewState.value.categories,
-                        filters = filters.value as? FieldFilters,
-                        onCategorySelected = { category, isSelected ->
-                            viewModel.onCategoryClicked(
-                                category = category,
+                        filters = filters.value as FilterCollection,
+                        onCategoryChanged = { viewModel.onCategoryChanged(it) },
+                        onFilterSelected = { filter, isSelected ->
+                            viewModel.onFilterSelected(
+                                filter = filter,
                                 isSelected = isSelected
                             )
-                        },
-                        onFilterSelected = { viewModel.onFilterSelected(it) }
+                        }
                     )
                 }
                 is Result.Error -> {}
@@ -79,7 +99,7 @@ private fun SuggestBody(
     categories: List<CategoryFilter>,
     filters: FieldFilters?,
     onCategorySelected: (CategoryFilter, Boolean) -> Unit,
-    onFilterSelected: (Filter) -> Unit
+    onFilterSelected: (Filter, Boolean) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -97,7 +117,12 @@ private fun SuggestBody(
                 FilterChip(
                     selected = it.isSelected,
                     onClick = { onCategorySelected(it, !it.isSelected) },
-                    label = { Text(text = it.name) }
+                    label = {
+                        Text(
+                            text = it.name,
+                            fontSize = 18.sp
+                        )
+                    }
                 )
             }
         }
@@ -135,7 +160,7 @@ private fun SuggestBody(
 @Composable
 private fun NpcFilters(
     filters: FieldFilters.NpcFieldFilters,
-    onFilterSelected: (Filter) -> Unit
+    onFilterSelected: (Filter, Boolean) -> Unit
 ) {
     FilterFlowGroup(
         header = stringResource(id = R.string.race),
@@ -167,7 +192,7 @@ private fun NpcFilters(
 @Composable
 private fun ShopFilters(
     filters: FieldFilters.ShopFieldFilters,
-    onFilterSelected: (Filter) -> Unit
+    onFilterSelected: (Filter, Boolean) -> Unit
 ) {
     FilterFlowGroup(
         header = stringResource(id = R.string.type),
@@ -181,7 +206,7 @@ private fun ShopFilters(
 @Composable
 private fun LocationFilters(
     filters: FieldFilters.LocationFieldFilters,
-    onFilterSelected: (Filter) -> Unit
+    onFilterSelected: (Filter, Boolean) -> Unit
 ) {
     FilterFlowGroup(
         header = stringResource(id = R.string.type),
@@ -195,7 +220,7 @@ private fun LocationFilters(
 @Composable
 private fun ItemFilters(
     filters: FieldFilters.ItemFieldFilters,
-    onFilterSelected: (Filter) -> Unit
+    onFilterSelected: (Filter, Boolean) -> Unit
 ) {
     FilterFlowGroup(
         header = stringResource(id = R.string.type),
@@ -213,7 +238,7 @@ private fun FilterHeader(
 ) {
     Text(
         text = text,
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         fontWeight = FontWeight.Medium,
         modifier = modifier
     )
@@ -223,7 +248,7 @@ private fun FilterHeader(
 private fun FilterFlowGroup(
     header: String,
     filters: List<Filter>,
-    onFilterSelected: (Filter) -> Unit
+    onFilterSelected: (Filter, Boolean) -> Unit
 ) {
     FilterHeader(text = header)
 
@@ -232,13 +257,13 @@ private fun FilterFlowGroup(
         modifier = Modifier.padding(start = 8.dp, bottom = 16.dp)
     ) {
         filters.forEach { filter ->
-            var selected by rememberSaveable { mutableStateOf(false) }
+            var selected by rememberSaveable(key = filter.toString()) { mutableStateOf(filter.isSelected) }
 
             FilterChip(
                 selected = selected,
                 onClick = {
                     selected = !selected
-                    onFilterSelected(filter)
+                    onFilterSelected(filter, selected)
                 },
                 label = { Text(text = filter.name) },
                 modifier = Modifier.wrapContentWidth()
@@ -265,5 +290,124 @@ private fun UnusedSwitch() {
                 checked = it
             }
         )
+    }
+}
+
+@Composable
+private fun TabbedCategoryLayout(
+    categories: List<CategoryFilter>,
+    filters: FilterCollection,
+    onCategoryChanged: (Int) -> Unit,
+    onFilterSelected: (Filter, Boolean) -> Unit
+) {
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f,
+        pageCount = { categories.size }
+    )
+
+    Column {
+        HeaderLayout(
+            categories = categories,
+            pagerState = pagerState,
+            onCategoryChanged = onCategoryChanged
+        )
+
+        CategoryPager(
+            categories = categories,
+            filters = filters,
+            pagerState = pagerState,
+            onFilterSelected = onFilterSelected
+        )
+    }
+}
+
+@Composable
+private fun HeaderLayout(
+    categories: List<CategoryFilter>,
+    pagerState: PagerState,
+    onCategoryChanged: (Int) -> Unit,
+) {
+    val coroutineScope = rememberCoroutineScope()
+    var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
+
+    TabRow(
+        selectedTabIndex = selectedIndex,
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        indicator = {
+            TabRowDefaults.PrimaryIndicator(
+                width = 30.dp,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.tabIndicatorOffset(it[selectedIndex])
+            )
+        }
+    ) {
+        categories.forEachIndexed { index, category ->
+            Tab(
+                selected = selectedIndex == index,
+                onClick = {
+                    selectedIndex = index
+                    onCategoryChanged(index)
+
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(page = index)
+                    }
+                },
+                modifier = Modifier.height(48.dp)
+            ) {
+                Text(text = category.name)
+            }
+        }
+    }
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { selectedIndex = it }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun CategoryPager(
+    categories: List<CategoryFilter>,
+    filters: FilterCollection,
+    pagerState: PagerState,
+    onFilterSelected: (Filter, Boolean) -> Unit
+) {
+    HorizontalPager(
+        state = pagerState,
+        contentPadding = PaddingValues(top = 8.dp),
+        modifier = Modifier.fillMaxSize()
+    ) { page ->
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
+        ) {
+            val selectedCategory = categories[page]
+
+            when (selectedCategory.type) {
+                Filter.Category.NPC -> NpcFilters(
+                    filters = filters.npcFieldFilters,
+                    onFilterSelected = onFilterSelected
+                )
+
+                Filter.Category.SHOP -> ShopFilters(
+                    filters = filters.shopFieldFilters,
+                    onFilterSelected = onFilterSelected
+                )
+
+                Filter.Category.LOCATION -> LocationFilters(
+                    filters = filters.locationFieldFilters,
+                    onFilterSelected = onFilterSelected
+                )
+
+                Filter.Category.ITEM -> ItemFilters(
+                    filters = filters.itemFieldFilters,
+                    onFilterSelected = onFilterSelected
+                )
+            }
+        }
     }
 }

@@ -75,6 +75,7 @@ fun GrabBagHome(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .align(Alignment.CenterHorizontally)
+//                    .padding(top = 24.dp)
             )
 
             SuggestButton(
@@ -92,6 +93,41 @@ fun CategoryButtonLayout(
     categories: List<Category>,
     onCategoryClicked: (Category) -> Unit
 ) {
+//    for (i in 0..categories.lastIndex step 2) {
+//        Row(
+//            horizontalArrangement = Arrangement.spacedBy(8.dp),
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(horizontal = 8.dp)
+//        ) {
+//            val category1 = categories[i]
+//            val category2 = if (i + 1 <= categories.lastIndex) {
+//                categories[i + 1]
+//            } else {
+//                null
+//            }
+//
+//            val maxWidthFraction = category2?.let { 0.5f } ?: 1.0f
+//
+//            CategoryButton(
+//                category = category1,
+//                onCategoryClicked = { onCategoryClicked(category1) },
+//                modifier = Modifier
+//                    .fillMaxWidth(maxWidthFraction)
+//                    .weight(1.0f)
+//            )
+//
+//            category2?.let { category ->
+//                CategoryButton(
+//                    category = category,
+//                    onCategoryClicked = { onCategoryClicked(category) },
+//                    modifier = Modifier
+//                        .fillMaxWidth(maxWidthFraction)
+//                        .weight(1.0f)
+//                )
+//            }
+//        }
+//    }
     categories.forEach { category ->
         CategoryButton(
             category = category,
@@ -131,7 +167,8 @@ fun ImportContentButton(
         modifier = modifier,
     ) {
         Text(
-            text = stringResource(id = R.string.import_content)
+            text = stringResource(id = R.string.import_content),
+//            modifier = Modifier.padding(8.dp)
         )
     }
 }
@@ -141,13 +178,16 @@ fun SuggestButton(
     onSuggestClicked: () -> Unit,
     modifier: Modifier
 ) {
-    Button(
+    OutlinedButton(
         onClick = onSuggestClicked,
+//        colors = ButtonDefaults.buttonColors(
+//            contentColor = MaterialTheme.colorScheme.onTertiaryContainer // TODO change to Color.White?
+//        ),
         modifier = modifier,
     ) {
         Text(
             text = stringResource(id = R.string.suggest),
-            modifier = Modifier.padding(8.dp)
+//            modifier = Modifier.padding(8.dp)
         )
     }
 }

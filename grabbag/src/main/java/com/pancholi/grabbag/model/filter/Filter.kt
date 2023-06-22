@@ -3,7 +3,8 @@ package com.pancholi.grabbag.model.filter
 data class Filter(
     val name: String,
     val category: Category,
-    val field: Field?
+    val field: Field?,
+    var isSelected: Boolean = false
 ) {
 
     enum class Category {

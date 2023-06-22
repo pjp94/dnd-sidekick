@@ -47,51 +47,35 @@ class SuggestViewModel @Inject constructor(
     val viewState: StateFlow<ViewState> = _viewState.asStateFlow()
 
     private lateinit var filterCollection: FilterCollection
+    private lateinit var category: CategoryFilter
 
     init {
         setCategories()
         getAllFilters()
     }
 
-    fun onCategoryClicked(
-        category: CategoryFilter,
-        isSelected: Boolean
-    ) {
-        val updatedCategories = if (isSelected) {
-            _viewState.value.categories.map {
-                it.copy(isSelected = it == category)
-            }
-        } else {
-            _viewState.value.categories.map {
-                it.copy(isSelected = false)
-            }
-        }
-
-        val filters = when (category.type) {
-            Filter.Category.NPC -> filterCollection.npcFieldFilters
-            Filter.Category.SHOP -> filterCollection.shopFieldFilters
-            Filter.Category.LOCATION -> filterCollection.locationFieldFilters
-            Filter.Category.ITEM -> filterCollection.itemFieldFilters
-        }
-
-        val result = if (isSelected) {
-            Result.Success(filters)
-        } else {
-            Result.Success(null)
-        }
-
-        _viewState.update { it.copy(categories = updatedCategories, filters = result) }
+    fun onCategoryChanged(index: Int) {
+        this.category = _viewState.value.categories[index]
     }
 
-    fun onFilterSelected(filter: Filter) {
-
+    fun onFilterSelected(
+        filter: Filter,
+        isSelected: Boolean
+    ) {
+        when (category.type) {
+            Filter.Category.NPC -> filterCollection.npcFieldFilters.updateFilter(filter, isSelected)
+            Filter.Category.SHOP -> filterCollection.shopFieldFilters.updateFilter(filter, isSelected)
+            Filter.Category.LOCATION -> filterCollection.locationFieldFilters.updateFilter(filter, isSelected)
+            Filter.Category.ITEM -> filterCollection.itemFieldFilters.updateFilter(filter, isSelected)
+        }
     }
 
     private fun setCategories() {
         val categories = listOf(
             CategoryFilter(
                 name = resources.getString(R.string.npc),
-                type = Filter.Category.NPC
+                type = Filter.Category.NPC,
+                isSelected = true
             ),
             CategoryFilter(
                 name = resources.getString(R.string.shop),
@@ -126,7 +110,7 @@ class SuggestViewModel @Inject constructor(
                 )
             }.collect { collection ->
                 filterCollection = collection
-                _viewState.update { it.copy(filters = Result.Success(null)) }
+                _viewState.update { it.copy(filters = Result.Success(collection)) }
             }
         }
     }
